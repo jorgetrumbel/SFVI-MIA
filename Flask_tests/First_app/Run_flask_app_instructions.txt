@@ -1,0 +1,31 @@
+EN WINDOWS:
+
+    Pagina standard de servidor flask:
+        http://localhost:5000/
+
+    Setear enviroment variable FLASK_APP:
+        set FLASK_APP=hello.py (Nombre de archivo python)
+    
+    Correr servidor flask:
+        flask run
+
+    Correr servidor flask con debugger:
+        flask run --debug
+
+    Activar modo Debug de servidor Flask (Al cambiar el codigo fuente se actualiza el servidor):
+        set FLASK_DEBUG=1
+
+    Correr servidor flask aceptando conexiones externas:
+    (The --host argument tells the web server what network interface to listen to for connections from clients. 
+    By default, Flask’s development web server listens for connections on localhost.
+    The following command makes the web server listen for connections on the public network interface)
+        flask run --host 0.0.0.0
+
+OTROS COMANDOS UTILES:
+    Ayuda de comando flask:
+        flask --help
+    Correr python shell en aplicacion:
+    (The flask shell command is used to start a Python shell session in the context of the application. 
+    You can use this session to run maintenance tasks or tests, or to debug issues.)
+        flask shell
+    
