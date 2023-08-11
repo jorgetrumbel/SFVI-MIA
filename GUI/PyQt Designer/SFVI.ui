@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>964</width>
-    <height>785</height>
+    <height>781</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -82,7 +82,7 @@
     <item>
      <widget class="QStackedWidget" name="stackWidget">
       <property name="currentIndex">
-       <number>1</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="ScreenMonitorMain">
        <layout class="QVBoxLayout" name="verticalLayout">
@@ -427,93 +427,7 @@ Fotos rechazadas: XXX</string>
         </property>
         <item>
          <layout class="QGridLayout" name="gridLayoutScreenProgrammingMain">
-          <item row="1" column="2">
-           <widget class="QPushButton" name="buttonCopyProgramScreenProgrammingMain">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-              <horstretch>1</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="font">
-             <font>
-              <family>Sitka</family>
-              <pointsize>11</pointsize>
-              <weight>75</weight>
-              <bold>true</bold>
-             </font>
-            </property>
-            <property name="text">
-             <string>Copiar
-Programa</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QPushButton" name="buttonEraseProgramScreenProgrammingMain">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-              <horstretch>1</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="font">
-             <font>
-              <family>Sitka</family>
-              <pointsize>11</pointsize>
-              <weight>75</weight>
-              <bold>true</bold>
-             </font>
-            </property>
-            <property name="text">
-             <string>Borrar
-Programa</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="0" colspan="4">
-           <widget class="QGraphicsView" name="graphicsView_2">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-              <horstretch>4</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QPushButton" name="buttonNewProgramScreenProgrammingMain">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-              <horstretch>1</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="font">
-             <font>
-              <family>Sitka</family>
-              <pointsize>11</pointsize>
-              <weight>75</weight>
-              <bold>true</bold>
-             </font>
-            </property>
-            <property name="text">
-             <string>Nuevo
-Programa</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="4" colspan="4">
-           <widget class="QTextEdit" name="textEdit_2">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-              <horstretch>3</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="3">
+          <item row="1" column="7">
            <widget class="QPushButton" name="buttonEditProgramScreenProgrammingMain">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -535,7 +449,29 @@ Programa</string>
             </property>
            </widget>
           </item>
-          <item row="1" column="4" colspan="4">
+          <item row="1" column="4">
+           <widget class="QPushButton" name="buttonNewProgramScreenProgrammingMain">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>1</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="font">
+             <font>
+              <family>Sitka</family>
+              <pointsize>11</pointsize>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>Nuevo
+Programa</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="9">
            <widget class="QPushButton" name="buttonChangeToMonitorMain">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -554,6 +490,60 @@ Programa</string>
             <property name="text">
              <string>Interfaz de
 Monitoreo</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="4" colspan="4">
+           <widget class="QListView" name="listView"/>
+          </item>
+          <item row="1" column="5">
+           <widget class="QPushButton" name="buttonEraseProgramScreenProgrammingMain">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>1</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="font">
+             <font>
+              <family>Sitka</family>
+              <pointsize>11</pointsize>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>Borrar
+Programa</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="6">
+           <widget class="QPushButton" name="buttonCopyProgramScreenProgrammingMain">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>1</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="font">
+             <font>
+              <family>Sitka</family>
+              <pointsize>11</pointsize>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>Copiar
+Programa</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="9">
+           <widget class="QLabel" name="label">
+            <property name="text">
+             <string>TextLabel</string>
             </property>
            </widget>
           </item>
@@ -661,24 +651,27 @@ Monitoreo</string>
            </widget>
           </item>
           <item row="3" column="0" colspan="4">
-           <widget class="QTableView" name="tableView">
+           <widget class="QTableView" name="tableViewScreenProgramEditor">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="alternatingRowColors">
+             <bool>true</bool>
+            </property>
            </widget>
           </item>
           <item row="2" column="3">
-           <widget class="QStackedWidget" name="stackedWidget">
+           <widget class="QStackedWidget" name="stackedWidgetScreenProgramEditor">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
               <horstretch>2</horstretch>
               <verstretch>2</verstretch>
              </sizepolicy>
             </property>
-            <widget class="QWidget" name="page_3">
+            <widget class="QWidget" name="stackCameraOptions">
              <property name="palette">
               <palette>
                <active>
@@ -745,7 +738,7 @@ Monitoreo</string>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_4">
               <item>
-               <layout class="QFormLayout" name="formLayout">
+               <layout class="QFormLayout" name="formLayoutCameraOptions">
                 <item row="0" column="0">
                  <widget class="QLabel" name="exposicNLabel">
                   <property name="text">
@@ -760,11 +753,28 @@ Monitoreo</string>
               </item>
              </layout>
             </widget>
-            <widget class="QWidget" name="page_4"/>
+            <widget class="QWidget" name="StackFilterOptions">
+             <layout class="QVBoxLayout" name="verticalLayout_5">
+              <item>
+               <layout class="QFormLayout" name="formLayoutFilterOptions">
+                <item row="0" column="0">
+                 <widget class="QLabel" name="labelKernelRows">
+                  <property name="text">
+                   <string>Kernel rows</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="1">
+                 <widget class="QSpinBox" name="spinBoxKernelRows"/>
+                </item>
+               </layout>
+              </item>
+             </layout>
+            </widget>
            </widget>
           </item>
           <item row="0" column="3" rowspan="2">
-           <widget class="QTreeView" name="treeView">
+           <widget class="QTreeView" name="treeViewScreenProgramEditor">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
               <horstretch>2</horstretch>
@@ -835,12 +845,32 @@ Monitoreo</string>
               </disabled>
              </palette>
             </property>
+            <property name="editTriggers">
+             <set>QAbstractItemView::NoEditTriggers</set>
+            </property>
+            <property name="alternatingRowColors">
+             <bool>false</bool>
+            </property>
            </widget>
           </item>
           <item row="4" column="3">
            <widget class="QPushButton" name="buttonExitScreenProgramEditor">
             <property name="text">
              <string>Salir</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0">
+           <widget class="QPushButton" name="buttonAddCommandScreenProgramEditor">
+            <property name="text">
+             <string>Agregar Comando</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="1">
+           <widget class="QPushButton" name="buttonRunScreenProgramEditor">
+            <property name="text">
+             <string>Ejecutar</string>
             </property>
            </widget>
           </item>
