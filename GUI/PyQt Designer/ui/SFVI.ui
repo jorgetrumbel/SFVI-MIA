@@ -681,7 +681,7 @@ Programa</string>
               <verstretch>2</verstretch>
              </sizepolicy>
             </property>
-            <widget class="QWidget" name="stackCameraOptions">
+            <widget class="QWidget" name="stackCaptureOptions">
              <property name="palette">
               <palette>
                <active>
@@ -748,16 +748,26 @@ Programa</string>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_4">
               <item>
-               <layout class="QFormLayout" name="formLayoutCameraOptions">
-                <item row="0" column="0">
-                 <widget class="QLabel" name="exposicNLabel">
+               <layout class="QFormLayout" name="formLayoutCaptureOptions">
+                <item row="1" column="0">
+                 <widget class="QLabel" name="labelExposure">
                   <property name="text">
-                   <string>Exposicion</string>
+                   <string>Exposure</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="1">
+                 <widget class="QSpinBox" name="spinBoxExposure"/>
+                </item>
+                <item row="0" column="0">
+                 <widget class="QLabel" name="labelCaptureName">
+                  <property name="text">
+                   <string>Name</string>
                   </property>
                  </widget>
                 </item>
                 <item row="0" column="1">
-                 <widget class="QSpinBox" name="exposicNSpinBox"/>
+                 <widget class="QLineEdit" name="lineEditCapturaName"/>
                 </item>
                </layout>
               </item>
@@ -767,25 +777,45 @@ Programa</string>
              <layout class="QVBoxLayout" name="verticalLayout_5">
               <item>
                <layout class="QFormLayout" name="formLayoutFilterOptions">
-                <item row="0" column="0">
+                <item row="1" column="0">
                  <widget class="QLabel" name="labelKernelRows">
                   <property name="text">
-                   <string>Kernel rows</string>
+                   <string>Kernel Rows</string>
                   </property>
                  </widget>
                 </item>
-                <item row="0" column="1">
+                <item row="1" column="1">
                  <widget class="QSpinBox" name="spinBoxKernelRows"/>
                 </item>
-                <item row="1" column="0">
+                <item row="2" column="0">
                  <widget class="QLabel" name="labelKernelColumns">
                   <property name="text">
                    <string>Kernel Columns</string>
                   </property>
                  </widget>
                 </item>
-                <item row="1" column="1">
+                <item row="2" column="1">
                  <widget class="QSpinBox" name="spinBoxKernelColumns"/>
+                </item>
+                <item row="3" column="0">
+                 <widget class="QLabel" name="labelIterations">
+                  <property name="text">
+                   <string>Iterations</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="3" column="1">
+                 <widget class="QSpinBox" name="spinBoxIterations"/>
+                </item>
+                <item row="0" column="0">
+                 <widget class="QLabel" name="labelFilterName">
+                  <property name="text">
+                   <string>Name</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="1">
+                 <widget class="QLineEdit" name="lineEditFilterName"/>
                 </item>
                </layout>
               </item>

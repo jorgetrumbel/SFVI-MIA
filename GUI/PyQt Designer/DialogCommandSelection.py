@@ -2,6 +2,7 @@ import sys
 from PyQt5.QtWidgets import QDialog
 from PyQt5.QtGui import QIcon, QStandardItemModel, QStandardItem
 from PyQt5.uic import loadUi
+import VisionProgram
 
 #############################################################
 # DialogCommandSelection    
@@ -25,24 +26,20 @@ class DialogCommandSelection(QDialog):
         self.itemModel = QStandardItemModel()
         parentItem = self.itemModel.invisibleRootItem()
         #Create Capture row and subitems
-        item = QStandardItem("Captura")
+        item = QStandardItem(VisionProgram.COMMAND_GROUPS_CAPTURE)
         parentItem.appendRow(item)
         parentItem = item
-        item = QStandardItem("Camara")
-        parentItem.appendRow(item)
-        item = QStandardItem("Flash")
-        parentItem.appendRow(item)
+        for itemName in VisionProgram.captureOptions:
+            item = QStandardItem(itemName)
+            parentItem.appendRow(item)
         #Create filter row and subitems
         parentItem = self.itemModel.invisibleRootItem()
-        item = QStandardItem("Filtro")
+        item = QStandardItem(VisionProgram.COMMAND_GROUPS_FILTER)
         parentItem.appendRow(item)
         parentItem = item
-        item = QStandardItem("Blur")
-        parentItem.appendRow(item)
-        item = QStandardItem("Gauss")
-        parentItem.appendRow(item)
-        item = QStandardItem("Sobel")
-        parentItem.appendRow(item)
+        for itemName in VisionProgram.filterOptions:
+            item = QStandardItem(itemName)
+            parentItem.appendRow(item)
         #Create measure row and subitems
         parentItem = self.itemModel.invisibleRootItem()
         item = QStandardItem("Medición")

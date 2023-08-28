@@ -1,28 +1,22 @@
 {
-    "1": {
-        "Name": "Captura1",
-        "Type": "Captura",
-        "Parent": 0,
+    "Camera1": {
+        "Name": "Camera1",
+        "Type": "Camera",
+        "Parent": "",
         "Configuration": {
-            "Exposicion": 0
+            "Name": "",
+            "Exposure": 1
         }
     },
-    "2": {
-        "Name": "Blur2",
-        "Type": "Blur",
-        "Parent": 1,
+    "Erosion1": {
+        "Name": "Erosion1",
+        "Type": "Erosion",
+        "Parent": "Camera1",
         "Configuration": {
-            "Kernel rows": 3,
-            "Kernel Columns": 3
-        }
-    },
-    "3": {
-        "Name": "Gauss3",
-        "Type": "Gauss",
-        "Parent": 1,
-        "Configuration": {
-            "Kernel rows": 3,
-            "Kernel Columns": 3
+            "Name": "",
+            "Kernel Rows": 5,
+            "Kernel Columns": 5,
+            "Iterations": 2
         }
     }
 }

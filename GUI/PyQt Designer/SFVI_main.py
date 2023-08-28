@@ -5,10 +5,15 @@ from PyQt5.QtGui import QIcon, QPixmap, QStandardItemModel, QStandardItem, QImag
 from PyQt5.QtCore import QModelIndex
 from PyQt5.uic import loadUi
 from PIL import Image as im
-import json
 
 from DialogCommandSelection import DialogCommandSelection
-from VisionProgram import VisionProgram
+import VisionProgram
+from VisionProgram import ProgramStructure
+
+
+stackOptionsNames = ("stackCaptureOptions", "StackFilterOptions")
+STACK_OPTIONS_CAPTURE_WIDGET_NAME = stackOptionsNames[0]
+STACK_OPTIONS_FILTER_WIDGET_NAME = stackOptionsNames[1]
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -88,25 +93,42 @@ class MainWindow(QMainWindow):
             print("Image not found.")
 
     def loadTreeView(self):
+        #Setup first item for TreeView and configure QTreeView
         self.itemModel = QStandardItemModel()
         parentItem = self.itemModel.invisibleRootItem()
-        item = QStandardItem("Captura")
+        item = QStandardItem("Camera1")
         parentItem.appendRow(item)
-        '''
-        parentItem = item
-        item = QStandardItem("Filtro")
-        parentItem.appendRow(item)
-        '''
+        self.visionProgramStructure.addInstruction("Camera1", parentItem.text(), VisionProgram.CAPTURE_OPTIONS_CAMERA)
+        self.treeIndex = item.index()
         self.treeViewScreenProgramEditor.setModel(self.itemModel)
     
     def treeViewClicked(self, index):
-        self.treeIndex = index
-        
+        #Get configuration from currently selected tree command and pass it to vision program
+        previousItem = self.itemModel.itemFromIndex(self.treeIndex)
+        configuration = self.getInstructionConfigurationFromTree()
+        self.visionProgramStructure.changeInstructionConfiguration(previousItem.text(), configuration)
+        self.treeIndex = index #Update treeIndex
+        #Update currently displayed widget according to type of instruction selected
         item = self.itemModel.itemFromIndex(index)
-        if item.text() == "Captura":
-            self.stackedWidgetScreenProgramEditor.setCurrentWidget(self.stackCameraOptions)
-        elif item.text() in self.filterOptions:
+        instructionType = self.visionProgramStructure.getInstructionType(item.text())
+        instructionConfiguration = self.visionProgramStructure.getInstructionConfiguration(item.text())
+        self.updateStackedWidgetScreenProgramEditor(instructionType, instructionConfiguration)
+
+    def updateStackedWidgetScreenProgramEditor(self, instructionType, instructionConfiguration):
+        if instructionType in VisionProgram.captureOptions:
+            self.stackedWidgetScreenProgramEditor.setCurrentWidget(self.stackCaptureOptions)
+            self.loadStackCaptureOptions(instructionConfiguration)
+        elif instructionType in VisionProgram.filterOptions:
             self.stackedWidgetScreenProgramEditor.setCurrentWidget(self.StackFilterOptions)
+            self.loadStackFilterOptions(instructionConfiguration)
+
+    def loadStackFilterOptions(self, configuration):
+        self.spinBoxKernelRows.setValue(configuration[VisionProgram.FILTER_CONFIGURATIONS_KERNEL_ROWS])
+        self.spinBoxKernelColumns.setValue(configuration[VisionProgram.FILTER_CONFIGURATIONS_KERNEL_COLUMNS])
+        self.spinBoxIterations.setValue(configuration[VisionProgram.FILTER_CONFIGURATIONS_ITERATIONS])
+
+    def loadStackCaptureOptions(self, configuration):
+        self.spinBoxExposure.setValue(configuration[VisionProgram.CAPTURE_CONFIGURATIONS_EXPOSURE])
 
     def addCommandToTree(self):
         #Launch dialog
@@ -114,76 +136,69 @@ class MainWindow(QMainWindow):
         commandSelectDialog.exec()
         dialogReturnString = commandSelectDialog.getReturnString()
         parentItem = self.itemModel.itemFromIndex(self.treeIndex)
+        instructionType = dialogReturnString
+        instructionCounter = 1
+        dialogReturnStringTemp = dialogReturnString + str(instructionCounter)
+        while(self.visionProgramStructure.checkInstrucionName(dialogReturnStringTemp)):
+            instructionCounter = instructionCounter + 1
+            dialogReturnStringTemp = dialogReturnString + str(instructionCounter)
+        dialogReturnString = dialogReturnStringTemp
+        self.visionProgramStructure.addInstruction(dialogReturnString, parentItem.text(), instructionType)
         item = QStandardItem(dialogReturnString)
         parentItem.appendRow(item)
+        #Select newly created index on treeView
+        self.treeViewClicked(item.index())
+        self.treeViewScreenProgramEditor.setCurrentIndex(item.index())
+
 
     def deleteCommandFromTree(self):
         selectedIndex = QModelIndex(self.treeViewScreenProgramEditor.selectedIndexes()[0])
+        selectedItem = self.itemModel.itemFromIndex(selectedIndex)
+        self.visionProgramStructure.removeInstruction(selectedItem.text())
         self.itemModel.removeRow(selectedIndex.row(), selectedIndex.parent())
-
-    def createProgramFromTree(self, inputItem, parentIndex, programData):
-        rowItemNumber = inputItem.rowCount()
-        for selectedRow in range(0,rowItemNumber):
-            #Take the first item of the list
-            currentRow = inputItem.child(selectedRow)
-            currentIndex = parentIndex + selectedRow + 1
-            instructionConfiguration = self.getInstructionConfiguration(currentRow.text())
-            #print("parent:", parentIndex, currentRow.text(), "index:", currentIndex)
-            programData[currentIndex] = {"Name": currentRow.text() + str(currentIndex),
-                                                          "Type": currentRow.text(),
-                                                          "Parent": parentIndex,
-                                                          "Configuration": instructionConfiguration}
-            if currentRow.hasChildren():
-                #print(currentRow.rowCount())
-                self.createProgramFromTree(currentRow, currentIndex, programData)
-        if parentIndex == 0:
-            #print(programData)
-            with open("temp/program_file.json", "w") as write_file:
-                json.dump(programData, write_file, indent=4)
-        return programData
-            
-    def getInstructionConfiguration(self, instructionType):
-        #stackCurrentWidgetIndex = self.stackedWidgetScreenProgramEditor.currentIndex()
-        instructionData = {}
-        if instructionType in self.filterOptions:
-            #stackCurrentWidget = self.stackedWidgetScreenProgramEditor.currentWidget()
-            stackCurrentWidget = self.stackedWidgetScreenProgramEditor.widget(self.stackedWidgetScreenProgramEditor.indexOf(self.StackFilterOptions))
-        elif instructionType in self.cameraOptions:
-            stackCurrentWidget = self.stackedWidgetScreenProgramEditor.widget(self.stackedWidgetScreenProgramEditor.indexOf(self.stackCameraOptions))
-        formLayout = stackCurrentWidget.findChildren(QFormLayout)
-        formRows = formLayout[0].rowCount()
-        for rowNumber in range(0,formRows):
-            rowLabelText = formLayout[0].itemAt(rowNumber,0).widget().text()
-            rowItemValue = formLayout[0].itemAt(rowNumber,1).widget().value()
-            instructionData[rowLabelText] = rowItemValue
-            #print(rowLabelText)
-            #print(rowItemValue)
-        #print(instructionData)
+        self.treeIndex = selectedIndex.parent()
+        item = self.itemModel.itemFromIndex(self.treeIndex)
+        instructionType = self.visionProgramStructure.getInstructionType(item.text())
+        instructionConfiguration = self.visionProgramStructure.getInstructionConfiguration(item.text())
+        self.updateStackedWidgetScreenProgramEditor(instructionType, instructionConfiguration)
+        self.treeViewClicked(self.treeIndex)
+        self.treeViewScreenProgramEditor.setCurrentIndex(self.treeIndex)
+         
+    def getInstructionConfigurationFromTree(self):
+        stackCurrentWidgetName = self.stackedWidgetScreenProgramEditor.currentWidget().objectName()
+        if stackCurrentWidgetName == STACK_OPTIONS_CAPTURE_WIDGET_NAME:
+            instructionData = self.getStackCaptureConfiguration()
+        elif stackCurrentWidgetName == STACK_OPTIONS_FILTER_WIDGET_NAME:
+            instructionData = self.getStackFilterConfiguration()
         return instructionData
-            
+
+    def getStackCaptureConfiguration(self):
+        instructionData = {}
+        #form = self.formLayoutCaptureOptions
+        instructionData[VisionProgram.CAPTURE_CONFIGURATIONS_NAME] = self.lineEditCapturaName.text()
+        instructionData[VisionProgram.CAPTURE_CONFIGURATIONS_EXPOSURE] = self.spinBoxExposure.value()
+        return instructionData
+    
+    def getStackFilterConfiguration(self):
+        instructionData = {}
+        #form = self.formLayoutCaptureOptions
+        instructionData[VisionProgram.FILTER_CONFIGURATIONS_NAME] = self.lineEditFilterName.text()
+        instructionData[VisionProgram.FILTER_CONFIGURATIONS_KERNEL_ROWS] = self.spinBoxKernelRows.value()
+        instructionData[VisionProgram.FILTER_CONFIGURATIONS_KERNEL_COLUMNS] = self.spinBoxKernelColumns.value()
+        instructionData[VisionProgram.FILTER_CONFIGURATIONS_ITERATIONS] = self.spinBoxIterations.value()
+        return instructionData
 
     def runVisionProgram(self):
-        program = self.createProgramFromTree(self.itemModel.invisibleRootItem(), 0, {})
-        visionProgram = VisionProgram()
-        visionProgram.loadImage("images/apple.png", grayscale=True)
-        programLength = len(program) + 1
-        for instructionNumber in range(1,programLength):
-            instruction = program[instructionNumber]
-            instructionConfiguration = instruction["Configuration"]
-            if instruction["Type"] == "Blur":
-                visionProgram.applyBlurFilter(instructionConfiguration["Kernel rows"], instructionConfiguration["Kernel Columns"])
-            elif instruction["Type"] == "Gauss":
-                visionProgram.applyGaussFilter(instructionConfiguration["Kernel rows"], instructionConfiguration["Kernel Columns"])
-            elif instruction["Type"] == "Sobel":
-                visionProgram.applySobelFilter()
-        image = visionProgram.getImage()
-        #visionProgram.showImage()
+        currentItem = self.itemModel.itemFromIndex(self.treeIndex)
+        configuration = self.getInstructionConfigurationFromTree()
+        self.visionProgramStructure.changeInstructionConfiguration(currentItem.text(), configuration)
+        image = self.visionProgramStructure.runProgram()
         self.setImageScreenProgramEditor(image)
 
+    
     itemModel = None
     treeIndex = None
-    filterOptions = ("Filtro", "Blur", "Gauss", "Sobel") #GUI names of filters, used for selection purposes
-    cameraOptions = ("Camara", "Captura", "Flash")
+    visionProgramStructure = ProgramStructure()
     #End ScreenProgramEditor
     #########################################################
     
