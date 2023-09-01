@@ -40,6 +40,14 @@ class DialogCommandSelection(QDialog):
         for itemName in VisionProgram.filterOptions:
             item = QStandardItem(itemName)
             parentItem.appendRow(item)
+        #Create feature detection row and subitems
+        parentItem = self.itemModel.invisibleRootItem()
+        item = QStandardItem(VisionProgram.COMMAND_GROUPS_FEATURE_DETECTION)
+        parentItem.appendRow(item)
+        parentItem = item
+        for itemName in VisionProgram.featureDetectionOptions:
+            item = QStandardItem(itemName)
+            parentItem.appendRow(item)
         #Create measure row and subitems
         parentItem = self.itemModel.invisibleRootItem()
         item = QStandardItem("Medición")

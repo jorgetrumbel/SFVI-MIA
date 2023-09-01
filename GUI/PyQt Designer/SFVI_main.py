@@ -11,9 +11,10 @@ import VisionProgram
 from VisionProgram import ProgramStructure
 
 
-stackOptionsNames = ("stackCaptureOptions", "StackFilterOptions")
+stackOptionsNames = ("stackCaptureOptions", "StackFilterOptions", "stackFeatureDetectionOptions")
 STACK_OPTIONS_CAPTURE_WIDGET_NAME = stackOptionsNames[0]
 STACK_OPTIONS_FILTER_WIDGET_NAME = stackOptionsNames[1]
+STACK_OPTIONS_FEATURE_DETECTION_WIDGET_NAME = stackOptionsNames[2]
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -101,6 +102,7 @@ class MainWindow(QMainWindow):
         self.visionProgramStructure.addInstruction("Camera1", parentItem.text(), VisionProgram.CAPTURE_OPTIONS_CAMERA)
         self.treeIndex = item.index()
         self.treeViewScreenProgramEditor.setModel(self.itemModel)
+        self.stackedWidgetScreenProgramEditor.setCurrentWidget(self.stackCaptureOptions)
     
     def treeViewClicked(self, index):
         #Get configuration from currently selected tree command and pass it to vision program
@@ -121,6 +123,9 @@ class MainWindow(QMainWindow):
         elif instructionType in VisionProgram.filterOptions:
             self.stackedWidgetScreenProgramEditor.setCurrentWidget(self.StackFilterOptions)
             self.loadStackFilterOptions(instructionConfiguration)
+        elif instructionType in VisionProgram.featureDetectionOptions:
+            self.stackedWidgetScreenProgramEditor.setCurrentWidget(self.stackFeatureDetectionOptions)
+            self.loadStackFeatureDetectionOptions(instructionConfiguration)
 
     def loadStackFilterOptions(self, configuration):
         self.spinBoxKernelRows.setValue(configuration[VisionProgram.FILTER_CONFIGURATIONS_KERNEL_ROWS])
@@ -129,6 +134,11 @@ class MainWindow(QMainWindow):
 
     def loadStackCaptureOptions(self, configuration):
         self.spinBoxExposure.setValue(configuration[VisionProgram.CAPTURE_CONFIGURATIONS_EXPOSURE])
+    
+    def loadStackFeatureDetectionOptions(self, configuration):
+        self.spinBoxFeatureDetectionVariable1.setValue(configuration[VisionProgram.FEATURE_DETECTION_CONFIGURATIONS_VARIABLE_1])
+        self.spinBoxFeatureDetectionVariable2.setValue(configuration[VisionProgram.FEATURE_DETECTION_CONFIGURATIONS_VARIABLE_2])
+        self.spinBoxFeatureDetectionVariable3.setValue(configuration[VisionProgram.FEATURE_DETECTION_CONFIGURATIONS_VARIABLE_3])
 
     def addCommandToTree(self):
         #Launch dialog
@@ -150,7 +160,6 @@ class MainWindow(QMainWindow):
         self.treeViewClicked(item.index())
         self.treeViewScreenProgramEditor.setCurrentIndex(item.index())
 
-
     def deleteCommandFromTree(self):
         selectedIndex = QModelIndex(self.treeViewScreenProgramEditor.selectedIndexes()[0])
         selectedItem = self.itemModel.itemFromIndex(selectedIndex)
@@ -170,22 +179,30 @@ class MainWindow(QMainWindow):
             instructionData = self.getStackCaptureConfiguration()
         elif stackCurrentWidgetName == STACK_OPTIONS_FILTER_WIDGET_NAME:
             instructionData = self.getStackFilterConfiguration()
+        elif stackCurrentWidgetName == STACK_OPTIONS_FEATURE_DETECTION_WIDGET_NAME:
+            instructionData = self.getStackFeatureDetectionConfiguration()
         return instructionData
 
     def getStackCaptureConfiguration(self):
         instructionData = {}
-        #form = self.formLayoutCaptureOptions
         instructionData[VisionProgram.CAPTURE_CONFIGURATIONS_NAME] = self.lineEditCapturaName.text()
         instructionData[VisionProgram.CAPTURE_CONFIGURATIONS_EXPOSURE] = self.spinBoxExposure.value()
         return instructionData
     
     def getStackFilterConfiguration(self):
         instructionData = {}
-        #form = self.formLayoutCaptureOptions
         instructionData[VisionProgram.FILTER_CONFIGURATIONS_NAME] = self.lineEditFilterName.text()
         instructionData[VisionProgram.FILTER_CONFIGURATIONS_KERNEL_ROWS] = self.spinBoxKernelRows.value()
         instructionData[VisionProgram.FILTER_CONFIGURATIONS_KERNEL_COLUMNS] = self.spinBoxKernelColumns.value()
         instructionData[VisionProgram.FILTER_CONFIGURATIONS_ITERATIONS] = self.spinBoxIterations.value()
+        return instructionData
+    
+    def getStackFeatureDetectionConfiguration(self):
+        instructionData = {}
+        instructionData[VisionProgram.FEATURE_DETECTION_CONFIGURATIONS_NAME] = self.lineEditFeatureDetectionName.text()
+        instructionData[VisionProgram.FEATURE_DETECTION_CONFIGURATIONS_VARIABLE_1] = self.spinBoxFeatureDetectionVariable1.value()
+        instructionData[VisionProgram.FEATURE_DETECTION_CONFIGURATIONS_VARIABLE_2] = self.spinBoxFeatureDetectionVariable2.value()
+        instructionData[VisionProgram.FEATURE_DETECTION_CONFIGURATIONS_VARIABLE_3] = self.spinBoxFeatureDetectionVariable3.value()
         return instructionData
 
     def runVisionProgram(self):

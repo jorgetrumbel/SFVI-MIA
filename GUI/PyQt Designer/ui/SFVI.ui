@@ -681,6 +681,9 @@ Programa</string>
               <verstretch>2</verstretch>
              </sizepolicy>
             </property>
+            <property name="currentIndex">
+             <number>2</number>
+            </property>
             <widget class="QWidget" name="stackCaptureOptions">
              <property name="palette">
               <palette>
@@ -816,6 +819,66 @@ Programa</string>
                 </item>
                 <item row="0" column="1">
                  <widget class="QLineEdit" name="lineEditFilterName"/>
+                </item>
+               </layout>
+              </item>
+             </layout>
+            </widget>
+            <widget class="QWidget" name="stackFeatureDetectionOptions">
+             <layout class="QVBoxLayout" name="verticalLayout_6">
+              <item>
+               <layout class="QFormLayout" name="formLayoutFeatureDetectionOptions">
+                <item row="0" column="0">
+                 <widget class="QLabel" name="labelFeatureDetectionName">
+                  <property name="text">
+                   <string>Name</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="1">
+                 <widget class="QLineEdit" name="lineEditFeatureDetectionName"/>
+                </item>
+                <item row="1" column="0">
+                 <widget class="QLabel" name="labelFeatureDetectionVariable1">
+                  <property name="text">
+                   <string>Variable 1</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="1">
+                 <widget class="QSpinBox" name="spinBoxFeatureDetectionVariable1">
+                  <property name="maximum">
+                   <number>1000</number>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="0">
+                 <widget class="QLabel" name="labelFeatureDetectionVariable2">
+                  <property name="text">
+                   <string>Variable 2</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="1">
+                 <widget class="QSpinBox" name="spinBoxFeatureDetectionVariable2">
+                  <property name="maximum">
+                   <number>1000</number>
+                  </property>
+                 </widget>
+                </item>
+                <item row="3" column="0">
+                 <widget class="QLabel" name="labelFeatureDetectionVariable3">
+                  <property name="text">
+                   <string>Variable 3</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="3" column="1">
+                 <widget class="QSpinBox" name="spinBoxFeatureDetectionVariable3">
+                  <property name="maximum">
+                   <number>1000</number>
+                  </property>
+                 </widget>
                 </item>
                </layout>
               </item>

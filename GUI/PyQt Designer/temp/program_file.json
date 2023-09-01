@@ -5,18 +5,18 @@
         "Parent": "",
         "Configuration": {
             "Name": "",
-            "Exposure": 1
+            "Exposure": 0
         }
     },
-    "Erosion1": {
-        "Name": "Erosion1",
-        "Type": "Erosion",
+    "Canny1": {
+        "Name": "Canny1",
+        "Type": "Canny",
         "Parent": "Camera1",
         "Configuration": {
             "Name": "",
-            "Kernel Rows": 5,
-            "Kernel Columns": 5,
-            "Iterations": 2
+            "Variable 1": 600,
+            "Variable 2": 200,
+            "Variable 3": 3
         }
     }
 }

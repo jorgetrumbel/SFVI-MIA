@@ -1,11 +1,17 @@
-import numpy as np
-import cv2 as cv
 import sys
 import json
+from VisionModule import VisionProgram
 
-commandGroups = ("Capture", "Filter")
+instructionDataNames = ("Name", "Type", "Parent", "Configuration")
+INSTRUCTION_DATA_NAME = instructionDataNames[0]
+INSTRUCTION_DATA_TYPE = instructionDataNames[1]
+INSTRUCTION_DATA_PARENT = instructionDataNames[2]
+INSTRUCTION_DATA_CONFIGURATION = instructionDataNames[3]
+
+commandGroups = ("Capture", "Filter", "Feature Detection")
 COMMAND_GROUPS_CAPTURE = commandGroups[0]
 COMMAND_GROUPS_FILTER = commandGroups[1]
+COMMAND_GROUPS_FEATURE_DETECTION = commandGroups[2]
 
 filterOptions = ("Blur", "Gauss", "Sobel", "Median", "Erosion", "Dilation", "Open", "Close",
                      "Gradient", "Top Hat", "Black Hat") #GUI names of filters, used for selection purposes
@@ -35,6 +41,15 @@ captureConfigurations = ("Name", "Exposure")
 CAPTURE_CONFIGURATIONS_NAME = captureConfigurations[0]
 CAPTURE_CONFIGURATIONS_EXPOSURE = captureConfigurations[1]
 
+featureDetectionOptions = ("Canny", "Hough")
+FEATURE_DETECTION_OPTIONS_CANNY = featureDetectionOptions[0]
+
+featureDetectionConfigurations = ("Name", "Variable 1", "Variable 2", "Variable 3")
+FEATURE_DETECTION_CONFIGURATIONS_NAME = featureDetectionConfigurations[0]
+FEATURE_DETECTION_CONFIGURATIONS_VARIABLE_1 = featureDetectionConfigurations[1]
+FEATURE_DETECTION_CONFIGURATIONS_VARIABLE_2 = featureDetectionConfigurations[2]
+FEATURE_DETECTION_CONFIGURATIONS_VARIABLE_3 = featureDetectionConfigurations[3]
+
 def getImplementedVisionFunctions():
     return filterOptions, captureOptions
 
@@ -43,16 +58,20 @@ class ProgramStructure():
         pass
 
     def addInstruction(self, instructionName, parentName, instructionType):
-        instructionData = {"Name": instructionName,
-                            "Type": instructionType,
-                            "Parent": parentName,
-                            "Configuration": {}}
+        instructionData = {INSTRUCTION_DATA_NAME: instructionName,
+                            INSTRUCTION_DATA_TYPE: instructionType,
+                            INSTRUCTION_DATA_PARENT: parentName,
+                            INSTRUCTION_DATA_CONFIGURATION: {}}
         if instructionType in  captureOptions:
-            instructionData["Configuration"] = {CAPTURE_CONFIGURATIONS_EXPOSURE: 0}
+            instructionData[INSTRUCTION_DATA_CONFIGURATION] = {CAPTURE_CONFIGURATIONS_EXPOSURE: 0}
         elif instructionType in filterOptions:
-            instructionData["Configuration"] = {FILTER_CONFIGURATIONS_KERNEL_ROWS: 0,
+            instructionData[INSTRUCTION_DATA_CONFIGURATION] = {FILTER_CONFIGURATIONS_KERNEL_ROWS: 0,
                                                 FILTER_CONFIGURATIONS_KERNEL_COLUMNS: 0,
                                                 FILTER_CONFIGURATIONS_ITERATIONS: 0}
+        elif instructionType in featureDetectionOptions:
+            instructionData[INSTRUCTION_DATA_CONFIGURATION] = {FEATURE_DETECTION_CONFIGURATIONS_VARIABLE_1: 50,
+                                                FEATURE_DETECTION_CONFIGURATIONS_VARIABLE_2: 50,
+                                                FEATURE_DETECTION_CONFIGURATIONS_VARIABLE_3: 50}
         self.programInstructionList[instructionName] = instructionData
 
     def removeInstruction(self, instructionName):
@@ -67,9 +86,9 @@ class ProgramStructure():
     def checkChildren(self, instructionName):
         childrenList = []
         for instruction in self.programInstructionList.values():
-            if instruction['Parent'] == instructionName:
-                childrenList.append(instruction['Name'])
-                for child in self.checkChildren(instruction['Name']):
+            if instruction[INSTRUCTION_DATA_PARENT] == instructionName:
+                childrenList.append(instruction[INSTRUCTION_DATA_NAME])
+                for child in self.checkChildren(instruction[INSTRUCTION_DATA_NAME]):
                     childrenList.append(child)
         #print(childrenList)
         return childrenList
@@ -78,16 +97,16 @@ class ProgramStructure():
         return (True == (instructionName in self.programInstructionList))
 
     def changeInstructionConfiguration(self, instructionName, instructionConfiguration):
-        self.programInstructionList[instructionName]['Configuration'] = instructionConfiguration
+        self.programInstructionList[instructionName][INSTRUCTION_DATA_CONFIGURATION] = instructionConfiguration
 
     def changeInstructionName(self, instructionID, instructionName):
         pass
 
     def getInstructionType(self, instructionName):
-        return self.programInstructionList[instructionName]['Type']
+        return self.programInstructionList[instructionName][INSTRUCTION_DATA_TYPE]
     
     def getInstructionConfiguration(self, instructionName):
-        return self.programInstructionList[instructionName]['Configuration']
+        return self.programInstructionList[instructionName][INSTRUCTION_DATA_CONFIGURATION]
 
     def getProgram(self):
         return self.programInstructionList
@@ -103,19 +122,23 @@ class ProgramStructure():
         self.saveProgram("temp/program_file.json")
         visionProgram.loadImage("images/apple.png", grayscale=True)
         for instruction in self.programInstructionList.values():
-            instructionConfiguration = instruction["Configuration"]
-            if instruction["Type"] == "Blur":
+            instructionConfiguration = instruction[INSTRUCTION_DATA_CONFIGURATION]
+            if instruction[INSTRUCTION_DATA_TYPE] == FILTER_OPTIONS_BLUR:
                 visionProgram.applyBlurFilter(instructionConfiguration[FILTER_CONFIGURATIONS_KERNEL_ROWS], 
                                               instructionConfiguration[FILTER_CONFIGURATIONS_KERNEL_COLUMNS])
-            elif instruction["Type"] == "Gauss":
+            elif instruction[INSTRUCTION_DATA_TYPE] == FILTER_OPTIONS_GAUSS:
                 visionProgram.applyGaussFilter(instructionConfiguration[FILTER_CONFIGURATIONS_KERNEL_ROWS], 
                                                instructionConfiguration[FILTER_CONFIGURATIONS_KERNEL_COLUMNS])
-            elif instruction["Type"] == "Sobel":
+            elif instruction[INSTRUCTION_DATA_TYPE] == FILTER_OPTIONS_SOBEL:
                 visionProgram.applySobelFilter()
-            elif instruction["Type"] == "Erosion":
+            elif instruction[INSTRUCTION_DATA_TYPE] == FILTER_OPTIONS_EROSION:
                 visionProgram.applyErosionOperation(instructionConfiguration[FILTER_CONFIGURATIONS_KERNEL_ROWS],
                                                     instructionConfiguration[FILTER_CONFIGURATIONS_KERNEL_COLUMNS],
                                                     instructionConfiguration[FILTER_CONFIGURATIONS_ITERATIONS])
+            elif instruction[INSTRUCTION_DATA_TYPE] == FEATURE_DETECTION_OPTIONS_CANNY:
+                visionProgram.applyCannyEdgeDetection(instructionConfiguration[FEATURE_DETECTION_CONFIGURATIONS_VARIABLE_1],
+                                                    instructionConfiguration[FEATURE_DETECTION_CONFIGURATIONS_VARIABLE_2],
+                                                    instructionConfiguration[FEATURE_DETECTION_CONFIGURATIONS_VARIABLE_3])
         image = visionProgram.getImage()
         return image
 
@@ -123,72 +146,3 @@ class ProgramStructure():
     program = {}
     programIndex = 0
 
-class VisionProgram():
-    
-    def __init__(self):
-        pass
-
-    def loadImage(self, path, grayscale = False):
-        self.imagePath = path
-        if grayscale == False:
-            self.image = cv.imread(self.imagePath)
-        else:
-            self.image = cv.imread(self.imagePath, cv.IMREAD_GRAYSCALE)
-
-    def applyBlurFilter(self, kRows = 3, kColumns = 3):
-        self.image = cv.blur(self.image, [kRows, kColumns])
-
-    def applyGaussFilter(self, kRows = 3, kColumns = 3):
-        self.image = cv.GaussianBlur(self.image, (kRows,kColumns), 5)
-
-    def applyMedianFilter(self, ksize):
-        self.image = cv.medianBlur(self.image, ksize)
-
-    def applyErosionOperation(self, kRows = 3, kColumns = 3, iterations = 1):
-        kernel = np.ones((kRows, kColumns), np.uint8)
-        self.image = cv.erode(self.image, kernel = kernel, iterations = iterations)
-
-    def applyDilationOperation(self, kRows = 3, kColumns = 3, iterations = 1):
-        kernel = np.ones((kRows, kColumns), np.uint8)
-        self.image = cv.dilate(self.image, kernel = kernel, iterations = iterations)
-
-    def applyOpenOperation(self, kRows = 3, kColumns = 3, iterations = 1):
-        kernel = np.ones((kRows, kColumns), np.uint8)
-        self.image = cv.morphologyEx(self.image, cv.MORPH_OPEN, kernel = kernel, iterations = iterations)
-
-    def applyCloseOperation(self, kRows = 3, kColumns = 3, iterations = 1):
-        kernel = np.ones((kRows, kColumns), np.uint8)
-        self.image = cv.morphologyEx(self.image, cv.MORPH_CLOSE, kernel = kernel, iterations = iterations)
-
-    def applyMorphologicalGradientOperation(self, kRows = 3, kColumns = 3, iterations = 1):
-        kernel = np.ones((kRows, kColumns), np.uint8)
-        self.image = cv.morphologyEx(self.image, cv.MORPH_GRADIENT, kernel = kernel, iterations = iterations)
-
-    def applyTopHatOperation(self, kRows = 3, kColumns = 3, iterations = 1):
-        kernel = np.ones((kRows, kColumns), np.uint8)
-        self.image = cv.morphologyEx(self.image, cv.MORPH_TOPHAT, kernel = kernel, iterations = iterations)
-
-    def applyBlackHatOperation(self, kRows = 3, kColumns = 3, iterations = 1):
-        kernel = np.ones((kRows, kColumns), np.uint8)
-        self.image = cv.morphologyEx(self.image, cv.MORPH_BLACKHAT, kernel = kernel, iterations = iterations)
-
-    def applySobelFilter(self):
-        grad_x = cv.Sobel(self.image, cv.CV_16S, 1, 0, ksize=3, scale=1, delta=0, borderType=cv.BORDER_DEFAULT)
-        grad_y = cv.Sobel(self.image, cv.CV_16S, 0, 1, ksize=3, scale=1, delta=0, borderType=cv.BORDER_DEFAULT)
-        abs_grad_x = cv.convertScaleAbs(grad_x)
-        abs_grad_y = cv.convertScaleAbs(grad_y) 
-        self.image = cv.addWeighted(abs_grad_x, 0.5, abs_grad_y, 0.5, 0)
-
-    def getImageRGB(self):
-        img_rgb = cv.cvtColor(self.image, cv.COLOR_BGR2RGB)
-        return img_rgb
-    
-    def getImage(self):
-        return self.image
-
-    def showImage(self):
-        cv.imshow("Image", self.image)
-        cv.waitKey(0)
-
-    image = None
-    imagePath = None
