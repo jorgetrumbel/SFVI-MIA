@@ -8,15 +8,15 @@
             "Exposure": 0
         }
     },
-    "Canny1": {
-        "Name": "Canny1",
-        "Type": "Canny",
+    "Erosion1": {
+        "Name": "Erosion1",
+        "Type": "Erosion",
         "Parent": "Camera1",
         "Configuration": {
             "Name": "",
-            "Variable 1": 600,
-            "Variable 2": 200,
-            "Variable 3": 3
+            "Kernel Rows": 3,
+            "Kernel Columns": 3,
+            "Iterations": 3
         }
     }
 }

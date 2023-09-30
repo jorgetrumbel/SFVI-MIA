@@ -43,6 +43,7 @@ CAPTURE_CONFIGURATIONS_EXPOSURE = captureConfigurations[1]
 
 featureDetectionOptions = ("Canny", "Hough")
 FEATURE_DETECTION_OPTIONS_CANNY = featureDetectionOptions[0]
+FEATURE_DETECTION_OPTIONS_HOUGH = featureDetectionOptions[1]
 
 featureDetectionConfigurations = ("Name", "Variable 1", "Variable 2", "Variable 3")
 FEATURE_DETECTION_CONFIGURATIONS_NAME = featureDetectionConfigurations[0]
@@ -120,7 +121,7 @@ class ProgramStructure():
         #HAY QUE CAMBIAR ESTO, POR AHORA CORRE UN PROGRAMA LINEAL, NO PUEDE TENER BRANCHES (CORRE TODAS LAS INSTRUCCIONES EN SERIE)
         visionProgram = VisionProgram()
         self.saveProgram("temp/program_file.json")
-        visionProgram.loadImage("images/apple.png", grayscale=True)
+        visionProgram.loadImage("images/sudoku.png", grayscale=True)
         for instruction in self.programInstructionList.values():
             instructionConfiguration = instruction[INSTRUCTION_DATA_CONFIGURATION]
             if instruction[INSTRUCTION_DATA_TYPE] == FILTER_OPTIONS_BLUR:
@@ -137,6 +138,10 @@ class ProgramStructure():
                                                     instructionConfiguration[FILTER_CONFIGURATIONS_ITERATIONS])
             elif instruction[INSTRUCTION_DATA_TYPE] == FEATURE_DETECTION_OPTIONS_CANNY:
                 visionProgram.applyCannyEdgeDetection(instructionConfiguration[FEATURE_DETECTION_CONFIGURATIONS_VARIABLE_1],
+                                                    instructionConfiguration[FEATURE_DETECTION_CONFIGURATIONS_VARIABLE_2],
+                                                    instructionConfiguration[FEATURE_DETECTION_CONFIGURATIONS_VARIABLE_3])
+            elif instruction[INSTRUCTION_DATA_TYPE] == FEATURE_DETECTION_OPTIONS_HOUGH:
+                visionProgram.applyHoughLineDetection(instructionConfiguration[FEATURE_DETECTION_CONFIGURATIONS_VARIABLE_1],
                                                     instructionConfiguration[FEATURE_DETECTION_CONFIGURATIONS_VARIABLE_2],
                                                     instructionConfiguration[FEATURE_DETECTION_CONFIGURATIONS_VARIABLE_3])
         image = visionProgram.getImage()
