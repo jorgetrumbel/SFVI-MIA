@@ -8,15 +8,15 @@
             "Exposure": 0
         }
     },
-    "Erosion1": {
-        "Name": "Erosion1",
-        "Type": "Erosion",
+    "Blur1": {
+        "Name": "Blur1",
+        "Type": "Blur",
         "Parent": "Camera1",
         "Configuration": {
             "Name": "",
-            "Kernel Rows": 3,
-            "Kernel Columns": 3,
-            "Iterations": 3
+            "Kernel Rows": 54,
+            "Kernel Columns": 54,
+            "Iterations": 1
         }
     }
 }

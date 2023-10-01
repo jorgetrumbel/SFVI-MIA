@@ -2,7 +2,7 @@ import sys
 from PyQt5.QtWidgets import QDialog
 from PyQt5.QtGui import QIcon, QStandardItemModel, QStandardItem
 from PyQt5.uic import loadUi
-import VisionProgram
+import VisionProgramOptions as VPO
 
 #############################################################
 # DialogCommandSelection    
@@ -26,26 +26,26 @@ class DialogCommandSelection(QDialog):
         self.itemModel = QStandardItemModel()
         parentItem = self.itemModel.invisibleRootItem()
         #Create Capture row and subitems
-        item = QStandardItem(VisionProgram.COMMAND_GROUPS_CAPTURE)
+        item = QStandardItem(VPO.COMMAND_GROUPS_CAPTURE)
         parentItem.appendRow(item)
         parentItem = item
-        for itemName in VisionProgram.captureOptions:
+        for itemName in VPO.captureOptions:
             item = QStandardItem(itemName)
             parentItem.appendRow(item)
         #Create filter row and subitems
         parentItem = self.itemModel.invisibleRootItem()
-        item = QStandardItem(VisionProgram.COMMAND_GROUPS_FILTER)
+        item = QStandardItem(VPO.COMMAND_GROUPS_FILTER)
         parentItem.appendRow(item)
         parentItem = item
-        for itemName in VisionProgram.filterOptions:
+        for itemName in VPO.filterOptions:
             item = QStandardItem(itemName)
             parentItem.appendRow(item)
         #Create feature detection row and subitems
         parentItem = self.itemModel.invisibleRootItem()
-        item = QStandardItem(VisionProgram.COMMAND_GROUPS_FEATURE_DETECTION)
+        item = QStandardItem(VPO.COMMAND_GROUPS_FEATURE_DETECTION)
         parentItem.appendRow(item)
         parentItem = item
-        for itemName in VisionProgram.featureDetectionOptions:
+        for itemName in VPO.featureDetectionOptions:
             item = QStandardItem(itemName)
             parentItem.appendRow(item)
         #Create measure row and subitems

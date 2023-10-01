@@ -35,3 +35,11 @@ def scale_image(image, percent, maxwh):
     height = int(image.shape[0] * percent / 100)
     result = cv.resize(image, (width, height), interpolation = cv.INTER_AREA)
     return result, percent
+
+def getImageRGB(image):
+    img_rgb = cv.cvtColor(image, cv.COLOR_BGR2RGB)
+    return img_rgb
+
+def showImage(image):
+    cv.imshow("Image", image)
+    cv.waitKey(0)
