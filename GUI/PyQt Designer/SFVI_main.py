@@ -9,12 +9,14 @@ from PIL import Image as im
 from DialogCommandSelection import DialogCommandSelection
 import VisionProgramOptions as VPO
 from VisionProgram import ProgramStructure
+import VisionProgram as VP
 
 
-stackOptionsNames = ("stackCaptureOptions", "StackFilterOptions", "stackFeatureDetectionOptions")
+stackOptionsNames = ("stackCaptureOptions", "StackFilterOptions", "stackFeatureDetectionOptions", "stackDrawOptions")
 STACK_OPTIONS_CAPTURE_WIDGET_NAME = stackOptionsNames[0]
 STACK_OPTIONS_FILTER_WIDGET_NAME = stackOptionsNames[1]
 STACK_OPTIONS_FEATURE_DETECTION_WIDGET_NAME = stackOptionsNames[2]
+STACK_OPTIONS_DRAW_OPTIONS_WIDGET_NAME = stackOptionsNames[3]
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -82,6 +84,7 @@ class MainWindow(QMainWindow):
         self.buttonAddCommandScreenProgramEditor.clicked.connect(self.addCommandToTree)
         self.buttonRunScreenProgramEditor.clicked.connect(self.runVisionProgram)
         self.buttonDeleteCommandScreenProgramEditor.clicked.connect(self.deleteCommandFromTree)
+        self.buttonFeatureDetectionTemplate.clicked.connect(self.visionProgramStructure.selectTemplate)
 
     def setImageScreenProgramEditor(self, image):
         try:
@@ -126,11 +129,16 @@ class MainWindow(QMainWindow):
         elif instructionType in VPO.featureDetectionOptions:
             self.stackedWidgetScreenProgramEditor.setCurrentWidget(self.stackFeatureDetectionOptions)
             self.loadStackFeatureDetectionOptions(instructionConfiguration)
+        elif instructionType in VPO.drawOptions:
+            self.stackedWidgetScreenProgramEditor.setCurrentWidget(self.stackDrawOptions)
+            self.loadStackDrawOptions(instructionConfiguration)
 
     def loadStackFilterOptions(self, configuration):
         self.spinBoxKernelRows.setValue(configuration[VPO.FILTER_CONFIGURATIONS_KERNEL_ROWS])
         self.spinBoxKernelColumns.setValue(configuration[VPO.FILTER_CONFIGURATIONS_KERNEL_COLUMNS])
         self.spinBoxIterations.setValue(configuration[VPO.FILTER_CONFIGURATIONS_ITERATIONS])
+        self.spinBoxThreshold.setValue(configuration[VPO.FILTER_CONFIGURATIONS_THRESHOLD])
+        self.spinBoxThreshold2.setValue(configuration[VPO.FILTER_CONFIGURATIONS_THRESHOLD2])
 
     def loadStackCaptureOptions(self, configuration):
         self.spinBoxExposure.setValue(configuration[VPO.CAPTURE_CONFIGURATIONS_EXPOSURE])
@@ -139,6 +147,11 @@ class MainWindow(QMainWindow):
         self.spinBoxFeatureDetectionVariable1.setValue(configuration[VPO.FEATURE_DETECTION_CONFIGURATIONS_VARIABLE_1])
         self.spinBoxFeatureDetectionVariable2.setValue(configuration[VPO.FEATURE_DETECTION_CONFIGURATIONS_VARIABLE_2])
         self.spinBoxFeatureDetectionVariable3.setValue(configuration[VPO.FEATURE_DETECTION_CONFIGURATIONS_VARIABLE_3])
+
+    def loadStackDrawOptions(self, configuration):
+        self.spinBoxDrawOptionsVariable1.setValue(configuration[VPO.DRAW_OPTIONS_CONFIGURATIONS_VARIABLE_1])
+        self.spinBoxDrawOptionsVariable2.setValue(configuration[VPO.DRAW_OPTIONS_CONFIGURATIONS_VARIABLE_2])
+        self.spinBoxDrawOptionsVariable3.setValue(configuration[VPO.DRAW_OPTIONS_CONFIGURATIONS_VARIABLE_3])
 
     def addCommandToTree(self):
         #Launch dialog
@@ -181,6 +194,8 @@ class MainWindow(QMainWindow):
             instructionData = self.getStackFilterConfiguration()
         elif stackCurrentWidgetName == STACK_OPTIONS_FEATURE_DETECTION_WIDGET_NAME:
             instructionData = self.getStackFeatureDetectionConfiguration()
+        elif stackCurrentWidgetName == STACK_OPTIONS_DRAW_OPTIONS_WIDGET_NAME:
+            instructionData = self.getStackDrawOptionsConfiguration()
         return instructionData
 
     def getStackCaptureConfiguration(self):
@@ -195,6 +210,8 @@ class MainWindow(QMainWindow):
         instructionData[VPO.FILTER_CONFIGURATIONS_KERNEL_ROWS] = self.spinBoxKernelRows.value()
         instructionData[VPO.FILTER_CONFIGURATIONS_KERNEL_COLUMNS] = self.spinBoxKernelColumns.value()
         instructionData[VPO.FILTER_CONFIGURATIONS_ITERATIONS] = self.spinBoxIterations.value()
+        instructionData[VPO.FILTER_CONFIGURATIONS_THRESHOLD] = self.spinBoxThreshold.value()
+        instructionData[VPO.FILTER_CONFIGURATIONS_THRESHOLD2] = self.spinBoxThreshold2.value()
         return instructionData
     
     def getStackFeatureDetectionConfiguration(self):
@@ -203,6 +220,14 @@ class MainWindow(QMainWindow):
         instructionData[VPO.FEATURE_DETECTION_CONFIGURATIONS_VARIABLE_1] = self.spinBoxFeatureDetectionVariable1.value()
         instructionData[VPO.FEATURE_DETECTION_CONFIGURATIONS_VARIABLE_2] = self.spinBoxFeatureDetectionVariable2.value()
         instructionData[VPO.FEATURE_DETECTION_CONFIGURATIONS_VARIABLE_3] = self.spinBoxFeatureDetectionVariable3.value()
+        return instructionData
+
+    def getStackDrawOptionsConfiguration(self):
+        instructionData = {}
+        instructionData[VPO.DRAW_OPTIONS_CONFIGURATIONS_NAME] = self.lineEditDrawOptionsName.text()
+        instructionData[VPO.DRAW_OPTIONS_CONFIGURATIONS_VARIABLE_1] = self.spinBoxDrawOptionsVariable1.value()
+        instructionData[VPO.DRAW_OPTIONS_CONFIGURATIONS_VARIABLE_2] = self.spinBoxDrawOptionsVariable2.value()
+        instructionData[VPO.DRAW_OPTIONS_CONFIGURATIONS_VARIABLE_3] = self.spinBoxDrawOptionsVariable3.value()
         return instructionData
 
     def runVisionProgram(self):

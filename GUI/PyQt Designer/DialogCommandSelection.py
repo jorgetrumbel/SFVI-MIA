@@ -48,6 +48,14 @@ class DialogCommandSelection(QDialog):
         for itemName in VPO.featureDetectionOptions:
             item = QStandardItem(itemName)
             parentItem.appendRow(item)
+        #Create feature detection row and subitems
+        parentItem = self.itemModel.invisibleRootItem()
+        item = QStandardItem(VPO.COMMAND_GROUPS_DRAW)
+        parentItem.appendRow(item)
+        parentItem = item
+        for itemName in VPO.drawOptions:
+            item = QStandardItem(itemName)
+            parentItem.appendRow(item)
         #Create measure row and subitems
         parentItem = self.itemModel.invisibleRootItem()
         item = QStandardItem("Medición")

@@ -32,7 +32,7 @@ def drawAutoCannyOverImage(image):
     edges = imutils.auto_canny(image)
     kernel = np.ones((5, 5), np.uint8)
     edges = cv.dilate(edges, kernel = kernel, iterations = 2)
-    bgr = cv.cvtColor(edges, cv.COLOR_GRAY2BGR) #ESTA LINEA HABRIA QUE VER DE PONERLA EN OTRO LADO (SI LA IMAGEN DE ENTRADA NO ES GRAYSCALE TIRA ERROR)
+    bgr = cv.cvtColor(edges, cv.COLOR_GRAY2BGR)
     bgr *= np.array((0,1,0),np.uint8)
     image = np.bitwise_or(image, bgr)
     return image

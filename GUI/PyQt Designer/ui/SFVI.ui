@@ -820,6 +820,34 @@ Programa</string>
                 <item row="0" column="1">
                  <widget class="QLineEdit" name="lineEditFilterName"/>
                 </item>
+                <item row="4" column="0">
+                 <widget class="QLabel" name="labelThreshold">
+                  <property name="text">
+                   <string>Threshold</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="4" column="1">
+                 <widget class="QSpinBox" name="spinBoxThreshold">
+                  <property name="maximum">
+                   <number>255</number>
+                  </property>
+                 </widget>
+                </item>
+                <item row="5" column="0">
+                 <widget class="QLabel" name="labelThreshold2">
+                  <property name="text">
+                   <string>Threshold 2</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="5" column="1">
+                 <widget class="QSpinBox" name="spinBoxThreshold2">
+                  <property name="maximum">
+                   <number>255</number>
+                  </property>
+                 </widget>
+                </item>
                </layout>
               </item>
              </layout>
@@ -879,6 +907,74 @@ Programa</string>
                    <number>1000</number>
                   </property>
                  </widget>
+                </item>
+                <item row="4" column="0">
+                 <widget class="QLabel" name="labelFeatureDetectionLabel">
+                  <property name="text">
+                   <string>Template</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="4" column="1">
+                 <widget class="QWidget" name="widgetFeatureDetectionTemplate" native="true">
+                  <layout class="QVBoxLayout" name="verticalLayout_8">
+                   <item>
+                    <widget class="QPushButton" name="buttonFeatureDetectionTemplate">
+                     <property name="text">
+                      <string>Select Template</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+             </layout>
+            </widget>
+            <widget class="QWidget" name="stackDrawOptions">
+             <layout class="QVBoxLayout" name="verticalLayout_7">
+              <item>
+               <layout class="QFormLayout" name="formLayoutDrawOptions">
+                <item row="0" column="0">
+                 <widget class="QLabel" name="labelDrawOptionsName">
+                  <property name="text">
+                   <string>Name</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="1">
+                 <widget class="QLineEdit" name="lineEditDrawOptionsName"/>
+                </item>
+                <item row="1" column="0">
+                 <widget class="QLabel" name="labelDrawOptionsVariable1">
+                  <property name="text">
+                   <string>Variable 1</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="1">
+                 <widget class="QSpinBox" name="spinBoxDrawOptionsVariable1"/>
+                </item>
+                <item row="2" column="0">
+                 <widget class="QLabel" name="labelDrawOptionsVariable2">
+                  <property name="text">
+                   <string>Variable 2</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="1">
+                 <widget class="QSpinBox" name="spinBoxDrawOptionsVariable2"/>
+                </item>
+                <item row="3" column="0">
+                 <widget class="QLabel" name="labelDrawOptionsVariable3">
+                  <property name="text">
+                   <string>Variable 3</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="3" column="1">
+                 <widget class="QSpinBox" name="spinBoxDrawOptionsVariable3"/>
                 </item>
                </layout>
               </item>

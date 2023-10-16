@@ -79,7 +79,7 @@ def applyBlackHatOperation(image, kRows = 3, kColumns = 3, iterations = 1):
     
 #THRESHOLDING OPERATIONS
 def applyThreshold(image, threshold):
-    retImage = cv.threshold(image, thresh = threshold, maxval = 255, type = cv.THRESH_BINARY)
+    ret, retImage = cv.threshold(image, thresh = threshold, maxval = 255, type = cv.THRESH_BINARY)
     return retImage
 
 def applyRangeThreshold(image, lowThresh, highThresh):

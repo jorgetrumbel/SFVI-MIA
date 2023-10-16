@@ -8,15 +8,26 @@
             "Exposure": 0
         }
     },
-    "Blur1": {
-        "Name": "Blur1",
-        "Type": "Blur",
+    "Canny Template Match1": {
+        "Name": "Canny Template Match1",
+        "Type": "Canny Template Match",
         "Parent": "Camera1",
         "Configuration": {
             "Name": "",
-            "Kernel Rows": 54,
-            "Kernel Columns": 54,
-            "Iterations": 1
+            "Variable 1": 5,
+            "Variable 2": 80,
+            "Variable 3": 0
+        }
+    },
+    "Draw Multiple Template Match1": {
+        "Name": "Draw Multiple Template Match1",
+        "Type": "Draw Multiple Template Match",
+        "Parent": "Canny Template Match1",
+        "Configuration": {
+            "Name": "",
+            "Variable 1": 0,
+            "Variable 2": 0,
+            "Variable 3": 0
         }
     }
 }

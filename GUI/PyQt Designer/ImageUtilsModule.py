@@ -43,3 +43,38 @@ def getImageRGB(image):
 def showImage(image):
     cv.imshow("Image", image)
     cv.waitKey(0)
+
+#IMAGE CROPPING UTILITIES
+button_down = False
+box_points = []
+
+def click_and_crop(event, x, y, flags, param):
+    global box_points, button_down
+    if (button_down == False) and (event == cv.EVENT_LBUTTONDOWN):
+        button_down = True
+        box_points = [(x, y)]
+    elif (button_down == True) and (event == cv.EVENT_MOUSEMOVE):
+        image_copy = param.copy()
+        point = (x, y)
+        cv.rectangle(image_copy, box_points[0], point, (0, 255, 0), 2)
+        cv.imshow("Image Cropper - Press C to Crop", image_copy)
+    elif event == cv.EVENT_LBUTTONUP:
+        button_down = False
+        box_points.append((x, y))
+        cv.rectangle(param, box_points[0], box_points[1], (0, 255, 0), 2)
+        cv.imshow("Image Cropper - Press C to Crop", param)
+
+def image_crop(image):
+    clone = image.copy()
+    cv.namedWindow("Image Cropper - Press C to Crop")
+    param = image
+    cv.setMouseCallback("Image Cropper - Press C to Crop", click_and_crop, param)
+    while True:
+        cv.imshow("Image Cropper - Press C to Crop", image)
+        key = cv.waitKey(1)
+        if key == ord("c"):
+            cv.destroyAllWindows()
+            break
+    if len(box_points) == 2:
+        cropped_region = clone[box_points[0][1]:box_points[1][1], box_points[0][0]:box_points[1][0]]
+    return cropped_region

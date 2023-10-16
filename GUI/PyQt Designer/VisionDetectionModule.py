@@ -73,6 +73,7 @@ def matchTemplate(image, template):
 def matchTemplateMultiple(image, template, threshold):
     #imageGray = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
     #templateGray = cv.cvtColor(template, cv.COLOR_BGR2GRAY)
+    threshold = threshold / 100
     result = cv.matchTemplate(image, template,	cv.TM_CCOEFF_NORMED)
     (y, x) = np.where(result >= threshold)
     return result[y,x], (y,x)
@@ -80,9 +81,10 @@ def matchTemplateMultiple(image, template, threshold):
 def matchTemplateInvariantRotation(image, template, threshold, rotationAngles):
     resultList = []
     resultCoordinateList = []
+    threshold = threshold / 100
     for angle in rotationAngles:
         rotatedTemplate = IUM.rotateImageWithoutCropping(template, angle)
-        result = cv.matchTemplate(image, rotatedTemplate,	cv.TM_CCOEFF_NORMED)
+        result = cv.matchTemplate(image, rotatedTemplate, cv.TM_CCOEFF_NORMED)
         (y, x) = np.where(result >= threshold)
         resultList.append((result[y,x]))
         resultCoordinateList.append(((y, x)))
@@ -91,6 +93,7 @@ def matchTemplateInvariantRotation(image, template, threshold, rotationAngles):
 def matchTemplateInvariantScale(image, template, threshold, scaleValues):
     resultList = []
     resultCoordinateList = []
+    threshold = threshold / 100
     for scale in scaleValues:
         scaledTemplate = IUM.scaleImage(template, scale)
         result = cv.matchTemplate(image, scaledTemplate, cv.TM_CCOEFF_NORMED)
@@ -102,6 +105,7 @@ def matchTemplateInvariantScale(image, template, threshold, scaleValues):
 def matchTemplateInvariant(image, template, threshold, scaleValues, rotationAngles):
     resultList = []
     resultCoordinateList = []
+    threshold = threshold / 100
     for angle in rotationAngles:
         rotatedTemplate = IUM.rotateImageWithoutCropping(template, angle)
         for scale in scaleValues:
@@ -112,7 +116,7 @@ def matchTemplateInvariant(image, template, threshold, scaleValues, rotationAngl
             resultCoordinateList.append(((y, x)))
     return resultList, resultCoordinateList
 
-def cannyTemplateMatch(image, template, iterations = 3, threshold = 0.9):
+def cannyTemplateMatch(image, template, iterations = 3, threshold = 90):
     image = VM.applyAutoCanny(image)
     image = cv.dilate(image, kernel = (25,25), iterations = iterations)
     template = VM.applyAutoCanny(template)
