@@ -1,17 +1,23 @@
 def getImplementedVisionFunctions():
     return filterOptions, captureOptions
 
-instructionDataNames = ("Name", "Type", "Parent", "Configuration")
+instructionDataNames = ("Name", "Type", "Parent", "Image", "Configuration")
 INSTRUCTION_DATA_NAME = instructionDataNames[0]
 INSTRUCTION_DATA_TYPE = instructionDataNames[1]
 INSTRUCTION_DATA_PARENT = instructionDataNames[2]
-INSTRUCTION_DATA_CONFIGURATION = instructionDataNames[3]
+INSTRUCTION_DATA_IMAGE = instructionDataNames[3]
+INSTRUCTION_DATA_CONFIGURATION = instructionDataNames[4]
 
 commandGroups = ("Capture", "Filter", "Feature Detection", "Draw")
 COMMAND_GROUPS_CAPTURE = commandGroups[0]
 COMMAND_GROUPS_FILTER = commandGroups[1]
 COMMAND_GROUPS_FEATURE_DETECTION = commandGroups[2]
 COMMAND_GROUPS_DRAW = commandGroups[3]
+
+#DETECTED FEATURES MEASUREMENT VARIABLE NAMES
+FEATURE_MEASUREMENT_CONTOURS_NAMES = ["Position", "Perimeter", "Area"]
+FEATURE_MEASUREMENT_TEMPLATE_MATCHING_NAMES = ["Position", "Value"]
+FEATURE_MEASUREMENT_HOUGH_PROBABILISTIC_NAMES = ["Start", "End", "Distance", "Angle"]
 
 #FILTER OPTIONS
 filterOptions = ("Blur", "Gauss", "Sobel", "Median", "Erosion", "Dilation", "Open", "Close",
@@ -37,13 +43,14 @@ FILTER_OPTIONS_CANNY = filterOptions[16]
 FILTER_OPTIONS_CANNY_AUTO = filterOptions[17]
 
 
-filterConfigurations = ("Name", "Kernel Rows", "Kernel Columns", "Iterations", "Threshold", "Threshold 2")
+filterConfigurations = ("Name", "Kernel Rows", "Kernel Columns", "Iterations", "Threshold", "Threshold 2", "Crop Area")
 FILTER_CONFIGURATIONS_NAME = filterConfigurations[0]
 FILTER_CONFIGURATIONS_KERNEL_ROWS = filterConfigurations[1]
 FILTER_CONFIGURATIONS_KERNEL_COLUMNS = filterConfigurations[2]
 FILTER_CONFIGURATIONS_ITERATIONS = filterConfigurations[3]
 FILTER_CONFIGURATIONS_THRESHOLD = filterConfigurations[4]
 FILTER_CONFIGURATIONS_THRESHOLD2 = filterConfigurations[5]
+FILTER_CONFIGURATIONS_CROP_AREA = filterConfigurations[6]
 
 #CAPTURE OPTIONS
 captureOptions = ("Camera", "Flash")
@@ -68,28 +75,30 @@ FEATURE_DETECTION_OPTIONS_TEMPLATE_MATCH_INVARIANT = featureDetectionOptions[6]
 FEATURE_DETECTION_OPTIONS_CANNY_TEMPLATE_MATCH = featureDetectionOptions[7]
 FEATURE_DETECTION_OPTIONS_CANNY_TEMPLATE_MATCH_INVARIANT = featureDetectionOptions[8]
 
-featureDetectionConfigurations = ("Name", "Variable 1", "Variable 2", "Variable 3")
+featureDetectionConfigurations = ("Name", "Variable 1", "Variable 2", "Variable 3", "Template Path")
 FEATURE_DETECTION_CONFIGURATIONS_NAME = featureDetectionConfigurations[0]
 FEATURE_DETECTION_CONFIGURATIONS_VARIABLE_1 = featureDetectionConfigurations[1]
 FEATURE_DETECTION_CONFIGURATIONS_VARIABLE_2 = featureDetectionConfigurations[2]
 FEATURE_DETECTION_CONFIGURATIONS_VARIABLE_3 = featureDetectionConfigurations[3]
+FEATURE_DETECTION_CONFIGURATIONS_TEMPLATE_PATH = featureDetectionConfigurations[4]
 
 #DRAW OPTIONS
-drawOptions = ("Bounding Boxes", "Min Area Rectangles", "Draw Canny", "Draw Auto Canny", "Point Distance",
+drawOptions = ("Draw Contours", "Bounding Boxes", "Min Area Rectangles", "Draw Canny", "Draw Auto Canny", "Point Distance",
                "Segment Min Distance", "Detected Hough Lines", "Detected Probabilistic Hough Lines",
                "Segment Detector Lines", "Draw Template Match", "Draw Multiple Template Match", "Draw Template Match Invariant")
-DRAW_OPTIONS_BOUNDING_BOXES = drawOptions[0]
-DRAW_OPTIONS_MIN_AREA_RECTANGLES = drawOptions[1]
-DRAW_OPTIONS_CANNY = drawOptions[2]
-DRAW_OPTIONS_AUTO_CANNY = drawOptions[3]
-DRAW_OPTIONS_POINT_DISTANCE = drawOptions[4]
-DRAW_OPTIONS_SEGMENT_MIN_DISTANCE = drawOptions[5]
-DRAW_OPTIONS_DETECTED_HOUGH_LINES = drawOptions[6]
-DRAW_OPTIONS_DETECTED_PROBABILISTIC_HOUGH_LINES = drawOptions[7]
-DRAW_OPTIONS_SEGMENT_DETECTOR_LINES = drawOptions[8]
-DRAW_OPTIONS_TEMPLATE_MATCH = drawOptions[9]
-DRAW_OPTIONS_MULTIPLE_TEMPLATE_MATCH = drawOptions[10]
-DRAW_OPTIONS_TEMPLATE_MATCH_INVARIANT = drawOptions[11]
+DRAW_OPTIONS_CONTOURS = drawOptions[0]
+DRAW_OPTIONS_BOUNDING_BOXES = drawOptions[1]
+DRAW_OPTIONS_MIN_AREA_RECTANGLES = drawOptions[2]
+DRAW_OPTIONS_CANNY = drawOptions[3]
+DRAW_OPTIONS_AUTO_CANNY = drawOptions[4]
+DRAW_OPTIONS_POINT_DISTANCE = drawOptions[5]
+DRAW_OPTIONS_SEGMENT_MIN_DISTANCE = drawOptions[6]
+DRAW_OPTIONS_DETECTED_HOUGH_LINES = drawOptions[7]
+DRAW_OPTIONS_DETECTED_PROBABILISTIC_HOUGH_LINES = drawOptions[8]
+DRAW_OPTIONS_SEGMENT_DETECTOR_LINES = drawOptions[9]
+DRAW_OPTIONS_TEMPLATE_MATCH = drawOptions[10]
+DRAW_OPTIONS_MULTIPLE_TEMPLATE_MATCH = drawOptions[11]
+DRAW_OPTIONS_TEMPLATE_MATCH_INVARIANT = drawOptions[12]
 
 drawOptionsConfigurations = ("Name", "Variable 1", "Variable 2", "Variable 3")
 DRAW_OPTIONS_CONFIGURATIONS_NAME = drawOptionsConfigurations[0]

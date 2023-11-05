@@ -3,14 +3,28 @@ import cv2 as cv
 import imutils
 import VisionModule as VM
 import ImageUtilsModule as IUM
+import math
+import GeometryModule as GM
+from scipy.spatial.distance import cdist
 
 #FEATURE DETECTION FUNCTIONS
 
 def getImageContours(image):
+    areas = []
+    perimeters = []
+    centroids = []
     ret, thresh = cv.threshold(image, thresh = 50, maxval = 255, type = cv.THRESH_OTSU)
     contours, hierarchy = cv.findContours(thresh, mode = cv.RETR_TREE, method = cv.CHAIN_APPROX_SIMPLE)
-    #cv.drawContours(image, contours = contours, contourIdx = -1, color = (0,255,0), thickness = 3)
-    return contours
+    for contour in contours:
+            area = cv.contourArea(contour)
+            perimeter = cv.arcLength(contour,True)
+            M = cv.moments(contour)
+            cx = int(M['m10']/M['m00'])
+            cy = int(M['m01']/M['m00'])
+            areas.append(area)
+            perimeters.append(perimeter)
+            centroids.append((cx, cy))
+    return [contours, areas, perimeters, centroids]
     
 def applyHoughLineDetection(image, rho, theta, threshold):
     imageDraw = cv.Canny(image, threshold1 = 50, threshold2 = 200, apertureSize = 3, L2gradient = False)     
@@ -20,7 +34,9 @@ def applyHoughLineDetection(image, rho, theta, threshold):
 def applyProbabilisticHoughLineDetection(image, rho, theta, threshold):
     imageDraw = cv.Canny(image, threshold1 = 50, threshold2 = 200, apertureSize = 3, L2gradient = False)     
     lines = cv.HoughLinesP(imageDraw, rho = rho, theta = np.pi / 180, threshold = threshold, minLineLength = 50, maxLineGap = 10)
-    return lines
+    lines = GM.cleanOverlappingLines(lines)
+    distances, angles = calculateLineFeatures(lines)
+    return [lines, distances, angles]
 
 def getLinesWithDetector(image):
     ret, thresh = cv.threshold(image, thresh = 50, maxval = 255, type = cv.THRESH_OTSU)
@@ -61,6 +77,18 @@ def getContoursFeatures(contours, minArea, maxArea):
         minAreaRectangles.append(minAreaRectangle)
     return contourAreas, contourBoundingBoxes, minAreaRectangles
 
+#Calculate line features from start and end point
+def calculateLineFeatures(lines):
+    distances = []
+    angles = []
+    xUnitVector = [0,0,1,0]
+    for line in lines:
+        distance = math.dist((line[0][0],line[0][1]),(line[0][2],line[0][3]))
+        distances.append(distance)
+        angle = GM.angleBetweenLines(line[0], xUnitVector)
+        angles.append(angle)
+    return distances, angles
+
 # TEMPLATE MATCHING FUNCTIONS
 
 def matchTemplate(image, template):
@@ -76,7 +104,8 @@ def matchTemplateMultiple(image, template, threshold):
     threshold = threshold / 100
     result = cv.matchTemplate(image, template,	cv.TM_CCOEFF_NORMED)
     (y, x) = np.where(result >= threshold)
-    return result[y,x], (y,x)
+    values, locations = cleanMultipleMatches(result[y,x], (y,x), template.shape)
+    return values, locations
 
 def matchTemplateInvariantRotation(image, template, threshold, rotationAngles):
     resultList = []
@@ -130,4 +159,32 @@ def cannyTemplateMatchInvariant(image, template, iterations = 3, threshold = 0.9
     template = VM.applyAutoCanny(template)
     template = cv.dilate(template, kernel = (25,25), iterations = iterations)
     values, locations = matchTemplateInvariant(image, template, threshold = threshold, scaleValues = scaleValues, rotationAngles = rotationAngles)
+    values, locations = cleanMultipleMatches(values, locations, template.shape) #PROBAR
     return values, locations
+
+def cleanMultipleMatches(values, locations, templateSize):
+    retList = []
+    locRetX = []
+    locRetY = []
+    valRet = []
+    locList = list(zip(locations[0],locations[1]))
+    locList = list(zip(locList,values))
+    sortedList = sorted(locList, key=lambda x: (-x[1]))
+    retList = []
+    retList.append(sortedList[0])
+    templateCompareSize = int((templateSize[0]*2)/3)
+    for item in retList:
+        removeList = []
+        for sortedItem in sortedList:
+            if cdist(np.array(item[0]).reshape(1,2),np.array(sortedItem[0]).reshape(1,2)) < templateCompareSize: #CORREGIR
+                removeList.append(sortedItem)
+        for removeItem in removeList:
+            sortedList.remove(removeItem)
+        if len(sortedList) > 0:
+            retList.append(sortedList[0])
+
+    for i in range(0,len(retList)):
+        locRetX.append(retList[i][0][0])
+        locRetY.append(retList[i][0][1])
+        valRet.append(retList[i][1])
+    return valRet, [locRetX, locRetY]

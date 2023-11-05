@@ -98,9 +98,26 @@ def cleanOverlappingLines(lines):
                                                     scaledLine[0][2], scaledLine[0][3])
         distance2, points = point_segment_distance(c[0][0], c[0][1], scaledLine[0][0], scaledLine[0][1],
                                                     scaledLine[0][2], scaledLine[0][3])
-        if distance1 < 10 and distance2 < 10:
+        if distance1 < 10 and distance2 < 10: #CORREGIR
           similar = True
           break
     if not similar:
       retLines.append(line)
-  return retLines    
+  return retLines
+
+def dotProduct(vA, vB):
+    return vA[0]*vB[0]+vA[1]*vB[1]
+
+def angleBetweenLines(lineA, lineB):
+    # Get nicer vector form
+    vA = [(lineA[0]-lineA[2]), (lineA[1]-lineA[3])]
+    vB = [(lineB[0]-lineB[2]), (lineB[1]-lineB[3])]
+    # Get dot prod
+    dot_prod = dotProduct(vA, vB)
+    # Get magnitudes
+    magA = dotProduct(vA, vA)**0.5
+    magB = dotProduct(vB, vB)**0.5
+    # Get angle in radians and then convert to degrees
+    angle = math.acos(dot_prod/magB/magA)
+    ang_deg = math.degrees(angle)%360        
+    return ang_deg

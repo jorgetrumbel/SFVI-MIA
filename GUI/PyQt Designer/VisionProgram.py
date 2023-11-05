@@ -9,6 +9,7 @@ import numpy as np
 
 from PIL import Image as im
 import ImageUtilsModule as IUM #FOR DEBUGGING
+import cv2 as cv #FOR DEBUGGING
 
 class ProgramStructure():
     def __init__(self):
@@ -18,25 +19,34 @@ class ProgramStructure():
         instructionData = {VPO.INSTRUCTION_DATA_NAME: instructionName,
                             VPO.INSTRUCTION_DATA_TYPE: instructionType,
                             VPO.INSTRUCTION_DATA_PARENT: parentName,
+                            VPO.INSTRUCTION_DATA_IMAGE: None,
                             VPO.INSTRUCTION_DATA_CONFIGURATION: {}}
         
         if instructionType in  VPO.captureOptions:
-            instructionData[VPO.INSTRUCTION_DATA_CONFIGURATION] = {VPO.CAPTURE_CONFIGURATIONS_EXPOSURE: 0}
+            instructionData[VPO.INSTRUCTION_DATA_CONFIGURATION] = {VPO.FILTER_CONFIGURATIONS_NAME: None,
+                                                                   VPO.CAPTURE_CONFIGURATIONS_EXPOSURE: 0}
 
         elif instructionType in VPO.filterOptions:
-            instructionData[VPO.INSTRUCTION_DATA_CONFIGURATION] = {VPO.FILTER_CONFIGURATIONS_KERNEL_ROWS: 0,
-                                                VPO.FILTER_CONFIGURATIONS_KERNEL_COLUMNS: 0,
-                                                VPO.FILTER_CONFIGURATIONS_ITERATIONS: 0,
-                                                VPO.FILTER_CONFIGURATIONS_THRESHOLD: 0,
-                                                VPO.FILTER_CONFIGURATIONS_THRESHOLD2: 0}
+            instructionData[VPO.INSTRUCTION_DATA_CONFIGURATION] = {VPO.FILTER_CONFIGURATIONS_NAME: None,
+                                                                   VPO.FILTER_CONFIGURATIONS_KERNEL_ROWS: 0,
+                                                                   VPO.FILTER_CONFIGURATIONS_KERNEL_COLUMNS: 0,
+                                                                   VPO.FILTER_CONFIGURATIONS_ITERATIONS: 0,
+                                                                   VPO.FILTER_CONFIGURATIONS_THRESHOLD: 0,
+                                                                   VPO.FILTER_CONFIGURATIONS_THRESHOLD2: 0,
+                                                                   VPO.FILTER_CONFIGURATIONS_CROP_AREA: 0}
             
         elif instructionType in VPO.featureDetectionOptions:
-            instructionData[VPO.INSTRUCTION_DATA_CONFIGURATION] = {VPO.FEATURE_DETECTION_CONFIGURATIONS_VARIABLE_1: 0,
+            instructionData[VPO.INSTRUCTION_DATA_CONFIGURATION] = {
+                                                VPO.FILTER_CONFIGURATIONS_NAME: None,
+                                                VPO.FEATURE_DETECTION_CONFIGURATIONS_VARIABLE_1: 0,
                                                 VPO.FEATURE_DETECTION_CONFIGURATIONS_VARIABLE_2: 0,
-                                                VPO.FEATURE_DETECTION_CONFIGURATIONS_VARIABLE_3: 0}
+                                                VPO.FEATURE_DETECTION_CONFIGURATIONS_VARIABLE_3: 0,
+                                                VPO.FEATURE_DETECTION_CONFIGURATIONS_TEMPLATE_PATH: 0}
         
         elif instructionType in VPO.drawOptions:
-            instructionData[VPO.INSTRUCTION_DATA_CONFIGURATION] = {VPO.DRAW_OPTIONS_CONFIGURATIONS_VARIABLE_1: 0,
+            instructionData[VPO.INSTRUCTION_DATA_CONFIGURATION] = {
+                                                VPO.FILTER_CONFIGURATIONS_NAME: None,
+                                                VPO.DRAW_OPTIONS_CONFIGURATIONS_VARIABLE_1: 0,
                                                 VPO.DRAW_OPTIONS_CONFIGURATIONS_VARIABLE_2: 0,
                                                 VPO.DRAW_OPTIONS_CONFIGURATIONS_VARIABLE_3: 0}
             
@@ -58,14 +68,14 @@ class ProgramStructure():
                 childrenList.append(instruction[VPO.INSTRUCTION_DATA_NAME])
                 for child in self.checkChildren(instruction[VPO.INSTRUCTION_DATA_NAME]):
                     childrenList.append(child)
-        #print(childrenList)
         return childrenList
 
     def checkInstrucionName(self, instructionName):
         return (True == (instructionName in self.programInstructionList))
 
     def changeInstructionConfiguration(self, instructionName, instructionConfiguration):
-        self.programInstructionList[instructionName][VPO.INSTRUCTION_DATA_CONFIGURATION] = instructionConfiguration
+        for key in instructionConfiguration.keys():
+            self.programInstructionList[instructionName][VPO.INSTRUCTION_DATA_CONFIGURATION][key] = instructionConfiguration[key]
 
     def changeInstructionName(self, instructionID, instructionName):
         pass
@@ -80,36 +90,95 @@ class ProgramStructure():
         return self.programInstructionList
 
     def saveProgram(self, path):
+        copyDict = self.programInstructionList
+        for key in copyDict.keys():
+            del copyDict[key][VPO.INSTRUCTION_DATA_IMAGE]
         with open(path, "w") as write_file:
             json.dump(self.programInstructionList, write_file, indent=4)
         pass
 
-    def selectTemplate(self):
-        image = VM.loadImage("images/hearts_card.png", grayscale=True) #CAMBIAR ESTO
-        template = IUM.image_crop(image)
+    def selectTemplate(self, instructionName, parentInstructionName):
+        self.runProgram(False, parentInstructionName)
+        image = self.programInstructionList[parentInstructionName][VPO.INSTRUCTION_DATA_IMAGE]
+        template, points = IUM.image_crop(image)
         template = np.array(template)
-        tempTemplatePath = "temp/templateCrop.png"
+        tempTemplatePath = "temp/" + instructionName + "TemplateCrop.png"
+        self.programInstructionList[instructionName][VPO.INSTRUCTION_DATA_CONFIGURATION][VPO.FEATURE_DETECTION_CONFIGURATIONS_TEMPLATE_PATH] = tempTemplatePath
         data = im.fromarray(template)
         data.save(tempTemplatePath)
 
-    def runProgram(self):
-        #HAY QUE CAMBIAR ESTO, POR AHORA CORRE UN PROGRAMA LINEAL, NO PUEDE TENER BRANCHES (CORRE TODAS LAS INSTRUCCIONES EN SERIE)
-        #visionProgram = VisionProgram()
-        self.saveProgram("temp/program_file.json")
-        image = VM.loadImage("images/hearts_card.png", grayscale=True)
-        for instruction in self.programInstructionList.values():
+    def selectCropArea(self, instructionName, parentInstructionName):
+        self.runProgram(False, parentInstructionName)
+        image = self.programInstructionList[parentInstructionName][VPO.INSTRUCTION_DATA_IMAGE]
+        cropImage, points = IUM.image_crop(image)
+        cropImage = np.array(cropImage)
+        cropImagePath = "temp/" + instructionName + "Crop.png"
+        self.programInstructionList[instructionName][VPO.INSTRUCTION_DATA_CONFIGURATION][VPO.FILTER_CONFIGURATIONS_CROP_AREA] = points
+        data = im.fromarray(cropImage)
+        data.save(cropImagePath)
+
+    def getAllParentInstructions(self, instructionName):
+        retInstructions = {}
+        retInstructions[instructionName] = self.programInstructionList[instructionName]
+        currentParentName = self.programInstructionList[instructionName][VPO.INSTRUCTION_DATA_PARENT]
+        while currentParentName != "":
+            retInstructions[currentParentName] = self.programInstructionList[currentParentName]
+            currentParentName = self.programInstructionList[currentParentName][VPO.INSTRUCTION_DATA_PARENT]
+        retInstructions = dict(reversed(list(retInstructions.items())))
+        return retInstructions
+
+    def runProgram(self, runFullProgram, instructionStop = None):
+        #HAY QUE REVISAR EL ORDEN DE EJECUCION EN UN PROGRAMA FULL
+        instructionsToRun = None
+        dataRet = [[0]]
+        dataRetType = None
+        if runFullProgram == True:
+            self.saveProgram("temp/program_file.json")
+            instructionsToRun = self.programInstructionList
+        else:
+            instructionsToRun = self.getAllParentInstructions(instructionStop)
+        for instruction in instructionsToRun.values():
             instructionConfiguration = instruction[VPO.INSTRUCTION_DATA_CONFIGURATION]
             instructionType = instruction[VPO.INSTRUCTION_DATA_TYPE]
-            if instruction[VPO.INSTRUCTION_DATA_TYPE] in VPO.filterOptions:
+            instructionParent = instruction[VPO.INSTRUCTION_DATA_PARENT]
+            if instructionParent != "":
+                image = self.programInstructionList[instructionParent][VPO.INSTRUCTION_DATA_IMAGE].copy()
+            if instruction[VPO.INSTRUCTION_DATA_TYPE] in VPO.captureOptions:
+                image = VM.loadImage("images/sudoku.png", grayscale=True) #FOR DEBUGGING
+                instruction[VPO.INSTRUCTION_DATA_IMAGE] = image.copy()
+
+            elif instruction[VPO.INSTRUCTION_DATA_TYPE] in VPO.filterOptions:
                 image = runFilterInstruction(image, instructionType, instructionConfiguration)
+                instruction[VPO.INSTRUCTION_DATA_IMAGE] = image.copy()
             
             elif instruction[VPO.INSTRUCTION_DATA_TYPE] in VPO.featureDetectionOptions:
                 lines, contours, values, locations, templateSize = runFeatureDetectionInstruction(image, instructionType, instructionConfiguration, "temp/templateCrop.png") #CAMBIAR PATH
+                instruction[VPO.INSTRUCTION_DATA_IMAGE] = image.copy()
+                # CORREGIR DE ACA PARA ABAJO
+                if instruction[VPO.INSTRUCTION_DATA_TYPE] == VPO.FEATURE_DETECTION_OPTIONS_CONTOURS:
+                    dataRet = list(zip(contours[3],contours[2],contours[1])) #CORREGIR
+                    dataRetType = VPO.FEATURE_DETECTION_OPTIONS_CONTOURS
+                elif instruction[VPO.INSTRUCTION_DATA_TYPE] == VPO.FEATURE_DETECTION_OPTIONS_TEMPLATE_MATCH:
+                    dataRet = [[locations,int(values*100)]]
+                    dataRetType = VPO.FEATURE_DETECTION_OPTIONS_TEMPLATE_MATCH
+                elif instruction[VPO.INSTRUCTION_DATA_TYPE] == VPO.FEATURE_DETECTION_OPTIONS_TEMPLATE_MATCH_MULTIPLE or \
+                instruction[VPO.INSTRUCTION_DATA_TYPE] == VPO.FEATURE_DETECTION_OPTIONS_CANNY_TEMPLATE_MATCH:
+                    loc = list(zip(locations[0],locations[1]))
+                    dataRet = list(zip(loc,values))
+                    dataRetType = VPO.FEATURE_DETECTION_OPTIONS_TEMPLATE_MATCH
+                elif instruction[VPO.INSTRUCTION_DATA_TYPE] == VPO.FEATURE_DETECTION_OPTIONS_HOUGH_PROBABILISTIC:                    
+                    new_list = [x[0] for x in lines[0]]
+                    startPoints = [(x[0], x[1]) for x in new_list]
+                    endPoints = [(x[2], x[3]) for x in new_list]
+                    dataRet = list(zip(startPoints,endPoints,lines[1],lines[2]))
+                    dataRetType = VPO.FEATURE_DETECTION_OPTIONS_HOUGH_PROBABILISTIC
+                #HASTA ACA
 
             elif instruction[VPO.INSTRUCTION_DATA_TYPE] in VPO.drawOptions:
                 image = runDrawInstruction(image, instructionType, instructionConfiguration, lines, contours, values, locations, templateSize)
-        
-        return image
+                instruction[VPO.INSTRUCTION_DATA_IMAGE] = image.copy()
+
+        return image, dataRet, dataRetType
 
     programInstructionList = {}
     program = {}
@@ -121,6 +190,9 @@ def runFilterInstruction(image, type, configuration):
     iterations = configuration[VPO.FILTER_CONFIGURATIONS_ITERATIONS]
     threshold = configuration[VPO.FILTER_CONFIGURATIONS_THRESHOLD]
     threshold2 = configuration[VPO.FILTER_CONFIGURATIONS_THRESHOLD2]
+    imageCropArea = configuration[VPO.FILTER_CONFIGURATIONS_CROP_AREA]
+    if imageCropArea != 0:
+        image = image[imageCropArea[0][1]:imageCropArea[1][1], imageCropArea[0][0]:imageCropArea[1][0]]
     if type == VPO.FILTER_OPTIONS_BLUR:
         imageRet = VM.applyBlurFilter(image, kernelRows, kernelColumns)
     elif type == VPO.FILTER_OPTIONS_GAUSS:
@@ -164,11 +236,14 @@ def runFeatureDetectionInstruction(image, type, configuration, templatePath):
     linesRet = None
     values = None
     location = None
+    templateSize = None
     var1 = configuration[VPO.FEATURE_DETECTION_CONFIGURATIONS_VARIABLE_1]
     var2 = configuration[VPO.FEATURE_DETECTION_CONFIGURATIONS_VARIABLE_2]
     var3 = configuration[VPO.FEATURE_DETECTION_CONFIGURATIONS_VARIABLE_3]
-    template = VM.loadImage(templatePath, grayscale=True)
-    templateSize = template.shape
+    templatePath = configuration[VPO.FEATURE_DETECTION_CONFIGURATIONS_TEMPLATE_PATH]
+    if templatePath != 0:
+        template = VM.loadImage(templatePath, grayscale=True)
+        templateSize = template.shape
     if type == VPO.FEATURE_DETECTION_OPTIONS_CONTOURS:
         contoursRet = VDM.getImageContours(image)
     elif type == VPO.FEATURE_DETECTION_OPTIONS_HOUGH:
@@ -194,7 +269,10 @@ def runDrawInstruction(image, type, configuration, lines, contours, values, loca
     var1 = configuration[VPO.DRAW_OPTIONS_CONFIGURATIONS_VARIABLE_1]
     var2 = configuration[VPO.DRAW_OPTIONS_CONFIGURATIONS_VARIABLE_2]
     var3 = configuration[VPO.DRAW_OPTIONS_CONFIGURATIONS_VARIABLE_3]
-    if type == VPO.DRAW_OPTIONS_BOUNDING_BOXES:
+    if type == VPO.DRAW_OPTIONS_CONTOURS:
+        imageRet = DM.drawContours(image, contours = contours[0])
+        imageRet = DM.drawContoursCentroids(image, points = contours[3])
+    elif type == VPO.DRAW_OPTIONS_BOUNDING_BOXES:
         imageRet = DM.drawBoundingBoxes(image, boundingBoxes = None) #CORREGIR
     elif type == VPO.DRAW_OPTIONS_MIN_AREA_RECTANGLES:
         imageRet = DM.drawMinAreaRectangles(image, minAreaRectangles = None) #CORREGIR
@@ -209,8 +287,7 @@ def runDrawInstruction(image, type, configuration, lines, contours, values, loca
     elif type == VPO.DRAW_OPTIONS_DETECTED_HOUGH_LINES:
         imageRet = DM.drawDetectedHoughLines(image, lines = lines) #CORREGIR
     elif type == VPO.DRAW_OPTIONS_DETECTED_PROBABILISTIC_HOUGH_LINES:
-        cleanLines = GM.cleanOverlappingLines(lines)
-        imageRet = DM.drawDetectedProbabilisticHoughLines(image, lines = cleanLines)
+        imageRet = DM.drawDetectedProbabilisticHoughLines(image, lines = lines[0])
     elif type == VPO.DRAW_OPTIONS_SEGMENT_DETECTOR_LINES:
         imageRet = DM.drawSegmentDetectorLines(image, lines = lines) #CORREGIR
     elif type == VPO.DRAW_OPTIONS_TEMPLATE_MATCH:

@@ -2,7 +2,7 @@ import sys
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QMainWindow, QFormLayout, QApplication, QHBoxLayout, QVBoxLayout, QWidget, QLabel, QDialog
 from PyQt5.QtGui import QIcon, QPixmap, QStandardItemModel, QStandardItem, QImage
-from PyQt5.QtCore import QModelIndex
+from PyQt5.QtCore import QModelIndex, QAbstractTableModel, Qt
 from PyQt5.uic import loadUi
 from PIL import Image as im
 
@@ -84,7 +84,8 @@ class MainWindow(QMainWindow):
         self.buttonAddCommandScreenProgramEditor.clicked.connect(self.addCommandToTree)
         self.buttonRunScreenProgramEditor.clicked.connect(self.runVisionProgram)
         self.buttonDeleteCommandScreenProgramEditor.clicked.connect(self.deleteCommandFromTree)
-        self.buttonFeatureDetectionTemplate.clicked.connect(self.visionProgramStructure.selectTemplate)
+        self.buttonFeatureDetectionTemplate.clicked.connect(lambda: self.visionProgramStructure.selectTemplate(self.getSelectedInstructionName(), self.getSelectedInstructionParentName()))
+        self.buttonFilterCropArea.clicked.connect(lambda: self.visionProgramStructure.selectCropArea(self.getSelectedInstructionName(), self.getSelectedInstructionParentName()))
 
     def setImageScreenProgramEditor(self, image):
         try:
@@ -230,20 +231,83 @@ class MainWindow(QMainWindow):
         instructionData[VPO.DRAW_OPTIONS_CONFIGURATIONS_VARIABLE_3] = self.spinBoxDrawOptionsVariable3.value()
         return instructionData
 
+    def getSelectedInstructionName(self):
+        currentItem = self.itemModel.itemFromIndex(self.treeIndex)
+        name = currentItem.text()
+        return name
+
+    def getSelectedInstructionParentName(self):
+        currentItem = self.itemModel.itemFromIndex(self.treeIndex)
+        name = currentItem.parent().text()
+        return name
+
+    def updateTableView(self, data, dataType):
+        headers = [0]
+        tableModel = MyTableModel(data = data)
+        
+        if dataType == VPO.FEATURE_DETECTION_OPTIONS_CONTOURS:
+            headers = VPO.FEATURE_MEASUREMENT_CONTOURS_NAMES
+        elif dataType == VPO.FEATURE_DETECTION_OPTIONS_TEMPLATE_MATCH:
+            headers = VPO.FEATURE_MEASUREMENT_TEMPLATE_MATCHING_NAMES
+        elif dataType == VPO.FEATURE_DETECTION_OPTIONS_HOUGH_PROBABILISTIC:
+            headers = VPO.FEATURE_MEASUREMENT_HOUGH_PROBABILISTIC_NAMES
+
+        tableModel.getHeaders(headers, None)
+        self.tableViewScreenProgramEditor.setModel(tableModel)
+
     def runVisionProgram(self):
         currentItem = self.itemModel.itemFromIndex(self.treeIndex)
         configuration = self.getInstructionConfigurationFromTree()
         self.visionProgramStructure.changeInstructionConfiguration(currentItem.text(), configuration)
-        image = self.visionProgramStructure.runProgram()
+        image, data, dataType = self.visionProgramStructure.runProgram(False, currentItem.text())
+        self.updateTableView(data, dataType)
         self.setImageScreenProgramEditor(image)
 
     
     itemModel = None
     treeIndex = None
+    tableModel = None
     visionProgramStructure = ProgramStructure()
     #End ScreenProgramEditor
     #########################################################
+
+#####################################################
+#CLASS TABLE MODEL
+#VER SI ESTA CLASE CORRESPONDE EN ESTE ARCHIVO
+class MyTableModel(QtCore.QAbstractTableModel):
+    def __init__(self, data=[[]], parent=None):
+        super().__init__(parent)
+        self.data = data
+
+    def headerData(self, section: int, orientation: Qt.Orientation, role: int):
+        if role == QtCore.Qt.DisplayRole:
+            if orientation == Qt.Horizontal:
+                return self.headersorizontal[section]
+            else:
+                return "ID " + str(section+1)
+
+    def columnCount(self, parent=None):
+        return len(self.data[0])
+
+    def rowCount(self, parent=None):
+        return len(self.data)
+
+    def data(self, index: QModelIndex, role: int):
+        if role == QtCore.Qt.DisplayRole:
+            row = index.row()
+            col = index.column()
+            return str(self.data[row][col])
     
+    def getHeaders(self, headersorizontal, headersVertical):
+        self.headersorizontal = headersorizontal
+        #self.headersVertical = headersVertical #NO SE USA
+
+    headersorizontal = None
+    #headersVertical = None #NO SE USA
+
+#END CLASS TABLE MODEL
+#######################################################
+
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     window = MainWindow()

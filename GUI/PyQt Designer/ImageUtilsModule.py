@@ -77,4 +77,4 @@ def image_crop(image):
             break
     if len(box_points) == 2:
         cropped_region = clone[box_points[0][1]:box_points[1][1], box_points[0][0]:box_points[1][0]]
-    return cropped_region
+    return cropped_region, box_points

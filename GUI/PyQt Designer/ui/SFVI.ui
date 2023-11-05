@@ -656,10 +656,13 @@ Programa</string>
           <item row="3" column="0" colspan="4">
            <widget class="QTableView" name="tableViewScreenProgramEditor">
             <property name="sizePolicy">
-             <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+             <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
+            </property>
+            <property name="editTriggers">
+             <set>QAbstractItemView::NoEditTriggers</set>
             </property>
             <property name="alternatingRowColors">
              <bool>true</bool>
@@ -682,7 +685,7 @@ Programa</string>
              </sizepolicy>
             </property>
             <property name="currentIndex">
-             <number>2</number>
+             <number>1</number>
             </property>
             <widget class="QWidget" name="stackCaptureOptions">
              <property name="palette">
@@ -848,6 +851,26 @@ Programa</string>
                   </property>
                  </widget>
                 </item>
+                <item row="6" column="0">
+                 <widget class="QLabel" name="labelFilterCropArea">
+                  <property name="text">
+                   <string>Crop Area</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="6" column="1">
+                 <widget class="QWidget" name="widgetFilterCropArea" native="true">
+                  <layout class="QVBoxLayout" name="verticalLayout_9">
+                   <item>
+                    <widget class="QPushButton" name="buttonFilterCropArea">
+                     <property name="text">
+                      <string>Crop Image</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
                </layout>
               </item>
              </layout>
@@ -909,7 +932,7 @@ Programa</string>
                  </widget>
                 </item>
                 <item row="4" column="0">
-                 <widget class="QLabel" name="labelFeatureDetectionLabel">
+                 <widget class="QLabel" name="labelFeatureDetectionTemplate">
                   <property name="text">
                    <string>Template</string>
                   </property>

@@ -6,12 +6,34 @@ import numpy as np
 import math
 from imutils.object_detection import non_max_suppression
 
+def drawContours(image, contours):
+    cv.drawContours(image, contours = contours, contourIdx = -1, color = (0,255,0), thickness = 3)
+    return image
+
+def drawContoursCentroids(image, points):
+    centroidNumber = 0
+    for point in points:
+        centroidNumber = centroidNumber + 1
+        image = cv.drawMarker(image, position = point,  color = (0,255,0), markerType = cv.MARKER_CROSS, markerSize = 10, thickness = 3)
+        image = cv.putText(image, text = str(centroidNumber), org = point, fontFace = cv.FONT_HERSHEY_SIMPLEX, 
+                           fontScale = 1, color = (0,255,0), thickness = 2, lineType = cv.LINE_AA)
+    return image
+
+def drawContoursInfo(image, points, areas, perimeters):
+    for point, area, perimeter in points, areas, perimeters:
+        text = "Area: " + str(area)
+        image = cv.putText(image, text, point - (0,20), cv.FONT_HERSHEY_SIMPLEX, 4,(255,255,255),2,cv.LINE_AA)
+        text = "Perimeter: " + str(perimeter)
+        image = cv.putText(image, text, point - (0,40), cv.FONT_HERSHEY_SIMPLEX, 4,(255,255,255),2,cv.LINE_AA)
+    return image
+
 def drawBoundingBoxes(image, boundingBoxes):
     for box in boundingBoxes:
         cv.rectangle(image, pt1 = (int(box[0]), int(box[1])), pt2 = (int(box[0]) + int(box[2]), int(box[1]) + int(box[3])), color = (255, 0, 0), thickness = 2, lineType = cv.FILLED)
         midPoint = GM.midpoint((int(box[0]), int(box[1])), (int(box[0]) + int(box[2]), int(box[1]) + int(box[3])))
         cv.drawMarker(image, position = (midPoint[0], midPoint[1]), color = (255, 0, 0), markerType = cv.MARKER_CROSS, markerSize = 20, thickness = 2, line_type = cv.FILLED)
-    
+    return image
+
 def drawMinAreaRectangles(image, minAreaRectangles):
     for box in minAreaRectangles:
         box = np.intp(box)
@@ -76,6 +98,9 @@ def drawDetectedProbabilisticHoughLines(image, lines):
     for i in range(0, len(lines)):
         l = lines[i][0]
         cv.line(retImage, (l[0], l[1]), (l[2], l[3]), (0,0,255), 3, cv.LINE_AA)
+        retImage = cv.drawMarker(retImage, position = (l[0], l[1]),  color = (0,255,0), markerType = cv.MARKER_CROSS, markerSize = 10, thickness = 3)
+        retImage = cv.putText(retImage, text = str(i+1), org = (l[0], l[1]), fontFace = cv.FONT_HERSHEY_SIMPLEX, 
+                           fontScale = 1, color = (0,255,0), thickness = 2, lineType = cv.LINE_AA)
     return retImage
 
 def drawSegmentDetectorLines(image, lines):
@@ -86,9 +111,17 @@ def drawMultipleTemplateMatch(image, loc, templateWidth, templateHeight):
     rects = []
     for (x, y) in zip(loc[1], loc[0]):
         rects.append((x, y, x + templateWidth, y + templateHeight))
-    pick = non_max_suppression(np.array(rects), overlapThresh = 0.3)
+    #pick = non_max_suppression(np.array(rects), overlapThresh = 0.3)
+    pick = rects
+    id = 1
     for (startX, startY, endX, endY) in pick:
         image = drawTemplateMatch(image, templateWidth, templateHeight, (startX, startY))
+        #Draw center mark and ID text
+        centerPoint = (int((startX + endX)/2),int((startY + endY)/2))
+        image = cv.drawMarker(image, position = centerPoint,  color = (0,255,0), markerType = cv.MARKER_CROSS, markerSize = 10, thickness = 3)
+        image = cv.putText(image, text = str(id), org = centerPoint, fontFace = cv.FONT_HERSHEY_SIMPLEX, 
+                           fontScale = 1, color = (0,255,0), thickness = 2, lineType = cv.LINE_AA)
+        id = id + 1
     return image
 
 def drawTemplateMatch(image, templateWidth, templateHeight, location):

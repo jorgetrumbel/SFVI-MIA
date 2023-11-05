@@ -8,26 +8,96 @@
             "Exposure": 0
         }
     },
-    "Canny Template Match1": {
-        "Name": "Canny Template Match1",
-        "Type": "Canny Template Match",
+    "Blur1": {
+        "Name": "Blur1",
+        "Type": "Blur",
         "Parent": "Camera1",
         "Configuration": {
             "Name": "",
-            "Variable 1": 5,
-            "Variable 2": 80,
-            "Variable 3": 0
+            "Kernel Rows": 11,
+            "Kernel Columns": 11,
+            "Iterations": 0,
+            "Threshold": 0,
+            "Threshold 2": 0,
+            "Crop Area": [
+                [
+                    24,
+                    9
+                ],
+                [
+                    935,
+                    682
+                ]
+            ]
         }
     },
-    "Draw Multiple Template Match1": {
-        "Name": "Draw Multiple Template Match1",
-        "Type": "Draw Multiple Template Match",
-        "Parent": "Canny Template Match1",
+    "Gauss1": {
+        "Name": "Gauss1",
+        "Type": "Gauss",
+        "Parent": "Blur1",
         "Configuration": {
             "Name": "",
-            "Variable 1": 0,
-            "Variable 2": 0,
-            "Variable 3": 0
+            "Kernel Rows": 11,
+            "Kernel Columns": 11,
+            "Iterations": 0,
+            "Threshold": 0,
+            "Threshold 2": 0,
+            "Crop Area": [
+                [
+                    92,
+                    37
+                ],
+                [
+                    751,
+                    507
+                ]
+            ]
+        }
+    },
+    "Sobel1": {
+        "Name": "Sobel1",
+        "Type": "Sobel",
+        "Parent": "Camera1",
+        "Configuration": {
+            "Name": "",
+            "Kernel Rows": 0,
+            "Kernel Columns": 0,
+            "Iterations": 0,
+            "Threshold": 0,
+            "Threshold 2": 0,
+            "Crop Area": [
+                [
+                    8,
+                    47
+                ],
+                [
+                    571,
+                    567
+                ]
+            ]
+        }
+    },
+    "Blur2": {
+        "Name": "Blur2",
+        "Type": "Blur",
+        "Parent": "Sobel1",
+        "Configuration": {
+            "Name": "",
+            "Kernel Rows": 11,
+            "Kernel Columns": 11,
+            "Iterations": 0,
+            "Threshold": 0,
+            "Threshold 2": 0,
+            "Crop Area": [
+                [
+                    84,
+                    49
+                ],
+                [
+                    426,
+                    390
+                ]
+            ]
         }
     }
 }
