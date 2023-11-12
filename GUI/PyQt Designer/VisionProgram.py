@@ -154,6 +154,7 @@ class ProgramStructure():
             elif instruction[VPO.INSTRUCTION_DATA_TYPE] in VPO.featureDetectionOptions:
                 lines, contours, values, locations, templateSize = runFeatureDetectionInstruction(image, instructionType, instructionConfiguration, "temp/templateCrop.png") #CAMBIAR PATH
                 instruction[VPO.INSTRUCTION_DATA_IMAGE] = image.copy()
+                
                 # CORREGIR DE ACA PARA ABAJO
                 if instruction[VPO.INSTRUCTION_DATA_TYPE] == VPO.FEATURE_DETECTION_OPTIONS_CONTOURS:
                     dataRet = list(zip(contours[3],contours[2],contours[1])) #CORREGIR
@@ -166,12 +167,23 @@ class ProgramStructure():
                     loc = list(zip(locations[0],locations[1]))
                     dataRet = list(zip(loc,values))
                     dataRetType = VPO.FEATURE_DETECTION_OPTIONS_TEMPLATE_MATCH
+                elif instruction[VPO.INSTRUCTION_DATA_TYPE] == VPO.FEATURE_DETECTION_OPTIONS_HOUGH:                    
+                    rho = [x[0][0] for x in lines[0]]
+                    theta = [x[0][1] for x in lines[0]]
+                    dataRet = list(zip(rho,theta,lines[2]))
+                    dataRetType = VPO.FEATURE_DETECTION_OPTIONS_HOUGH
                 elif instruction[VPO.INSTRUCTION_DATA_TYPE] == VPO.FEATURE_DETECTION_OPTIONS_HOUGH_PROBABILISTIC:                    
                     new_list = [x[0] for x in lines[0]]
                     startPoints = [(x[0], x[1]) for x in new_list]
                     endPoints = [(x[2], x[3]) for x in new_list]
                     dataRet = list(zip(startPoints,endPoints,lines[1],lines[2]))
                     dataRetType = VPO.FEATURE_DETECTION_OPTIONS_HOUGH_PROBABILISTIC
+                elif instruction[VPO.INSTRUCTION_DATA_TYPE] == VPO.FEATURE_DETECTION_OPTIONS_LINE_DETECTOR:                    
+                    new_list = [x[0] for x in lines[0]]
+                    startPoints = [(int(x[0]), int(x[1])) for x in new_list]
+                    endPoints = [(int(x[2]), int(x[3])) for x in new_list]
+                    dataRet = list(zip(startPoints,endPoints,lines[1],lines[2]))
+                    dataRetType = VPO.FEATURE_DETECTION_OPTIONS_LINE_DETECTOR
                 #HASTA ACA
 
             elif instruction[VPO.INSTRUCTION_DATA_TYPE] in VPO.drawOptions:
@@ -245,7 +257,7 @@ def runFeatureDetectionInstruction(image, type, configuration, templatePath):
         template = VM.loadImage(templatePath, grayscale=True)
         templateSize = template.shape
     if type == VPO.FEATURE_DETECTION_OPTIONS_CONTOURS:
-        contoursRet = VDM.getImageContours(image)
+        contoursRet = VDM.getImageContours(image, var1, var2)
     elif type == VPO.FEATURE_DETECTION_OPTIONS_HOUGH:
         linesRet = VDM.applyHoughLineDetection(image, var1, var2, var3)
     elif type == VPO.FEATURE_DETECTION_OPTIONS_HOUGH_PROBABILISTIC:
@@ -273,9 +285,9 @@ def runDrawInstruction(image, type, configuration, lines, contours, values, loca
         imageRet = DM.drawContours(image, contours = contours[0])
         imageRet = DM.drawContoursCentroids(image, points = contours[3])
     elif type == VPO.DRAW_OPTIONS_BOUNDING_BOXES:
-        imageRet = DM.drawBoundingBoxes(image, boundingBoxes = None) #CORREGIR
+        imageRet = DM.drawBoundingBoxes(image, boundingBoxes = contours[4]) 
     elif type == VPO.DRAW_OPTIONS_MIN_AREA_RECTANGLES:
-        imageRet = DM.drawMinAreaRectangles(image, minAreaRectangles = None) #CORREGIR
+        imageRet = DM.drawMinAreaRectangles(image, minAreaRectangles = contours[5])
     elif type == VPO.DRAW_OPTIONS_CANNY:
         imageRet = DM.drawCannyOverImage(image, var1, var2)
     elif type == VPO.DRAW_OPTIONS_AUTO_CANNY:
@@ -285,11 +297,11 @@ def runDrawInstruction(image, type, configuration, lines, contours, values, loca
     elif type == VPO.DRAW_OPTIONS_SEGMENT_MIN_DISTANCE:
         imageRet = DM.drawSegmentMinDistance(image, line1 = None, line2 = None)
     elif type == VPO.DRAW_OPTIONS_DETECTED_HOUGH_LINES:
-        imageRet = DM.drawDetectedHoughLines(image, lines = lines) #CORREGIR
+        imageRet = DM.drawDetectedHoughLines(image, lines = lines[1])
     elif type == VPO.DRAW_OPTIONS_DETECTED_PROBABILISTIC_HOUGH_LINES:
         imageRet = DM.drawDetectedProbabilisticHoughLines(image, lines = lines[0])
     elif type == VPO.DRAW_OPTIONS_SEGMENT_DETECTOR_LINES:
-        imageRet = DM.drawSegmentDetectorLines(image, lines = lines) #CORREGIR
+        imageRet = DM.drawSegmentDetectorLines(image, lines = lines[0])
     elif type == VPO.DRAW_OPTIONS_TEMPLATE_MATCH:
         imageRet = DM.drawTemplateMatch(image, templateWidth = templateSize[1], templateHeight = templateSize[0], location = locations) #CORREGIR
     elif type == VPO.DRAW_OPTIONS_MULTIPLE_TEMPLATE_MATCH:

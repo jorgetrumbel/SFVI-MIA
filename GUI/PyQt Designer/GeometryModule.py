@@ -79,7 +79,7 @@ def scaleSegment(line, factor):
   y2 = line[0][1] +(line[0][3] - line[0][1]) * t1
   return [[int(x1), int(y1), int(x2), int(y2)]]
 
-def cleanOverlappingLines(lines):
+def cleanOverlappingLines(lines, distanceThresh):
   retLines = []
   retLines.append(lines[0])
   for line in lines:
@@ -98,7 +98,7 @@ def cleanOverlappingLines(lines):
                                                     scaledLine[0][2], scaledLine[0][3])
         distance2, points = point_segment_distance(c[0][0], c[0][1], scaledLine[0][0], scaledLine[0][1],
                                                     scaledLine[0][2], scaledLine[0][3])
-        if distance1 < 10 and distance2 < 10: #CORREGIR
+        if distance1 < distanceThresh and distance2 < distanceThresh:
           similar = True
           break
     if not similar:

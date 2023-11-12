@@ -40,6 +40,7 @@ def drawMinAreaRectangles(image, minAreaRectangles):
         cv.drawContours(image, [box], 0, (255, 0, 0))
         midPoint = GM.midpoint(box[1], box[3])
         cv.drawMarker(image, position = (midPoint[0], midPoint[1]), color = (255, 0, 0), markerType = cv.MARKER_CROSS, markerSize = 20, thickness = 2, line_type = cv.FILLED)
+    return image
 
 def drawCannyOverImage(image, threshold1, threshold2):
     edges = cv.Canny(image, threshold1 = threshold1, threshold2 = threshold2, apertureSize = 3, L2gradient = False)
@@ -82,15 +83,13 @@ def drawSegmentMinDistance(image, line1, line2):
 def drawDetectedHoughLines(image, lines):
     retImage = cv.cvtColor(image, cv.COLOR_GRAY2BGR) #ESTA LINEA HABRIA QUE SACARLA
     for i in range(0, len(lines)):
-        rho = lines[i][0][0]
-        theta = lines[i][0][1]
-        a = math.cos(theta)
-        b = math.sin(theta)
-        x0 = a * rho
-        y0 = b * rho
-        pt1 = (int(x0 + 1000*(-b)), int(y0 + 1000*(a)))
-        pt2 = (int(x0 - 1000*(-b)), int(y0 - 1000*(a)))
-        cv.line(retImage, pt1, pt2, (0,0,255), 3, cv.LINE_AA)
+        l = lines[i][0]
+        centerX = int((l[0] + l[2])/2)
+        centerY = int((l[1] + l[3])/2)
+        cv.line(retImage, (l[0], l[1]), (l[2], l[3]), (0,0,255), 3, cv.LINE_AA)
+        retImage = cv.drawMarker(retImage, position = (centerX, centerY),  color = (0,255,0), markerType = cv.MARKER_CROSS, markerSize = 10, thickness = 3)
+        retImage = cv.putText(retImage, text = str(i+1), org = (centerX, centerY), fontFace = cv.FONT_HERSHEY_SIMPLEX, 
+                           fontScale = 1, color = (0,255,0), thickness = 2, lineType = cv.LINE_AA)
     return retImage
 
 def drawDetectedProbabilisticHoughLines(image, lines):
@@ -104,8 +103,14 @@ def drawDetectedProbabilisticHoughLines(image, lines):
     return retImage
 
 def drawSegmentDetectorLines(image, lines):
-    lineSegmentDetector = cv.createLineSegmentDetector(0)
-    lineSegmentDetector.drawSegments(image, lines)
+    lineSegmentDetector = cv.createLineSegmentDetector()
+    retImage = lineSegmentDetector.drawSegments(image, lines)
+    for i in range(0, len(lines)):
+        l = lines[i][0]
+        retImage = cv.drawMarker(retImage, position = (int(l[0]), int(l[1])),  color = (0,255,0), markerType = cv.MARKER_CROSS, markerSize = 10, thickness = 3)
+        retImage = cv.putText(retImage, text = str(i+1), org = (int(l[0]), int(l[1])), fontFace = cv.FONT_HERSHEY_SIMPLEX, 
+                           fontScale = 1, color = (0,255,0), thickness = 1, lineType = cv.LINE_AA)
+    return retImage
 
 def drawMultipleTemplateMatch(image, loc, templateWidth, templateHeight):
     rects = []

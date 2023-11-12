@@ -9,73 +9,81 @@ from scipy.spatial.distance import cdist
 
 #FEATURE DETECTION FUNCTIONS
 
-def getImageContours(image):
+def getImageContours(image, minArea, maxArea):
     areas = []
     perimeters = []
     centroids = []
+    contourBoundingBoxes = []
+    minAreaRectangles = []
     ret, thresh = cv.threshold(image, thresh = 50, maxval = 255, type = cv.THRESH_OTSU)
     contours, hierarchy = cv.findContours(thresh, mode = cv.RETR_TREE, method = cv.CHAIN_APPROX_SIMPLE)
-    for contour in contours:
+    contours = list(contours)
+    removeList = []
+    for index, contour in enumerate(contours):
             area = cv.contourArea(contour)
+            if area < minArea or area > maxArea:
+                removeList.append(index)
+                continue
             perimeter = cv.arcLength(contour,True)
             M = cv.moments(contour)
             cx = int(M['m10']/M['m00'])
             cy = int(M['m01']/M['m00'])
+            contourPoly = cv.approxPolyDP(contour, epsilon = 3, closed = True)
+            boundingBox = cv.boundingRect(contourPoly)
+            minAreaRectangle = cv.minAreaRect(contour)
+            minAreaRectangle = cv.boxPoints(minAreaRectangle)
             areas.append(area)
             perimeters.append(perimeter)
             centroids.append((cx, cy))
-    return [contours, areas, perimeters, centroids]
+            contourBoundingBoxes.append(boundingBox)
+            minAreaRectangles.append(minAreaRectangle)
+    for index in sorted(removeList, reverse=True):
+        del contours[index]
+    return [contours, areas, perimeters, centroids, contourBoundingBoxes, minAreaRectangles]
     
 def applyHoughLineDetection(image, rho, theta, threshold):
-    imageDraw = cv.Canny(image, threshold1 = 50, threshold2 = 200, apertureSize = 3, L2gradient = False)     
+    #imageDraw = cv.Canny(image, threshold1 = 50, threshold2 = 200, apertureSize = 3, L2gradient = False)     
+    imageDraw = VM.applyAutoCanny(image)  
     lines = cv.HoughLines(imageDraw, rho = rho, theta = np.pi / 180, threshold = threshold)
-    return lines
+    points = []
+    indexes = []
+    for i in range(0, len(lines)):
+        rho = lines[i][0][0]
+        theta = lines[i][0][1]
+        a = math.cos(theta)
+        b = math.sin(theta)
+        x0 = a * rho
+        y0 = b * rho
+        pt1 = (int(x0 + 1000*(-b)), int(y0 + 1000*(a)))
+        pt2 = (int(x0 - 1000*(-b)), int(y0 - 1000*(a)))
+        points.append([[pt1[0], pt1[1], pt2[0], pt2[1]]])
+        
+    cleanPoints = GM.cleanOverlappingLines(points, 30)
+
+    index = 0
+    for point in points:
+        if point in cleanPoints:
+            indexes.append(index)
+        index = index + 1
+    
+    lines = lines[indexes]
+    distances, angles = calculateLineFeatures(cleanPoints)
+    return [lines, cleanPoints, angles]
 
 def applyProbabilisticHoughLineDetection(image, rho, theta, threshold):
-    imageDraw = cv.Canny(image, threshold1 = 50, threshold2 = 200, apertureSize = 3, L2gradient = False)     
+    #imageDraw = cv.Canny(image, threshold1 = 50, threshold2 = 200, apertureSize = 3, L2gradient = False)     
+    imageDraw = VM.applyAutoCanny(image)  
     lines = cv.HoughLinesP(imageDraw, rho = rho, theta = np.pi / 180, threshold = threshold, minLineLength = 50, maxLineGap = 10)
-    lines = GM.cleanOverlappingLines(lines)
+    lines = GM.cleanOverlappingLines(lines, 10)
     distances, angles = calculateLineFeatures(lines)
     return [lines, distances, angles]
 
 def getLinesWithDetector(image):
     ret, thresh = cv.threshold(image, thresh = 50, maxval = 255, type = cv.THRESH_OTSU)
-    lineSegmentDetector = cv.createLineSegmentDetector(0)
+    lineSegmentDetector = cv.createLineSegmentDetector(refine = cv.LSD_REFINE_ADV, log_eps = 100, density_th = 0.8)
     lines = lineSegmentDetector.detect(thresh)[0]
-    return lines
-
-#FEATURE CALCULATION FUNCTIONS
-def getContoursFeatures(contours, minArea, maxArea):
-    contourAreas = []
-    contourBoundingBoxes = []
-    minAreaRectangles = []
-    for contour in contours:
-        area = cv.contourArea(contour)
-        if area < minArea or area > maxArea:
-            continue
-        contourAreas.append(area)
-        #Compute approximation polygon
-        contourPoly = cv.approxPolyDP(contour, epsilon = 3, closed = True)
-        boundingBox = cv.boundingRect(contourPoly)
-
-        minAreaRectangle = cv.minAreaRect(contour)
-        minAreaRectangle = cv.boxPoints(minAreaRectangle)
-        #minAreaRectangle = np.array(minAreaRectangle, dtype="int")
-        #minAreaRectangle = perspective.order_points(minAreaRectangle)
-        '''
-        # compute the rotated bounding box of the contour
-        box = cv.minAreaRect(contour)
-        box = cv.cv.BoxPoints(box)
-        box = np.array(box, dtype="int")
-        box = perspective.order_points(box)
-        # compute the center of the bounding box
-        cX = np.average(box[:, 0])
-        cY = np.average(box[:, 1])
-        '''
-        #REVISAR PARA AGREGAR OTROS FEATURES QUE DESCRIBAN A LOS CONTOURS
-        contourBoundingBoxes.append(boundingBox)
-        minAreaRectangles.append(minAreaRectangle)
-    return contourAreas, contourBoundingBoxes, minAreaRectangles
+    distances, angles = calculateLineFeatures(lines)
+    return lines, distances, angles
 
 #Calculate line features from start and end point
 def calculateLineFeatures(lines):
