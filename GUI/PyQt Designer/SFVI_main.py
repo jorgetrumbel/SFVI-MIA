@@ -1,6 +1,6 @@
 import sys
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QMainWindow, QFormLayout, QApplication, QHBoxLayout, QVBoxLayout, QWidget, QLabel, QDialog
+from PyQt5.QtWidgets import QMainWindow, QFormLayout, QApplication, QHBoxLayout, QVBoxLayout, QWidget, QLabel, QDialog, QFileDialog
 from PyQt5.QtGui import QIcon, QPixmap, QStandardItemModel, QStandardItem, QImage
 from PyQt5.QtCore import QModelIndex, QAbstractTableModel, Qt
 from PyQt5.uic import loadUi
@@ -11,12 +11,15 @@ import VisionProgramOptions as VPO
 from VisionProgram import ProgramStructure
 import VisionProgram as VP
 
+import cv2 as cv #FOR DEBUGGING
 
-stackOptionsNames = ("stackCaptureOptions", "StackFilterOptions", "stackFeatureDetectionOptions", "stackDrawOptions")
+
+stackOptionsNames = ("stackCaptureOptions", "StackFilterOptions", "stackFeatureDetectionOptions", "stackDrawOptions", "stackMeasurementOptions")
 STACK_OPTIONS_CAPTURE_WIDGET_NAME = stackOptionsNames[0]
 STACK_OPTIONS_FILTER_WIDGET_NAME = stackOptionsNames[1]
 STACK_OPTIONS_FEATURE_DETECTION_WIDGET_NAME = stackOptionsNames[2]
 STACK_OPTIONS_DRAW_OPTIONS_WIDGET_NAME = stackOptionsNames[3]
+STACK_OPTIONS_MEASUREMENT_OPTIONS_WIDGET_NAME = stackOptionsNames[4]
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -44,10 +47,47 @@ class MainWindow(QMainWindow):
     #ScreenMonitorMain
     def ScreenMonitorMainLogic(self):
         self.buttonChangeToProgrammingMain.clicked.connect(self.goToScreenProgrammingMain)
-        self.setImageScreenMonitorMain()
+        self.buttonSelectProgramScreenMonitorMain.clicked.connect(self.getProgramFileName)
+        self.buttonCounterScreenMonitorMain.clicked.connect(self.triggerProgramRun) #CORREGIR - NO VA EN ESTE BOTON
 
     def goToScreenProgrammingMain(self):
         self.stackWidget.setCurrentWidget(self.ScreenProgrammingMain)
+
+    def getProgramFileName(self):
+        options = QFileDialog.Options()
+        options |= QFileDialog.DontUseNativeDialog
+        file, _ = QFileDialog.getOpenFileName(self,"Select File", "","All Files (*);;Python Files (*.py)", options=options)
+        if file:
+            self.selectedProgram = file
+            self.visionProgramStructure.loadProgram(file)
+    
+    def triggerProgramRun(self):
+        image, data, dataType = self.visionProgramStructure.runProgram(True)
+        #self.updateTableView(data, dataType) CORREGIR
+        self.setImageScreenMonitorMain(image)
+        
+    def setImageScreenMonitorMain(self, image):
+        try:
+            tempImagePath = "temp/programImage.png"
+            data = im.fromarray(image)
+            data.save(tempImagePath)
+            pixmap = QPixmap(tempImagePath)
+            self.labelImageScreenMonitorMain.setPixmap(pixmap)
+        except FileNotFoundError:
+            print("Image not found.")
+
+    '''
+    def setImageScreenMonitorMain(self):
+        image = "images/apple.PNG"
+        try:
+            with open(image):
+                pixmap = QPixmap(image)
+                self.labelImageScreenMonitorMain.setPixmap(pixmap)
+        except FileNotFoundError:
+            print("Image not found.")
+    '''
+
+    selectedProgram = None
     #End ScreenMonitorMain
     #########################################################
 
@@ -63,14 +103,6 @@ class MainWindow(QMainWindow):
     def goToScreenMonitorMain(self):
         self.stackWidget.setCurrentWidget(self.ScreenMonitorMain)
 
-    def setImageScreenMonitorMain(self):
-        image = "images/apple.PNG"
-        try:
-            with open(image):
-                pixmap = QPixmap(image)
-                self.labelImageScreenMonitorMain.setPixmap(pixmap)
-        except FileNotFoundError:
-            print("Image not found.")
     #End ScreenProgrammingMain
     #########################################################
 
@@ -86,6 +118,7 @@ class MainWindow(QMainWindow):
         self.buttonDeleteCommandScreenProgramEditor.clicked.connect(self.deleteCommandFromTree)
         self.buttonFeatureDetectionTemplate.clicked.connect(lambda: self.visionProgramStructure.selectTemplate(self.getSelectedInstructionName(), self.getSelectedInstructionParentName()))
         self.buttonFilterCropArea.clicked.connect(lambda: self.visionProgramStructure.selectCropArea(self.getSelectedInstructionName(), self.getSelectedInstructionParentName()))
+        self.buttonCaptureSelectFile.clicked.connect(self.getCaptureFileName)
 
     def setImageScreenProgramEditor(self, image):
         try:
@@ -101,9 +134,9 @@ class MainWindow(QMainWindow):
         #Setup first item for TreeView and configure QTreeView
         self.itemModel = QStandardItemModel()
         parentItem = self.itemModel.invisibleRootItem()
-        item = QStandardItem("Camera1")
+        item = QStandardItem("File Select1") #CORREGIR
         parentItem.appendRow(item)
-        self.visionProgramStructure.addInstruction("Camera1", parentItem.text(), VPO.CAPTURE_OPTIONS_CAMERA)
+        self.visionProgramStructure.addInstruction("File Select1", parentItem.text(), VPO.CAPTURE_OPTIONS_FILE_SELECT)
         self.treeIndex = item.index()
         self.treeViewScreenProgramEditor.setModel(self.itemModel)
         self.stackedWidgetScreenProgramEditor.setCurrentWidget(self.stackCaptureOptions)
@@ -133,6 +166,9 @@ class MainWindow(QMainWindow):
         elif instructionType in VPO.drawOptions:
             self.stackedWidgetScreenProgramEditor.setCurrentWidget(self.stackDrawOptions)
             self.loadStackDrawOptions(instructionConfiguration)
+        elif instructionType in VPO.measurementOptions:
+            self.stackedWidgetScreenProgramEditor.setCurrentWidget(self.stackMeasurementOptions)
+            self.loadStackMeasurementOptions(instructionConfiguration)
 
     def loadStackFilterOptions(self, configuration):
         self.spinBoxKernelRows.setValue(configuration[VPO.FILTER_CONFIGURATIONS_KERNEL_ROWS])
@@ -153,6 +189,12 @@ class MainWindow(QMainWindow):
         self.spinBoxDrawOptionsVariable1.setValue(configuration[VPO.DRAW_OPTIONS_CONFIGURATIONS_VARIABLE_1])
         self.spinBoxDrawOptionsVariable2.setValue(configuration[VPO.DRAW_OPTIONS_CONFIGURATIONS_VARIABLE_2])
         self.spinBoxDrawOptionsVariable3.setValue(configuration[VPO.DRAW_OPTIONS_CONFIGURATIONS_VARIABLE_3])
+
+    def loadStackMeasurementOptions(self, configuration):
+        self.spinBoxMeasurementOptionsVariable1.setValue(configuration[VPO.MEASUREMENT_OPTIONS_CONFIGURATIONS_VARIABLE_1])
+        self.spinBoxMeasurementOptionsVariable2.setValue(configuration[VPO.MEASUREMENT_OPTIONS_CONFIGURATIONS_VARIABLE_2])
+        self.spinBoxMeasurementOptionsVariable3.setValue(configuration[VPO.MEASUREMENT_OPTIONS_CONFIGURATIONS_VARIABLE_3])
+        self.spinBoxMeasurementOptionsVariable4.setValue(configuration[VPO.MEASUREMENT_OPTIONS_CONFIGURATIONS_VARIABLE_4])
 
     def addCommandToTree(self):
         #Launch dialog
@@ -197,6 +239,8 @@ class MainWindow(QMainWindow):
             instructionData = self.getStackFeatureDetectionConfiguration()
         elif stackCurrentWidgetName == STACK_OPTIONS_DRAW_OPTIONS_WIDGET_NAME:
             instructionData = self.getStackDrawOptionsConfiguration()
+        elif stackCurrentWidgetName == STACK_OPTIONS_MEASUREMENT_OPTIONS_WIDGET_NAME:
+            instructionData = self.getStackMeasurementOptionsConfiguration()
         return instructionData
 
     def getStackCaptureConfiguration(self):
@@ -229,6 +273,15 @@ class MainWindow(QMainWindow):
         instructionData[VPO.DRAW_OPTIONS_CONFIGURATIONS_VARIABLE_1] = self.spinBoxDrawOptionsVariable1.value()
         instructionData[VPO.DRAW_OPTIONS_CONFIGURATIONS_VARIABLE_2] = self.spinBoxDrawOptionsVariable2.value()
         instructionData[VPO.DRAW_OPTIONS_CONFIGURATIONS_VARIABLE_3] = self.spinBoxDrawOptionsVariable3.value()
+        return instructionData
+    
+    def getStackMeasurementOptionsConfiguration(self):
+        instructionData = {}
+        instructionData[VPO.MEASUREMENT_OPTIONS_CONFIGURATIONS_NAME] = self.lineEditMeasurementOptionsName.text()
+        instructionData[VPO.MEASUREMENT_OPTIONS_CONFIGURATIONS_VARIABLE_1] = self.spinBoxMeasurementOptionsVariable1.value()
+        instructionData[VPO.MEASUREMENT_OPTIONS_CONFIGURATIONS_VARIABLE_2] = self.spinBoxMeasurementOptionsVariable2.value()
+        instructionData[VPO.MEASUREMENT_OPTIONS_CONFIGURATIONS_VARIABLE_3] = self.spinBoxMeasurementOptionsVariable3.value()
+        instructionData[VPO.MEASUREMENT_OPTIONS_CONFIGURATIONS_VARIABLE_4] = self.spinBoxMeasurementOptionsVariable4.value()
         return instructionData
 
     def getSelectedInstructionName(self):
@@ -266,12 +319,22 @@ class MainWindow(QMainWindow):
         self.setImageScreenProgramEditor(image)
 
     
+    def getCaptureFileName(self):
+        options = QFileDialog.Options()
+        options |= QFileDialog.DontUseNativeDialog
+        file, _ = QFileDialog.getOpenFileName(self,"Select File", "","All Files (*);;Python Files (*.py)", options=options)
+        if file:
+            currentItem = self.itemModel.itemFromIndex(self.treeIndex)
+            self.visionProgramStructure.getCaptureFileName(currentItem.text(), file)
+
     itemModel = None
     treeIndex = None
     tableModel = None
     visionProgramStructure = ProgramStructure()
     #End ScreenProgramEditor
     #########################################################
+
+    
 
 #####################################################
 #CLASS TABLE MODEL

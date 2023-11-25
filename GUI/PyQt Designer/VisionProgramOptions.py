@@ -8,17 +8,18 @@ INSTRUCTION_DATA_PARENT = instructionDataNames[2]
 INSTRUCTION_DATA_IMAGE = instructionDataNames[3]
 INSTRUCTION_DATA_CONFIGURATION = instructionDataNames[4]
 
-commandGroups = ("Capture", "Filter", "Feature Detection", "Draw")
+commandGroups = ("Capture", "Filter", "Feature Detection", "Draw", "Measurement")
 COMMAND_GROUPS_CAPTURE = commandGroups[0]
 COMMAND_GROUPS_FILTER = commandGroups[1]
 COMMAND_GROUPS_FEATURE_DETECTION = commandGroups[2]
 COMMAND_GROUPS_DRAW = commandGroups[3]
+COMMAND_GROUPS_MEASUREMENT = commandGroups[4]
 
 #DETECTED FEATURES MEASUREMENT VARIABLE NAMES
 FEATURE_MEASUREMENT_CONTOURS_NAMES = ["Position", "Perimeter", "Area"]
 FEATURE_MEASUREMENT_TEMPLATE_MATCHING_NAMES = ["Position", "Value"]
 FEATURE_MEASUREMENT_HOUGH_NAMES = ["Rho", "Theta", "Angle"]
-FEATURE_MEASUREMENT_HOUGH_PROBABILISTIC_NAMES = ["Start", "End", "Distance", "Angle"]
+FEATURE_MEASUREMENT_HOUGH_PROBABILISTIC_NAMES = ["Start", "End", "Length", "Angle"]
 
 #FILTER OPTIONS
 filterOptions = ("Blur", "Gauss", "Sobel", "Median", "Erosion", "Dilation", "Open", "Close",
@@ -54,13 +55,16 @@ FILTER_CONFIGURATIONS_THRESHOLD2 = filterConfigurations[5]
 FILTER_CONFIGURATIONS_CROP_AREA = filterConfigurations[6]
 
 #CAPTURE OPTIONS
-captureOptions = ("Camera", "Flash")
+captureOptions = ("Camera", "Flash", "File", "File Select")
 CAPTURE_OPTIONS_CAMERA = captureOptions[0]
 CAPTURE_OPTIONS_FLASH = captureOptions[1]
+CAPTURE_OPTIONS_FILE = captureOptions[2]
+CAPTURE_OPTIONS_FILE_SELECT = captureOptions[3]
 
-captureConfigurations = ("Name", "Exposure")
+captureConfigurations = ("Name", "Exposure", "File Path")
 CAPTURE_CONFIGURATIONS_NAME = captureConfigurations[0]
 CAPTURE_CONFIGURATIONS_EXPOSURE = captureConfigurations[1]
+CAPTURE_CONFIGURATIONS_FILE_PATH = captureConfigurations[2]
 
 #FEATURE DETECTION OPTIONS
 featureDetectionOptions = ("Contours", "Hough", "Probabilistic Hough", "Line Detector", "Template Matching",
@@ -106,3 +110,15 @@ DRAW_OPTIONS_CONFIGURATIONS_NAME = drawOptionsConfigurations[0]
 DRAW_OPTIONS_CONFIGURATIONS_VARIABLE_1 = drawOptionsConfigurations[1]
 DRAW_OPTIONS_CONFIGURATIONS_VARIABLE_2 = drawOptionsConfigurations[2]
 DRAW_OPTIONS_CONFIGURATIONS_VARIABLE_3 = drawOptionsConfigurations[3]
+
+#MEASUREMENT OPTIONS
+measurementOptions = ("Measure Contours", "Line distance")
+MEASUREMENT_OPTIONS_CONTOURS = measurementOptions[0]
+MEASUREMENT_OPTIONS_LINE_DISTANCE = measurementOptions[1]
+
+measurementOptionsConfigurations = ("Name", "Variable 1", "Variable 2", "Variable 3", "Variable 4")
+MEASUREMENT_OPTIONS_CONFIGURATIONS_NAME = measurementOptionsConfigurations[0]
+MEASUREMENT_OPTIONS_CONFIGURATIONS_VARIABLE_1 = measurementOptionsConfigurations[1]
+MEASUREMENT_OPTIONS_CONFIGURATIONS_VARIABLE_2 = measurementOptionsConfigurations[2]
+MEASUREMENT_OPTIONS_CONFIGURATIONS_VARIABLE_3 = measurementOptionsConfigurations[3]
+MEASUREMENT_OPTIONS_CONFIGURATIONS_VARIABLE_4 = measurementOptionsConfigurations[4]

@@ -69,6 +69,8 @@ def drawDistance(image, distance, pointA, pointB):
     return image
 
 def drawSegmentMinDistance(image, line1, line2):
+    if len(image.shape) < 3:
+        image = cv.cvtColor(image, cv.COLOR_GRAY2BGR)
     lines = []
     point11 = np.array([line1[0][0], line1[0][1]])
     point12 = np.array([line1[0][2], line1[0][3]])
@@ -81,7 +83,8 @@ def drawSegmentMinDistance(image, line1, line2):
     return image
 
 def drawDetectedHoughLines(image, lines):
-    retImage = cv.cvtColor(image, cv.COLOR_GRAY2BGR) #ESTA LINEA HABRIA QUE SACARLA
+    if len(image.shape) < 3:
+        retImage = cv.cvtColor(image, cv.COLOR_GRAY2BGR)
     for i in range(0, len(lines)):
         l = lines[i][0]
         centerX = int((l[0] + l[2])/2)
@@ -93,7 +96,8 @@ def drawDetectedHoughLines(image, lines):
     return retImage
 
 def drawDetectedProbabilisticHoughLines(image, lines):
-    retImage = cv.cvtColor(image, cv.COLOR_GRAY2BGR) #ESTA LINEA HABRIA QUE SACARLA
+    if len(image.shape) < 3:
+        retImage = cv.cvtColor(image, cv.COLOR_GRAY2BGR)
     for i in range(0, len(lines)):
         l = lines[i][0]
         cv.line(retImage, (l[0], l[1]), (l[2], l[3]), (0,0,255), 3, cv.LINE_AA)
@@ -143,4 +147,21 @@ def drawTemplateMatchInvariant(image, locationList, templateWidth, templateHeigh
     pick = non_max_suppression(np.array(rects), overlapThresh = 0.3)
     for (startX, startY, endX, endY) in pick:
         image = drawTemplateMatch(image, templateWidth, templateHeight, (startX, startY))
+    return image
+
+def drawMeasurementResult(image, result):
+    if len(image.shape) < 3:
+        image = cv.cvtColor(image, cv.COLOR_GRAY2BGR)
+    top = 5
+    bottom = top
+    left = 5
+    right = left
+    if result == True:
+        image = cv.copyMakeBorder(image, top, bottom, left, right, borderType = cv.BORDER_CONSTANT, dst = None, value = (0,255,0))
+        image = cv.putText(image, text = "PASS", org = (0, 50), fontFace = cv.FONT_HERSHEY_SIMPLEX, 
+                           fontScale = 1, color = (0,255,0), thickness = 2, lineType = cv.LINE_AA)
+    else:
+        image = cv.copyMakeBorder(image, top, bottom, left, right, borderType = cv.BORDER_CONSTANT, dst = None, value = (0,0,255))
+        image = cv.putText(image, text = "FAIL", org = (0, 50), fontFace = cv.FONT_HERSHEY_SIMPLEX, 
+                           fontScale = 1, color = (0,0,255), thickness = 2, lineType = cv.LINE_AA)
     return image

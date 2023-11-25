@@ -9,7 +9,7 @@ from scipy.spatial.distance import cdist
 
 #FEATURE DETECTION FUNCTIONS
 
-def getImageContours(image, minArea, maxArea):
+def getImageContours(image, minArea = 1, maxArea = 1000000):
     areas = []
     perimeters = []
     centroids = []

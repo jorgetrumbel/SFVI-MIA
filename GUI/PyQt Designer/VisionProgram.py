@@ -4,7 +4,9 @@ import VisionModule as VM
 import VisionProgramOptions as VPO
 import VisionDetectionModule as VDM
 import DrawModule as DM
+import MeasurementModule as MM
 import GeometryModule as GM
+import CameraModulePC as CM
 import numpy as np
 
 from PIL import Image as im
@@ -24,7 +26,8 @@ class ProgramStructure():
         
         if instructionType in  VPO.captureOptions:
             instructionData[VPO.INSTRUCTION_DATA_CONFIGURATION] = {VPO.FILTER_CONFIGURATIONS_NAME: None,
-                                                                   VPO.CAPTURE_CONFIGURATIONS_EXPOSURE: 0}
+                                                                   VPO.CAPTURE_CONFIGURATIONS_EXPOSURE: 0,
+                                                                   VPO.CAPTURE_CONFIGURATIONS_FILE_PATH: 0}
 
         elif instructionType in VPO.filterOptions:
             instructionData[VPO.INSTRUCTION_DATA_CONFIGURATION] = {VPO.FILTER_CONFIGURATIONS_NAME: None,
@@ -50,6 +53,14 @@ class ProgramStructure():
                                                 VPO.DRAW_OPTIONS_CONFIGURATIONS_VARIABLE_2: 0,
                                                 VPO.DRAW_OPTIONS_CONFIGURATIONS_VARIABLE_3: 0}
             
+        elif instructionType in VPO.measurementOptions:
+            instructionData[VPO.INSTRUCTION_DATA_CONFIGURATION] = {
+                                                VPO.FILTER_CONFIGURATIONS_NAME: None,
+                                                VPO.MEASUREMENT_OPTIONS_CONFIGURATIONS_VARIABLE_1: 0,
+                                                VPO.MEASUREMENT_OPTIONS_CONFIGURATIONS_VARIABLE_2: 0,
+                                                VPO.MEASUREMENT_OPTIONS_CONFIGURATIONS_VARIABLE_3: 0,
+                                                VPO.MEASUREMENT_OPTIONS_CONFIGURATIONS_VARIABLE_4: 0}
+
         self.programInstructionList[instructionName] = instructionData
 
     def removeInstruction(self, instructionName):
@@ -92,10 +103,17 @@ class ProgramStructure():
     def saveProgram(self, path):
         copyDict = self.programInstructionList
         for key in copyDict.keys():
-            del copyDict[key][VPO.INSTRUCTION_DATA_IMAGE]
+            try:
+                del copyDict[key][VPO.INSTRUCTION_DATA_IMAGE]
+            except:
+                pass
         with open(path, "w") as write_file:
             json.dump(self.programInstructionList, write_file, indent=4)
-        pass
+
+    def loadProgram(self, path):
+        with open(path, "r") as readFile:
+            jsonDict = json.load(readFile)
+        self.programInstructionList = jsonDict
 
     def selectTemplate(self, instructionName, parentInstructionName):
         self.runProgram(False, parentInstructionName)
@@ -117,6 +135,9 @@ class ProgramStructure():
         data = im.fromarray(cropImage)
         data.save(cropImagePath)
 
+    def getCaptureFileName(self, instructionName, file):
+        self.programInstructionList[instructionName][VPO.INSTRUCTION_DATA_CONFIGURATION][VPO.CAPTURE_CONFIGURATIONS_FILE_PATH] = file
+
     def getAllParentInstructions(self, instructionName):
         retInstructions = {}
         retInstructions[instructionName] = self.programInstructionList[instructionName]
@@ -132,8 +153,8 @@ class ProgramStructure():
         instructionsToRun = None
         dataRet = [[0]]
         dataRetType = None
+        self.saveProgram("temp/program_file.json")
         if runFullProgram == True:
-            self.saveProgram("temp/program_file.json")
             instructionsToRun = self.programInstructionList
         else:
             instructionsToRun = self.getAllParentInstructions(instructionStop)
@@ -144,7 +165,8 @@ class ProgramStructure():
             if instructionParent != "":
                 image = self.programInstructionList[instructionParent][VPO.INSTRUCTION_DATA_IMAGE].copy()
             if instruction[VPO.INSTRUCTION_DATA_TYPE] in VPO.captureOptions:
-                image = VM.loadImage("images/sudoku.png", grayscale=True) #FOR DEBUGGING
+                #image = VM.loadImage("images/hearts_card.png", grayscale=True) #FOR DEBUGGING
+                image = runCaptureInstruction(instructionType, instructionConfiguration)
                 instruction[VPO.INSTRUCTION_DATA_IMAGE] = image.copy()
 
             elif instruction[VPO.INSTRUCTION_DATA_TYPE] in VPO.filterOptions:
@@ -154,40 +176,15 @@ class ProgramStructure():
             elif instruction[VPO.INSTRUCTION_DATA_TYPE] in VPO.featureDetectionOptions:
                 lines, contours, values, locations, templateSize = runFeatureDetectionInstruction(image, instructionType, instructionConfiguration, "temp/templateCrop.png") #CAMBIAR PATH
                 instruction[VPO.INSTRUCTION_DATA_IMAGE] = image.copy()
-                
-                # CORREGIR DE ACA PARA ABAJO
-                if instruction[VPO.INSTRUCTION_DATA_TYPE] == VPO.FEATURE_DETECTION_OPTIONS_CONTOURS:
-                    dataRet = list(zip(contours[3],contours[2],contours[1])) #CORREGIR
-                    dataRetType = VPO.FEATURE_DETECTION_OPTIONS_CONTOURS
-                elif instruction[VPO.INSTRUCTION_DATA_TYPE] == VPO.FEATURE_DETECTION_OPTIONS_TEMPLATE_MATCH:
-                    dataRet = [[locations,int(values*100)]]
-                    dataRetType = VPO.FEATURE_DETECTION_OPTIONS_TEMPLATE_MATCH
-                elif instruction[VPO.INSTRUCTION_DATA_TYPE] == VPO.FEATURE_DETECTION_OPTIONS_TEMPLATE_MATCH_MULTIPLE or \
-                instruction[VPO.INSTRUCTION_DATA_TYPE] == VPO.FEATURE_DETECTION_OPTIONS_CANNY_TEMPLATE_MATCH:
-                    loc = list(zip(locations[0],locations[1]))
-                    dataRet = list(zip(loc,values))
-                    dataRetType = VPO.FEATURE_DETECTION_OPTIONS_TEMPLATE_MATCH
-                elif instruction[VPO.INSTRUCTION_DATA_TYPE] == VPO.FEATURE_DETECTION_OPTIONS_HOUGH:                    
-                    rho = [x[0][0] for x in lines[0]]
-                    theta = [x[0][1] for x in lines[0]]
-                    dataRet = list(zip(rho,theta,lines[2]))
-                    dataRetType = VPO.FEATURE_DETECTION_OPTIONS_HOUGH
-                elif instruction[VPO.INSTRUCTION_DATA_TYPE] == VPO.FEATURE_DETECTION_OPTIONS_HOUGH_PROBABILISTIC:                    
-                    new_list = [x[0] for x in lines[0]]
-                    startPoints = [(x[0], x[1]) for x in new_list]
-                    endPoints = [(x[2], x[3]) for x in new_list]
-                    dataRet = list(zip(startPoints,endPoints,lines[1],lines[2]))
-                    dataRetType = VPO.FEATURE_DETECTION_OPTIONS_HOUGH_PROBABILISTIC
-                elif instruction[VPO.INSTRUCTION_DATA_TYPE] == VPO.FEATURE_DETECTION_OPTIONS_LINE_DETECTOR:                    
-                    new_list = [x[0] for x in lines[0]]
-                    startPoints = [(int(x[0]), int(x[1])) for x in new_list]
-                    endPoints = [(int(x[2]), int(x[3])) for x in new_list]
-                    dataRet = list(zip(startPoints,endPoints,lines[1],lines[2]))
-                    dataRetType = VPO.FEATURE_DETECTION_OPTIONS_LINE_DETECTOR
-                #HASTA ACA
+                dataRet, dataRetType = rearrageResultData(instruction[VPO.INSTRUCTION_DATA_TYPE], lines, contours, values, locations, templateSize)
 
             elif instruction[VPO.INSTRUCTION_DATA_TYPE] in VPO.drawOptions:
                 image = runDrawInstruction(image, instructionType, instructionConfiguration, lines, contours, values, locations, templateSize)
+                instruction[VPO.INSTRUCTION_DATA_IMAGE] = image.copy()
+
+            elif instruction[VPO.INSTRUCTION_DATA_TYPE] in VPO.measurementOptions:
+                image, measurementResult, dataRet, dataRetType = runMeasurementInstruction(image, instructionType, instructionConfiguration, lines, contours, values, locations, templateSize)
+                image = DM.drawMeasurementResult(image, measurementResult)
                 instruction[VPO.INSTRUCTION_DATA_IMAGE] = image.copy()
 
         return image, dataRet, dataRetType
@@ -195,6 +192,18 @@ class ProgramStructure():
     programInstructionList = {}
     program = {}
     programIndex = 0
+
+def runCaptureInstruction(type, configuration):
+    exposure = configuration[VPO.CAPTURE_CONFIGURATIONS_EXPOSURE]
+    filePath = configuration[VPO.CAPTURE_CONFIGURATIONS_FILE_PATH]
+    if type == VPO.CAPTURE_OPTIONS_CAMERA:
+        image = CM.takePicturePC()
+    elif type == VPO.CAPTURE_OPTIONS_FILE:
+        image = VM.loadImage(filePath, grayscale=True)
+    elif type == VPO.CAPTURE_OPTIONS_FILE_SELECT:
+        filePath = CM.getImageFile()
+        image = VM.loadImage(filePath, grayscale=True)
+    return image
 
 def runFilterInstruction(image, type, configuration):
     kernelRows = configuration[VPO.FILTER_CONFIGURATIONS_KERNEL_ROWS]
@@ -244,11 +253,11 @@ def runFilterInstruction(image, type, configuration):
     return imageRet
 
 def runFeatureDetectionInstruction(image, type, configuration, templatePath):
-    contoursRet = None
-    linesRet = None
-    values = None
-    location = None
-    templateSize = None
+    contoursRet = [0]
+    linesRet = [0]
+    values = [0]
+    location = [0]
+    templateSize = [0]
     var1 = configuration[VPO.FEATURE_DETECTION_CONFIGURATIONS_VARIABLE_1]
     var2 = configuration[VPO.FEATURE_DETECTION_CONFIGURATIONS_VARIABLE_2]
     var3 = configuration[VPO.FEATURE_DETECTION_CONFIGURATIONS_VARIABLE_3]
@@ -257,7 +266,7 @@ def runFeatureDetectionInstruction(image, type, configuration, templatePath):
         template = VM.loadImage(templatePath, grayscale=True)
         templateSize = template.shape
     if type == VPO.FEATURE_DETECTION_OPTIONS_CONTOURS:
-        contoursRet = VDM.getImageContours(image, var1, var2)
+        contoursRet = VDM.getImageContours(image)
     elif type == VPO.FEATURE_DETECTION_OPTIONS_HOUGH:
         linesRet = VDM.applyHoughLineDetection(image, var1, var2, var3)
     elif type == VPO.FEATURE_DETECTION_OPTIONS_HOUGH_PROBABILISTIC:
@@ -309,3 +318,69 @@ def runDrawInstruction(image, type, configuration, lines, contours, values, loca
     elif type == VPO.DRAW_OPTIONS_TEMPLATE_MATCH_INVARIANT:
         imageRet = DM.drawTemplateMatchInvariant(image, locationList = locations, templateWidth = templateSize[1], templateHeight = templateSize[0]) #CORREGIR
     return imageRet
+
+def runMeasurementInstruction(image, type, configuration, lines, contours, values, locations, templateSize):
+    imageRet = image
+    dataRet = [[0]]
+    dataRetType = None
+    result = False
+    var1 = configuration[VPO.MEASUREMENT_OPTIONS_CONFIGURATIONS_VARIABLE_1]
+    var2 = configuration[VPO.MEASUREMENT_OPTIONS_CONFIGURATIONS_VARIABLE_2]
+    var3 = configuration[VPO.MEASUREMENT_OPTIONS_CONFIGURATIONS_VARIABLE_3]
+    var4 = configuration[VPO.MEASUREMENT_OPTIONS_CONFIGURATIONS_VARIABLE_4]
+    if type == VPO.MEASUREMENT_OPTIONS_CONTOURS:
+        indeces = MM.checkContours(contourAreas = contours[1], contourPerimeters = contours[2], 
+                                   minArea = var1, maxArea = var2, minPerimeter = var3, maxPerimeter = var4)
+        contoursArranged, dataType = rearrageResultData(type, lines, contours, values, locations, templateSize)
+        if MM.checkPass(indeces):
+            result = True
+            dataRet = [contoursArranged[i] for i in indeces]
+            dataRetType = VPO.FEATURE_DETECTION_OPTIONS_CONTOURS
+            imageRet = DM.drawContours(imageRet, contours = [contours[0][i] for i in indeces])
+            imageRet = DM.drawContoursCentroids(imageRet, points = [contours[3][i] for i in indeces])
+    elif type == VPO.MEASUREMENT_OPTIONS_LINE_DISTANCE:
+        lineDistance, result = MM.checkLineDistance(line1 = lines[0][0], line2 = lines[0][1], minDistance = var1, maxDistance = var2)
+        if lineDistance > 0:
+            imageRet = DM.drawDetectedProbabilisticHoughLines(imageRet, lines[0][0:2])
+            imageRet = DM.drawSegmentMinDistance(imageRet, lines[0][0], lines[0][1])
+        if result:
+            linesArranged, dataType = rearrageResultData(type, lines, contours, values, locations, templateSize)
+            dataRet = linesArranged[0:2]
+            dataRetType = VPO.FEATURE_DETECTION_OPTIONS_HOUGH_PROBABILISTIC
+    return imageRet, result, dataRet, dataRetType
+
+
+def rearrageResultData(instructionType, lines, contours, values, locations, templateSize):
+    dataRet = [[0]]
+    dataRetType = None
+    if instructionType == VPO.FEATURE_DETECTION_OPTIONS_CONTOURS or \
+    instructionType == VPO.MEASUREMENT_OPTIONS_CONTOURS:
+        dataRet = list(zip(contours[3],contours[2],contours[1]))
+        dataRetType = VPO.FEATURE_DETECTION_OPTIONS_CONTOURS
+    elif instructionType == VPO.FEATURE_DETECTION_OPTIONS_TEMPLATE_MATCH:
+        dataRet = [[locations,int(values*100)]]
+        dataRetType = VPO.FEATURE_DETECTION_OPTIONS_TEMPLATE_MATCH
+    elif instructionType == VPO.FEATURE_DETECTION_OPTIONS_TEMPLATE_MATCH_MULTIPLE or \
+    instructionType == VPO.FEATURE_DETECTION_OPTIONS_CANNY_TEMPLATE_MATCH:
+        loc = list(zip(locations[0],locations[1]))
+        dataRet = list(zip(loc,values))
+        dataRetType = VPO.FEATURE_DETECTION_OPTIONS_TEMPLATE_MATCH
+    elif instructionType == VPO.FEATURE_DETECTION_OPTIONS_HOUGH:                    
+        rho = [x[0][0] for x in lines[0]]
+        theta = [x[0][1] for x in lines[0]]
+        dataRet = list(zip(rho,theta,lines[2]))
+        dataRetType = VPO.FEATURE_DETECTION_OPTIONS_HOUGH
+    elif instructionType == VPO.FEATURE_DETECTION_OPTIONS_HOUGH_PROBABILISTIC or \
+    instructionType == VPO.MEASUREMENT_OPTIONS_LINE_DISTANCE:                    
+        new_list = [x[0] for x in lines[0]]
+        startPoints = [(x[0], x[1]) for x in new_list]
+        endPoints = [(x[2], x[3]) for x in new_list]
+        dataRet = list(zip(startPoints,endPoints,lines[1],lines[2]))
+        dataRetType = VPO.FEATURE_DETECTION_OPTIONS_HOUGH_PROBABILISTIC
+    elif instructionType == VPO.FEATURE_DETECTION_OPTIONS_LINE_DETECTOR:                    
+        new_list = [x[0] for x in lines[0]]
+        startPoints = [(int(x[0]), int(x[1])) for x in new_list]
+        endPoints = [(int(x[2]), int(x[3])) for x in new_list]
+        dataRet = list(zip(startPoints,endPoints,lines[1],lines[2]))
+        dataRetType = VPO.FEATURE_DETECTION_OPTIONS_LINE_DETECTOR
+    return dataRet, dataRetType

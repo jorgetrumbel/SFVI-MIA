@@ -48,7 +48,7 @@ class DialogCommandSelection(QDialog):
         for itemName in VPO.featureDetectionOptions:
             item = QStandardItem(itemName)
             parentItem.appendRow(item)
-        #Create feature detection row and subitems
+        #Create feature draw row and subitems
         parentItem = self.itemModel.invisibleRootItem()
         item = QStandardItem(VPO.COMMAND_GROUPS_DRAW)
         parentItem.appendRow(item)
@@ -58,15 +58,13 @@ class DialogCommandSelection(QDialog):
             parentItem.appendRow(item)
         #Create measure row and subitems
         parentItem = self.itemModel.invisibleRootItem()
-        item = QStandardItem("Medición")
+        item = QStandardItem(VPO.COMMAND_GROUPS_MEASUREMENT)
         parentItem.appendRow(item)
         parentItem = item
-        item = QStandardItem("Regla")
-        parentItem.appendRow(item)
-        item = QStandardItem("Blobs")
-        parentItem.appendRow(item)
-        item = QStandardItem("Template matching")
-        parentItem.appendRow(item)
+        for itemName in VPO.measurementOptions:
+            item = QStandardItem(itemName)
+            parentItem.appendRow(item)
+
         self.treeViewDialogCommandSelection.setModel(self.itemModel)
 
     def treeViewClicked(self, index):

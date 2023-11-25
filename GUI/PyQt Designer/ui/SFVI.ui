@@ -82,7 +82,7 @@
     <item>
      <widget class="QStackedWidget" name="stackWidget">
       <property name="currentIndex">
-       <number>2</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="ScreenMonitorMain">
        <layout class="QVBoxLayout" name="verticalLayout">
@@ -685,7 +685,7 @@ Programa</string>
              </sizepolicy>
             </property>
             <property name="currentIndex">
-             <number>1</number>
+             <number>4</number>
             </property>
             <widget class="QWidget" name="stackCaptureOptions">
              <property name="palette">
@@ -774,6 +774,26 @@ Programa</string>
                 </item>
                 <item row="0" column="1">
                  <widget class="QLineEdit" name="lineEditCapturaName"/>
+                </item>
+                <item row="2" column="0">
+                 <widget class="QLabel" name="labelCaptureSelectFile">
+                  <property name="text">
+                   <string>Select File</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="1">
+                 <widget class="QWidget" name="widgetCaptureSelectFile" native="true">
+                  <layout class="QVBoxLayout" name="verticalLayout_11">
+                   <item>
+                    <widget class="QPushButton" name="buttonCaptureSelectFile">
+                     <property name="text">
+                      <string>Select File</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
                 </item>
                </layout>
               </item>
@@ -899,7 +919,7 @@ Programa</string>
                 <item row="1" column="1">
                  <widget class="QSpinBox" name="spinBoxFeatureDetectionVariable1">
                   <property name="maximum">
-                   <number>1000</number>
+                   <number>100000</number>
                   </property>
                  </widget>
                 </item>
@@ -913,7 +933,7 @@ Programa</string>
                 <item row="2" column="1">
                  <widget class="QSpinBox" name="spinBoxFeatureDetectionVariable2">
                   <property name="maximum">
-                   <number>1000</number>
+                   <number>100000</number>
                   </property>
                  </widget>
                 </item>
@@ -927,7 +947,7 @@ Programa</string>
                 <item row="3" column="1">
                  <widget class="QSpinBox" name="spinBoxFeatureDetectionVariable3">
                   <property name="maximum">
-                   <number>1000</number>
+                   <number>100000</number>
                   </property>
                  </widget>
                 </item>
@@ -998,6 +1018,80 @@ Programa</string>
                 </item>
                 <item row="3" column="1">
                  <widget class="QSpinBox" name="spinBoxDrawOptionsVariable3"/>
+                </item>
+               </layout>
+              </item>
+             </layout>
+            </widget>
+            <widget class="QWidget" name="stackMeasurementOptions">
+             <layout class="QVBoxLayout" name="verticalLayout_10">
+              <item>
+               <layout class="QFormLayout" name="formLayoutMeasurementOptions">
+                <item row="0" column="0">
+                 <widget class="QLabel" name="labelMeasurementOptionsName">
+                  <property name="text">
+                   <string>Name</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="1">
+                 <widget class="QLineEdit" name="lineEditMeasurementOptionsName"/>
+                </item>
+                <item row="1" column="0">
+                 <widget class="QLabel" name="labelMeasurementOptionsVariable1">
+                  <property name="text">
+                   <string>Variable 1</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="1">
+                 <widget class="QSpinBox" name="spinBoxMeasurementOptionsVariable1">
+                  <property name="maximum">
+                   <number>100000</number>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="0">
+                 <widget class="QLabel" name="labelMeasurementOptionsVariable">
+                  <property name="text">
+                   <string>Variable 2</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="1">
+                 <widget class="QSpinBox" name="spinBoxMeasurementOptionsVariable2">
+                  <property name="maximum">
+                   <number>100000</number>
+                  </property>
+                 </widget>
+                </item>
+                <item row="3" column="0">
+                 <widget class="QLabel" name="labelMeasurementOptionsVariable3">
+                  <property name="text">
+                   <string>Variable 3</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="3" column="1">
+                 <widget class="QSpinBox" name="spinBoxMeasurementOptionsVariable3">
+                  <property name="maximum">
+                   <number>100000</number>
+                  </property>
+                 </widget>
+                </item>
+                <item row="4" column="0">
+                 <widget class="QLabel" name="labelMeasurementOptionsVariable4">
+                  <property name="text">
+                   <string>Variable 4</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="4" column="1">
+                 <widget class="QSpinBox" name="spinBoxMeasurementOptionsVariable4">
+                  <property name="maximum">
+                   <number>100000</number>
+                  </property>
+                 </widget>
                 </item>
                </layout>
               </item>
