@@ -1,0 +1,6 @@
+train: train/
+test: test/
+
+nc: 2
+
+names: ["OK", "NOK"]
