@@ -1,8 +1,7 @@
 task: classify
 mode: train
 model: yolov8n-cls.pt
-data: C:\Users\Alejandro\Desktop\MIA Trabajo final\Repositorio\SFVI-MIA\GUI\PyQt Designer\tests\Leather
-  Defect Classification
+data: C:\Users\Alejandro\Desktop\MIA Trabajo final\Repositorio\SFVI-MIA\GUI\PyQt Designer\tests\datasets\leather
 epochs: 5
 patience: 50
 batch: 16

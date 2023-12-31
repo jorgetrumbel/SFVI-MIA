@@ -82,7 +82,7 @@
     <item>
      <widget class="QStackedWidget" name="stackWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>3</number>
       </property>
       <widget class="QWidget" name="ScreenMonitorMain">
        <layout class="QVBoxLayout" name="verticalLayout">
@@ -685,7 +685,7 @@ Programa</string>
              </sizepolicy>
             </property>
             <property name="currentIndex">
-             <number>4</number>
+             <number>1</number>
             </property>
             <widget class="QWidget" name="stackCaptureOptions">
              <property name="palette">
@@ -1200,6 +1200,220 @@ Programa</string>
            <widget class="QPushButton" name="buttonRunScreenProgramEditor">
             <property name="text">
              <string>Ejecutar</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="ScreenDLProgramEditor">
+       <layout class="QVBoxLayout" name="verticalLayout_12">
+        <item>
+         <layout class="QGridLayout" name="gridLayoutScreenDLProgramEditor">
+          <item row="2" column="0">
+           <widget class="QPushButton" name="pushButtonDLProgramTrain">
+            <property name="text">
+             <string>Entrenar</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QPushButton" name="pushButtonDLProgramSave">
+            <property name="text">
+             <string>Guardar Programa</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="3">
+           <widget class="QPushButton" name="pushButtonDLProgramExit">
+            <property name="text">
+             <string>Salir</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="2" colspan="2">
+           <layout class="QFormLayout" name="formLayoutScreenDLProgramEditor">
+            <item row="0" column="0">
+             <widget class="QLabel" name="labelDLProgramBatchSize">
+              <property name="text">
+               <string>Batch Size</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QSpinBox" name="spinBoxDLProgramBatchSize"/>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="labelDLProgramEpochs">
+              <property name="text">
+               <string>Epochs</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QSpinBox" name="spinBoxDLProgramEpochs"/>
+            </item>
+            <item row="2" column="0">
+             <widget class="QLabel" name="labelDLProgramTrainTestSplit">
+              <property name="text">
+               <string>Train - Test Split</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1">
+             <widget class="QSpinBox" name="spinBoxDLProgramTrainTestSplit"/>
+            </item>
+            <item row="3" column="0">
+             <widget class="QLabel" name="labelDLProgramTrainPath">
+              <property name="text">
+               <string>OK Images Path</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="1">
+             <widget class="QWidget" name="widgetDLProgramTrainPath" native="true">
+              <layout class="QVBoxLayout" name="verticalLayout_13">
+               <item>
+                <widget class="QPushButton" name="pushButtonDLProgramOKPath">
+                 <property name="text">
+                  <string>Select OK Images Path</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item row="4" column="0">
+             <widget class="QLabel" name="labelDLProgramTestPath">
+              <property name="text">
+               <string>NOK Images Path</string>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="1">
+             <widget class="QWidget" name="widgetDLProgramTestPath" native="true">
+              <layout class="QVBoxLayout" name="verticalLayout_14">
+               <item>
+                <widget class="QPushButton" name="pushButtonDLProgramNOKPath">
+                 <property name="text">
+                  <string>Select NOK Images Path</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item row="5" column="0">
+             <widget class="QLabel" name="labelDLProgramAugment">
+              <property name="text">
+               <string>Image Augmentation</string>
+              </property>
+             </widget>
+            </item>
+            <item row="5" column="1">
+             <widget class="QWidget" name="widgetDLProgramAugment" native="true">
+              <layout class="QHBoxLayout" name="horizontalLayout_2">
+               <item>
+                <widget class="QPushButton" name="pushButtonDLProgramAddAugment">
+                 <property name="text">
+                  <string>Add Augment</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="pushButtonDLProgramRemoveAugment">
+                 <property name="text">
+                  <string>Remove Augment</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item row="0" column="0" rowspan="2" colspan="2">
+           <widget class="QLabel" name="labelImageScreenDLProgramEditor">
+            <property name="palette">
+             <palette>
+              <active>
+               <colorrole role="Base">
+                <brush brushstyle="SolidPattern">
+                 <color alpha="255">
+                  <red>240</red>
+                  <green>240</green>
+                  <blue>240</blue>
+                 </color>
+                </brush>
+               </colorrole>
+               <colorrole role="Window">
+                <brush brushstyle="SolidPattern">
+                 <color alpha="255">
+                  <red>240</red>
+                  <green>240</green>
+                  <blue>240</blue>
+                 </color>
+                </brush>
+               </colorrole>
+              </active>
+              <inactive>
+               <colorrole role="Base">
+                <brush brushstyle="SolidPattern">
+                 <color alpha="255">
+                  <red>240</red>
+                  <green>240</green>
+                  <blue>240</blue>
+                 </color>
+                </brush>
+               </colorrole>
+               <colorrole role="Window">
+                <brush brushstyle="SolidPattern">
+                 <color alpha="255">
+                  <red>240</red>
+                  <green>240</green>
+                  <blue>240</blue>
+                 </color>
+                </brush>
+               </colorrole>
+              </inactive>
+              <disabled>
+               <colorrole role="Base">
+                <brush brushstyle="SolidPattern">
+                 <color alpha="255">
+                  <red>240</red>
+                  <green>240</green>
+                  <blue>240</blue>
+                 </color>
+                </brush>
+               </colorrole>
+               <colorrole role="Window">
+                <brush brushstyle="SolidPattern">
+                 <color alpha="255">
+                  <red>240</red>
+                  <green>240</green>
+                  <blue>240</blue>
+                 </color>
+                </brush>
+               </colorrole>
+              </disabled>
+             </palette>
+            </property>
+            <property name="autoFillBackground">
+             <bool>true</bool>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2" colspan="2">
+           <widget class="QListView" name="listViewDLProgramAugment"/>
+          </item>
+          <item row="2" column="2">
+           <widget class="QPushButton" name="pushButtonDLProgramPredict">
+            <property name="text">
+             <string>Predict</string>
             </property>
            </widget>
           </item>

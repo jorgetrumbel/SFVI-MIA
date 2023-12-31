@@ -1,6 +1,10 @@
 def getImplementedVisionFunctions():
     return filterOptions, captureOptions
 
+visionProgramTypes = ("Classic", "Deep Learning")
+VISION_PROGRAM_TYPES_CLASSIC = visionProgramTypes[0]
+VISION_PROGRAM_TYPES_DEEP_LEARNING = visionProgramTypes[1]
+
 instructionDataNames = ("Name", "Type", "Parent", "Image", "Configuration")
 INSTRUCTION_DATA_NAME = instructionDataNames[0]
 INSTRUCTION_DATA_TYPE = instructionDataNames[1]

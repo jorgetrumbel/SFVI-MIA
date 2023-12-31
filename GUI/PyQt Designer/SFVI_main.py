@@ -2,14 +2,20 @@ import sys
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QMainWindow, QFormLayout, QApplication, QHBoxLayout, QVBoxLayout, QWidget, QLabel, QDialog, QFileDialog
 from PyQt5.QtGui import QIcon, QPixmap, QStandardItemModel, QStandardItem, QImage
-from PyQt5.QtCore import QModelIndex, QAbstractTableModel, Qt
+from PyQt5.QtCore import QModelIndex, QAbstractTableModel, Qt, QRunnable, QThreadPool
 from PyQt5.uic import loadUi
 from PIL import Image as im
 
 from DialogCommandSelection import DialogCommandSelection
+from DialogProgramSelection import DialogProgramSelection
+from DialogTrainOutput import DialogTrainOutput
+
 import VisionProgramOptions as VPO
+import DeepLearningProgramOptions as DLPO
 from VisionProgram import ProgramStructure
 import VisionProgram as VP
+import DeepLearningModule as DLM
+import DialogTrainOutput as DTO
 
 import cv2 as cv #FOR DEBUGGING
 
@@ -42,6 +48,7 @@ class MainWindow(QMainWindow):
         self.ScreenMonitorMainLogic()
         self.ScreenProgrammingMainLogic()
         self.ScreenProgramEditorLogic()
+        self.ScreenDLProgramEditorLogic()
 
     #########################################################
     #ScreenMonitorMain
@@ -95,13 +102,28 @@ class MainWindow(QMainWindow):
     #ScreenProgrammingMain
     def ScreenProgrammingMainLogic(self):
         self.buttonChangeToMonitorMain.clicked.connect(self.goToScreenMonitorMain)
-        self.buttonNewProgramScreenProgrammingMain.clicked.connect(self.goToScreenProgramEditor)
+        self.buttonNewProgramScreenProgrammingMain.clicked.connect(self.launchNewProgramDialog)
 
     def goToScreenProgramEditor(self):
         self.stackWidget.setCurrentWidget(self.ScreenProgramEditor)
 
     def goToScreenMonitorMain(self):
         self.stackWidget.setCurrentWidget(self.ScreenMonitorMain)
+
+    def goToScreenDLProgramEditor(self):
+        self.stackWidget.setCurrentWidget(self.ScreenDLProgramEditor)
+
+    def launchNewProgramDialog(self):
+        #Launch dialog
+        programSelectDialog = DialogProgramSelection(self)
+        programSelectDialog.exec()
+        programReturnString = programSelectDialog.getReturnString()
+        programTypeString = programSelectDialog.getProgramType()
+        if programTypeString == VPO.VISION_PROGRAM_TYPES_CLASSIC:
+            self.goToScreenProgramEditor()
+        elif programTypeString == VPO.VISION_PROGRAM_TYPES_DEEP_LEARNING:
+            self.DLmodel.setSelectedModel(programReturnString)
+            self.goToScreenDLProgramEditor()
 
     #End ScreenProgrammingMain
     #########################################################
@@ -327,13 +349,67 @@ class MainWindow(QMainWindow):
             currentItem = self.itemModel.itemFromIndex(self.treeIndex)
             self.visionProgramStructure.getCaptureFileName(currentItem.text(), file)
 
+    #End ScreenProgramEditor
+    #########################################################
+
+    #########################################################
+    #ScreenDLProgramEditor
+    def ScreenDLProgramEditorLogic(self):
+        self.pushButtonDLProgramExit.clicked.connect(self.goToScreenProgrammingMain)
+        self.pushButtonDLProgramOKPath.clicked.connect(lambda: self.getpathName("OK"))
+        self.pushButtonDLProgramNOKPath.clicked.connect(lambda: self.getpathName("NOK"))
+        self.pushButtonDLProgramTrain.clicked.connect(self.trainButtonAction)
+        self.pushButtonDLProgramPredict.clicked.connect(self.predictButtonAction)
+
+    def getpathName(self, pathToSet):
+        options = QFileDialog.Options()
+        options |= QFileDialog.DontUseNativeDialog
+        path = QFileDialog.getExistingDirectory(self,"Select Directory", options=options)
+        if path:
+            if pathToSet == "OK":
+                self.DLmodel.setOKPath(path)
+            elif pathToSet == "NOK":
+                self.DLmodel.setNOKPath(path)
+    
+    def trainButtonAction(self):
+        #Launch dialog
+        trainOutputDialog = DialogTrainOutput(self)
+        trainOutputDialog.show()
+        batchSize = self.spinBoxDLProgramBatchSize.value()
+        epochs = self.spinBoxDLProgramEpochs.value()
+        trainTestSplit = self.spinBoxDLProgramTrainTestSplit.value()
+        self.p = ProcessRunnable(target=self.DLmodel.trainModel, args=[epochs, trainTestSplit])
+        self.p.start()
+        
+    def predictButtonAction(self):
+        options = QFileDialog.Options()
+        options |= QFileDialog.DontUseNativeDialog
+        #modelFile, _ = QFileDialog.getOpenFileName(self,"Select Model", "","All Files (*);;Python Files (*.py)", options=options)
+        imageFile, _ = QFileDialog.getOpenFileName(self,"Select Image", "","All Files (*);;Python Files (*.py)", options=options)
+        prediction, showImage = self.DLmodel.modelPredict(imagePath = imageFile)
+        self.setImageScreenDLProgramEditor(showImage)
+
+    def setImageScreenDLProgramEditor(self, image):
+        try:
+            tempImagePath = "temp/programImage.png"
+            data = im.fromarray(image)
+            data.save(tempImagePath)
+            pixmap = QPixmap(tempImagePath)
+            self.labelImageScreenDLProgramEditor.setPixmap(pixmap)
+        except FileNotFoundError:
+            print("Image not found.")
+
+    #End ScreenDLProgramEditor
+    #########################################################
+
+
+    #Class attributes
     itemModel = None
     treeIndex = None
     tableModel = None
     visionProgramStructure = ProgramStructure()
-    #End ScreenProgramEditor
-    #########################################################
-
+    DLmodel = DLM.modelDL()
+    
     
 
 #####################################################
@@ -373,6 +449,24 @@ class MyTableModel(QtCore.QAbstractTableModel):
 #END CLASS TABLE MODEL
 #######################################################
 
+#######################################################
+#CLASS PROCESS RUNNABLE
+class ProcessRunnable(QRunnable):
+    def __init__(self, target, args):
+        QRunnable.__init__(self)
+        self.t = target
+        self.args = args
+
+    def run(self):
+        self.t(*self.args)
+
+    def start(self):
+        QThreadPool.globalInstance().start(self)
+
+#END CLASS PROCESS RUNNABLE
+#######################################################
+
+        
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     window = MainWindow()
