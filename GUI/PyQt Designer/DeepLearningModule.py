@@ -11,6 +11,8 @@ import torchsummary
 import torchmetrics
 import ultralytics
 from torch.utils.tensorboard import SummaryWriter
+from torchvision.transforms import v2
+from torchvision.io import read_image
 
 #Model imports
 from ultralytics import YOLO
@@ -90,10 +92,85 @@ class modelDL():
         imageRet = DM.drawMeasurementResult(imageRet, predictRet)
         return predictRet, imageRet
     
+    def getNextAugmentGroupNumber(self):
+        keyCounter = 1
+        for key in self.augmentGroups.keys():
+            if keyCounter not in self.augmentGroups.keys():
+                break
+            else:
+                keyCounter = keyCounter + 1
+        return keyCounter
+    
+    def getAugmentGroupQuantity(self):
+        return len(self.augmentGroups.keys())
+
+    def addAugmentGroup(self):
+        nextNumber = self.getNextAugmentGroupNumber()
+        self.augmentGroups[nextNumber] = {}
+        return nextNumber
+
+    def addAugment(self, groupIndex, augmentName):
+        augmentConfig = {DLPO.AUGMENT_CONFIG_VARIABLES_1: 0,
+                         DLPO.AUGMENT_CONFIG_VARIABLES_2: 0,
+                         DLPO.AUGMENT_CONFIG_VARIABLES_3: 0,
+                         DLPO.AUGMENT_CONFIG_VARIABLES_4: 0}
+        
+        self.augmentGroups[groupIndex][augmentName] = augmentConfig
+
+    def removeAugment(self, groupIndex, augmentName:str):
+        if augmentName.startswith(DLPO.GROUP_NAME_STRING):
+            del self.augmentGroups[groupIndex]
+        else:
+            del self.augmentGroups[groupIndex][augmentName]
+
+    def changeAugmentConfiguration(self, groupIndex, augmentName, configuration):
+        augmentConfig = {DLPO.AUGMENT_CONFIG_VARIABLES_1: configuration[0],
+                         DLPO.AUGMENT_CONFIG_VARIABLES_2: configuration[1],
+                         DLPO.AUGMENT_CONFIG_VARIABLES_3: configuration[2],
+                         DLPO.AUGMENT_CONFIG_VARIABLES_4: configuration[3]}
+        self.augmentGroups[groupIndex][augmentName] = augmentConfig
+
+    def getAugmentConfiguration(self, groupIndex, augmentName):
+        return (self.augmentGroups[groupIndex][augmentName])
+    
+    def augmentImages(self, destinationFolder, nRuns):
+        transformsList = []
+        deleteFolderFiles(destinationFolder + "\\OK")
+        deleteFolderFiles(destinationFolder + "\\NOK")
+        for group in self.augmentGroups.keys():
+            print("Constructing Augment Compose:")
+            augmentList = []
+            paramList = []
+            for augment in self.augmentGroups[group].keys():
+                augmentList.append(augment)
+                paramList.append(self.augmentGroups[group][augment])
+            if len(augmentList) > 0:
+                composedAugments = composeAugments(augmentList, paramList)
+                print(composedAugments)
+                transformsList.append(composedAugments)
+        print("Applying Augments")
+        #Create destination paths
+        try:  
+            os.mkdir(destinationFolder + "\\OK")
+        except:  
+            pass
+        try:  
+            os.mkdir(destinationFolder + "\\NOK")
+        except:  
+            pass
+        augmentImages(self.okPath, destinationFolder + "\\OK", transformsList, nRuns) #Create ok files
+        augmentImages(self.nokPath, destinationFolder + "\\NOK", transformsList, nRuns) #Create nok files
+        #Copy original images to destination path
+        print("Copying original images")
+        copyFolderFiles(self.okPath, destinationFolder + "\\OK")
+        copyFolderFiles(self.nokPath, destinationFolder + "\\NOK")
+        print("Augment Finished")
+        print("Images saved to " + destinationFolder)
     modelType = None
     okPath = None
     nokPath = None
     modelPath = None
+    augmentGroups = {}
 
 def trainYoloV8Model(epochs):
     model = YOLO('yolov8n-cls.pt') # load a pretrained model
@@ -143,3 +220,76 @@ def deleteFolderFiles(folderPath):
                 os.unlink(file_path)
         except:
             pass
+
+def copyFolderFiles(folderPath, destinationFolder):
+    for filename in os.listdir(folderPath):
+        file_path = os.path.join(folderPath, filename)
+        try:
+            if os.path.isfile(file_path):
+                shutil.copy(file_path, destinationFolder)
+        except:
+            pass
+
+def augmentImages(imgFolder, destinationFolder, transformsList, nRuns):
+    fileCounter = 0
+    files = [i for i in os.listdir(imgFolder) if i.lower().endswith(('.png', '.jpg', '.jpeg', '.tiff', '.bmp', '.gif'))]
+    for file in files:
+        image = read_image(imgFolder + "\\" + file)
+        for nRun in range(nRuns):
+            for transforms in transformsList:
+                transformedImage = transforms(image)
+                fileName = destinationFolder + "\\" + "Augment" + str(fileCounter) + ".png"
+                fileCounter = fileCounter + 1
+                plt.imsave(fileName,transformedImage.permute(1,2,0).cpu().numpy())
+                print(fileName + " created")
+
+def composeAugments(augments, parameters):
+    augmentList = []
+    for index, augment in enumerate(augments):
+        augmentObject = createAugment(augment, parameters[index])
+        augmentList.append(augmentObject)
+    transforms = v2.Compose(augmentList)
+    return transforms
+
+def createAugment(augment, parameters):
+    augmentRet = None
+    if augment == DLPO.AUGMENT_OPTIONS_RESIZE:
+        augmentRet = v2.Resize(size = (parameters[DLPO.AUGMENT_RESIZE_CONFIG_SIZE_H], 
+                                       parameters[DLPO.AUGMENT_RESIZE_CONFIG_SIZE_W]))
+    elif augment == DLPO.AUGMENT_OPTIONS_RANDOM_RESIZE:
+        augmentRet = v2.RandomResize(min_size = parameters[DLPO.AUGMENT_RANDOM_RESIZE_CONFIG_SIZE_MIN], 
+                                     max_size = parameters[DLPO.AUGMENT_RANDOM_RESIZE_CONFIG_SIZE_MAX])
+    elif augment == DLPO.AUGMENT_OPTIONS_RANDOM_CROP:
+        augmentRet = v2.RandomCrop(size = (parameters[DLPO.AUGMENT_RANDOM_CROP_CONFIG_SIZE_H],
+                                           parameters[DLPO.AUGMENT_RANDOM_CROP_CONFIG_SIZE_W]),
+                                    padding = parameters[DLPO.AUGMENT_RANDOM_CROP_CONFIG_PADDING])
+    elif augment == DLPO.AUGMENT_OPTIONS_CENTER_CROP:
+        augmentRet = v2.CenterCrop(size = (parameters[DLPO.AUGMENT_CENTER_CROP_CONFIG_SIZE_H],
+                                           parameters[DLPO.AUGMENT_CENTER_CROP_CONFIG_SIZE_W]))
+    elif augment == DLPO.AUGMENT_OPTIONS_RANDOM_HORIZONTAL_FLIP:
+        augmentRet = v2.RandomHorizontalFlip(p = parameters[DLPO.AUGMENT_RANDOM_HORIZONTAL_FLIP_CONFIG_PROB] / 100)
+    elif augment == DLPO.AUGMENT_OPTIONS_RANDOM_VERTICAL_FLIP:
+        augmentRet = v2.RandomVerticalFlip(p = parameters[DLPO.AUGMENT_RANDOM_VERTICAL_FLIP_CONFIG_PROB] / 100)
+    elif augment == DLPO.AUGMENT_OPTIONS_PAD:
+        augmentRet = v2.Pad(padding = parameters[DLPO.AUGMENT_PAD_CONFIG_PADDING])
+    elif augment == DLPO.AUGMENT_OPTIONS_RANDOM_ROTATION:
+        augmentRet = v2.RandomRotation(degrees = parameters[DLPO.AUGMENT_RANDOM_ROTATION_CONFIG_DEGREES])
+    elif augment == DLPO.AUGMENT_OPTIONS_RANDOM_AFFINE:
+        augmentRet = v2.RandomAffine(degrees = parameters[DLPO.AUGMENT_RANDOM_AFFINE_CONFIG_DEGREES],
+                                     translate = parameters[DLPO.AUGMENT_RANDOM_AFFINE_CONFIG_TRANSLATE],
+                                     scale = parameters[DLPO.AUGMENT_RANDOM_AFFINE_CONFIG_SCALE],
+                                     shear = parameters[DLPO.AUGMENT_RANDOM_AFFINE_CONFIG_SHEAR])
+    elif augment == DLPO.AUGMENT_OPTIONS_RANDOM_PERSPECTIVE:
+        augmentRet = v2.RandomPerspective(distortion_scale = parameters[DLPO.AUGMENT_RANDOM_PERSPECTIVE_CONFIG_DISTORTION_PERCENT] / 100,
+                                          p = parameters[DLPO.AUGMENT_RANDOM_PERSPECTIVE_CONFIG_PROBABILITY])
+    elif augment == DLPO.AUGMENT_OPTIONS_COLOR_JITTER:
+        augmentRet = v2.ColorJitter(brightness = parameters[DLPO.AUGMENT_COLOR_JITTER_CONFIG_BRIGHTNESS] / 100,
+                                    contrast = parameters[DLPO.AUGMENT_COLOR_JITTER_CONFIG_CONTRAST] / 100,
+                                    saturation = parameters[DLPO.AUGMENT_COLOR_JITTER_CONFIG_SATURATION] / 100,
+                                    hue = parameters[DLPO.AUGMENT_COLOR_JITTER_CONFIG_HUE] / 100)
+    elif augment == DLPO.AUGMENT_OPTIONS_GAUSSIAN_BLUR:
+        augmentRet = v2.GaussianBlur(kernel_size = parameters[DLPO.AUGMENT_GAUSSIAN_BLUR_CONFIG_KERNEL],
+                                     sigma = parameters[DLPO.AUGMENT_GAUSSIAN_BLUR_CONFIG_SIGMA] / 100)
+    elif augment == DLPO.AUGMENT_OPTIONS_RANDOM_INVERT:
+        augmentRet = v2.RandomInvert(p = parameters[DLPO.AUGMENT_RANDOM_INVERT_CONFIG_PERCENT] / 100)
+    return augmentRet

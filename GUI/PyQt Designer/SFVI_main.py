@@ -9,6 +9,7 @@ from PIL import Image as im
 from DialogCommandSelection import DialogCommandSelection
 from DialogProgramSelection import DialogProgramSelection
 from DialogTrainOutput import DialogTrainOutput
+from DialogAugmentSelection import DialogAugmentSelection
 
 import VisionProgramOptions as VPO
 import DeepLearningProgramOptions as DLPO
@@ -16,6 +17,7 @@ from VisionProgram import ProgramStructure
 import VisionProgram as VP
 import DeepLearningModule as DLM
 import DialogTrainOutput as DTO
+
 
 import cv2 as cv #FOR DEBUGGING
 
@@ -355,11 +357,128 @@ class MainWindow(QMainWindow):
     #########################################################
     #ScreenDLProgramEditor
     def ScreenDLProgramEditorLogic(self):
+        self.loadDLTreeView()
+        self.treeViewDLProgramEditor.clicked.connect(self.DLtreeViewClicked)
         self.pushButtonDLProgramExit.clicked.connect(self.goToScreenProgrammingMain)
         self.pushButtonDLProgramOKPath.clicked.connect(lambda: self.getpathName("OK"))
         self.pushButtonDLProgramNOKPath.clicked.connect(lambda: self.getpathName("NOK"))
         self.pushButtonDLProgramTrain.clicked.connect(self.trainButtonAction)
         self.pushButtonDLProgramPredict.clicked.connect(self.predictButtonAction)
+        self.pushButtonDLProgramAddAugment.clicked.connect(self.addAugmentToDLTree)
+        self.pushButtonDLProgramAddAugmentGroup.clicked.connect(self.addAugmentGroupToDLTreeView)
+        self.pushButtonDLProgramRemoveAugment.clicked.connect(self.deleteAugmentFromDLTree)
+        self.pushButtonDLProgramAugment.clicked.connect(self.augmentButtonAction)
+
+    def loadDLTreeView(self):
+        #Setup first item for TreeView and configure QTreeView
+        self.DLitemModel = QStandardItemModel()
+        parentItem = self.DLitemModel.invisibleRootItem()
+        item = QStandardItem(DLPO.GROUP_NAME_STRING + "1")
+        parentItem.appendRow(item)
+        self.DLtreeIndex = item.index()
+        self.treeViewDLProgramEditor.setModel(self.DLitemModel)
+        self.DLmodel.addAugmentGroup()
+        self.treeViewDLProgramEditor.setCurrentIndex(self.DLtreeIndex)
+        self.DLtreeViewClicked(item.index())
+
+    def DLtreeViewClicked(self, index):
+        #Get configuration from currently selected tree command and pass it to vision program
+        previousItem = self.DLitemModel.itemFromIndex(self.DLtreeIndex)
+        configuration = self.getAugmentConfigurationFromDLTree()
+        groupNumber = self.getAugmentGroupNumber(previousItem)
+        if not previousItem.text().startswith(DLPO.GROUP_NAME_STRING):
+            self.DLmodel.changeAugmentConfiguration(groupIndex = groupNumber, augmentName = previousItem.text(), configuration = configuration)
+        self.DLtreeIndex = index #Update treeIndex
+        #Update currently displayed widget according to type of instruction selected
+        item = self.DLitemModel.itemFromIndex(index)
+        groupNumber = self.getSelectedDLTreeViewGroupNumber()
+        augmentType = item.text()
+        if not augmentType.startswith(DLPO.GROUP_NAME_STRING):
+            augmentConfiguration = self.DLmodel.getAugmentConfiguration(groupIndex = groupNumber, augmentName = augmentType)
+            self.updateAugmentConfigurationDLTree(augmentConfiguration)
+
+    def getAugmentConfigurationFromDLTree(self):
+        instructionData = []
+        #stackCurrentWidgetName = self.stackedWidgetScreenProgramEditor.currentWidget().objectName()
+        instructionData.append(self.spinBoxVariable1DLProgramEditor.value())
+        instructionData.append(self.spinBoxVariable2DLProgramEditor.value())
+        instructionData.append(self.spinBoxVariable3DLProgramEditor.value())
+        instructionData.append(self.spinBoxVariable4DLProgramEditor.value())
+        return instructionData
+
+    def updateAugmentConfigurationDLTree(self, augmentConfig):
+        self.spinBoxVariable1DLProgramEditor.setValue(augmentConfig[DLPO.AUGMENT_CONFIG_VARIABLES_1])
+        self.spinBoxVariable2DLProgramEditor.setValue(augmentConfig[DLPO.AUGMENT_CONFIG_VARIABLES_2])
+        self.spinBoxVariable3DLProgramEditor.setValue(augmentConfig[DLPO.AUGMENT_CONFIG_VARIABLES_3])
+        self.spinBoxVariable4DLProgramEditor.setValue(augmentConfig[DLPO.AUGMENT_CONFIG_VARIABLES_4])
+
+    def addAugmentToDLTree(self):
+        #Launch dialog
+        augmentSelectDialog = DialogAugmentSelection(self) #CREAR DIALOGO
+        augmentSelectDialog.exec()
+        dialogReturnString = augmentSelectDialog.getReturnString()
+        parentItem = self.DLitemModel.itemFromIndex(self.DLtreeIndex)
+        if parentItem.parent() != None:
+            parentItem = parentItem.parent()
+        augmentType = dialogReturnString
+        item = QStandardItem(augmentType)
+        parentItem.appendRow(item)
+        #Send information to DL model
+        groupNumber = self.getSelectedDLTreeViewGroupNumber()
+        self.DLmodel.addAugment(groupNumber, augmentType)
+        #Select newly created index on treeView
+        self.DLtreeViewClicked(item.index())
+        self.treeViewDLProgramEditor.setCurrentIndex(item.index())
+
+    def addAugmentGroupToDLTreeView(self):
+        #Create new group and add it to the treeView
+        parentItem = self.DLitemModel.invisibleRootItem()
+        groupIndex = self.DLmodel.addAugmentGroup()
+        item = QStandardItem(DLPO.GROUP_NAME_STRING + str(groupIndex))
+        parentItem.appendRow(item)
+        self.DLtreeIndex = item.index()
+        self.DLtreeViewClicked(item.index())
+
+    def getSelectedDLTreeViewGroupNumber(self):
+        selectedIndex = QModelIndex(self.treeViewDLProgramEditor.selectedIndexes()[0])
+        selectedItem = self.DLitemModel.itemFromIndex(selectedIndex)
+        parentItem = selectedItem.parent()
+        if parentItem != None:
+            groupItem = parentItem
+        else:
+            groupItem = selectedItem
+        groupName = groupItem.text()
+        groupNumber = groupName[(groupName.rfind(" ")+1):]
+        return int(groupNumber)
+
+    def getAugmentGroupNumber(self, item):
+        parentItem = item.parent()
+        if parentItem != None:
+            groupItem = parentItem
+        else:
+            groupItem = item
+        groupName = groupItem.text()
+        groupNumber = groupName[(groupName.rfind(" ")+1):]
+        return int(groupNumber)
+
+    def deleteAugmentFromDLTree(self):
+        selectedIndex = QModelIndex(self.treeViewDLProgramEditor.selectedIndexes()[0])
+        selectedItem = self.DLitemModel.itemFromIndex(selectedIndex)
+        groupNumber = self.getSelectedDLTreeViewGroupNumber()
+        self.DLmodel.removeAugment(groupNumber, selectedItem.text())
+        self.DLtreeIndex = selectedIndex.parent()
+        self.DLitemModel.removeRow(selectedIndex.row(), selectedIndex.parent())
+        item = self.DLitemModel.itemFromIndex(self.DLtreeIndex)
+        counter = 0
+        while (item == None):
+            item = self.DLitemModel.itemFromIndex(self.DLitemModel.index(counter, 0))
+            counter = counter + 1
+            self.DLtreeIndex = self.DLitemModel.indexFromItem(item)
+        #instructionType = self.visionProgramStructure.getInstructionType(item.text())
+        #instructionConfiguration = self.visionProgramStructure.getInstructionConfiguration(item.text())
+        #self.updateStackedWidgetScreenProgramEditor(instructionType, instructionConfiguration)
+        self.DLtreeViewClicked(self.DLtreeIndex)
+        self.treeViewDLProgramEditor.setCurrentIndex(self.DLtreeIndex)
 
     def getpathName(self, pathToSet):
         options = QFileDialog.Options()
@@ -389,6 +508,18 @@ class MainWindow(QMainWindow):
         prediction, showImage = self.DLmodel.modelPredict(imagePath = imageFile)
         self.setImageScreenDLProgramEditor(showImage)
 
+    def augmentButtonAction(self):
+        options = QFileDialog.Options()
+        options |= QFileDialog.DontUseNativeDialog
+        path = QFileDialog.getExistingDirectory(self,"Select Directory", options=options)
+        augmentRuns = self.spinBoxDLProgramAaugmentRuns.value()
+        #Launch dialog
+        augmentOutputDialog = DialogTrainOutput(self)
+        augmentOutputDialog.show()
+        self.p2 = ProcessRunnable(target=self.DLmodel.augmentImages, args=[path, augmentRuns])
+        self.p2.start()
+        #VER ACA SI CONVIENE HACER QUE EL OK PATH Y NOK PATH CAMBIEN AL DESTINATION PATH
+
     def setImageScreenDLProgramEditor(self, image):
         try:
             tempImagePath = "temp/programImage.png"
@@ -405,7 +536,9 @@ class MainWindow(QMainWindow):
 
     #Class attributes
     itemModel = None
+    DLitemModel = None
     treeIndex = None
+    DLTreeIndex = None
     tableModel = None
     visionProgramStructure = ProgramStructure()
     DLmodel = DLM.modelDL()
