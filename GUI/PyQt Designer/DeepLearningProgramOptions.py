@@ -1,5 +1,3 @@
-
-
 deepLearningModelNames = ("VGG16", "Resnet18", "EfficientNet", "RegNet128", "SWIN", "YOLOv8")
 DL_MODEL_NAME_VGG16 = deepLearningModelNames[0]
 DL_MODEL_NAME_RESNET18 = deepLearningModelNames[1]
@@ -10,6 +8,22 @@ DL_MODEL_NAME_YOLOV8 = deepLearningModelNames[5]
 
 #GROUP NAMING
 GROUP_NAME_STRING = "Augment Group "
+
+#CLASSES
+classes = ["OK", "NOK"]
+DL_CLASS_OK = classes[0]
+DL_CLASS_NOK = classes[1]
+
+CLASS_QUANTITY = len(classes)
+
+#GENERAL TRAIN CONFIG
+MODEL_TRANSFORM_IMAGE_WIDTH = 300
+MODEL_TRANSFORM_IMAGE_HEIGHT = 300
+
+#PATHS
+#PATH_TEMP_AUGMENTATION = "C:\\Users\\Alejandro\\Desktop\\MIA Trabajo final\\Repositorio\\SFVI-MIA\\GUI\\PyQt Designer\\temp\\DeepLearning\\imageAugmentation"
+PATH_TEMP_MODEL_SAVE = "C:\\Users\\Alejandro\Desktop\\MIA Trabajo final\\Repositorio\\SFVI-MIA\\GUI\\PyQt Designer\\temp\\DeepLearning\\Models"
+PATH_TEMP_MODEL_RESULTS = "C:\\Users\Alejandro\\Desktop\\MIA Trabajo final\\Repositorio\\SFVI-MIA\\GUI\\PyQt Designer\\temp\\DeepLearning\\Results"
 
 #AUGMENT OPTIONS
 augmentOptions = ("Resize", "Random Resize", "Random Crop", "Center Crop", 

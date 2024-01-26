@@ -489,15 +489,21 @@ class MainWindow(QMainWindow):
                 self.DLmodel.setOKPath(path)
             elif pathToSet == "NOK":
                 self.DLmodel.setNOKPath(path)
-    
+
+    def trainModelAndGetResult(self):
+        batchSize = self.spinBoxDLProgramBatchSize.value()
+        epochs = self.spinBoxDLProgramEpochs.value()
+        trainTestSplit = self.spinBoxDLProgramTrainTestSplit.value()
+        self.DLmodel.trainModel(epochs, trainTestSplit, batchSize)
+        showImage = self.DLmodel.getTrainResultGraph()
+        if len(showImage) > 0:
+            self.setImageScreenDLProgramEditor(showImage)
+
     def trainButtonAction(self):
         #Launch dialog
         trainOutputDialog = DialogTrainOutput(self)
         trainOutputDialog.show()
-        batchSize = self.spinBoxDLProgramBatchSize.value()
-        epochs = self.spinBoxDLProgramEpochs.value()
-        trainTestSplit = self.spinBoxDLProgramTrainTestSplit.value()
-        self.p = ProcessRunnable(target=self.DLmodel.trainModel, args=[epochs, trainTestSplit])
+        self.p = ProcessRunnable(target=self.trainModelAndGetResult, args=[])
         self.p.start()
         
     def predictButtonAction(self):
@@ -513,6 +519,7 @@ class MainWindow(QMainWindow):
         options |= QFileDialog.DontUseNativeDialog
         path = QFileDialog.getExistingDirectory(self,"Select Directory", options=options)
         augmentRuns = self.spinBoxDLProgramAaugmentRuns.value()
+        self.DLtreeViewClicked(self.DLtreeIndex)
         #Launch dialog
         augmentOutputDialog = DialogTrainOutput(self)
         augmentOutputDialog.show()
