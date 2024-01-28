@@ -18,6 +18,10 @@ from PIL import Image
 #Model imports
 from ultralytics import YOLO
 from torchvision.models import resnet18, ResNet18_Weights
+from torchvision.models import vgg16, VGG16_Weights
+from torchvision.models import EfficientNet_V2_L_Weights, efficientnet_v2_l
+from torchvision.models import RegNet_Y_128GF_Weights, regnet_y_128gf
+from torchvision.models import Swin_V2_B_Weights, swin_v2_b
 
 #Local imports
 import DeepLearningProgramOptions as DLPO
@@ -65,9 +69,24 @@ class modelDL():
             self.modelPath = trainYoloV8Model(epochs)
         elif self.modelType == DLPO.DL_MODEL_NAME_RESNET18:
             print("RESNET18 Model")
-            prepareResnet18Files(self.okPath, self.nokPath, trainTestSplit)
+            prepareTorchModelFiles(self.okPath, self.nokPath, trainTestSplit)
             history, self.modelPath, self.modelResultPath = trainResnet18Model(epochs, batchSize, DLPO.MODEL_TRANSFORM_IMAGE_WIDTH, DLPO.MODEL_TRANSFORM_IMAGE_HEIGHT)
-
+        elif self.modelType == DLPO.DL_MODEL_NAME_VGG16:
+            print("VGG16 Model")
+            prepareTorchModelFiles(self.okPath, self.nokPath, trainTestSplit)
+            history, self.modelPath, self.modelResultPath = trainVGG16Model(epochs, batchSize, DLPO.MODEL_TRANSFORM_IMAGE_WIDTH, DLPO.MODEL_TRANSFORM_IMAGE_HEIGHT)
+        elif self.modelType == DLPO.DL_MODEL_NAME_EFFICIENTNET:
+            print("EfficientNet Model")
+            prepareTorchModelFiles(self.okPath, self.nokPath, trainTestSplit)
+            history, self.modelPath, self.modelResultPath = trainEfficientNetModel(epochs, batchSize, DLPO.MODEL_TRANSFORM_IMAGE_WIDTH, DLPO.MODEL_TRANSFORM_IMAGE_HEIGHT)
+        elif self.modelType == DLPO.DL_MODEL_NAME_REGNET128:
+            print("RegNet Model")
+            prepareTorchModelFiles(self.okPath, self.nokPath, trainTestSplit)
+            history, self.modelPath, self.modelResultPath = trainRegNetModel(epochs, batchSize, DLPO.MODEL_TRANSFORM_IMAGE_WIDTH, DLPO.MODEL_TRANSFORM_IMAGE_HEIGHT)
+        elif self.modelType == DLPO.DL_MODEL_NAME_SWIN:
+            print("Swin Model")
+            prepareTorchModelFiles(self.okPath, self.nokPath, trainTestSplit)
+            history, self.modelPath, self.modelResultPath = trainSwinModel(epochs, batchSize, DLPO.MODEL_TRANSFORM_IMAGE_WIDTH, DLPO.MODEL_TRANSFORM_IMAGE_HEIGHT)
         print("Model Training Finished")
     
     def modelPredict(self, imagePath = None):
@@ -79,6 +98,14 @@ class modelDL():
             predictRet = predictYoloV8Image(modelPath = str(self.modelPath) + "\\weights\\best.pt",imagePath = imagePath)
         elif self.modelType == DLPO.DL_MODEL_NAME_RESNET18:
             predictRet = predictResnet18Image(modelPath = self.modelPath, imagePath = imagePath, imageWidth = DLPO.MODEL_TRANSFORM_IMAGE_WIDTH, imageHeight = DLPO.MODEL_TRANSFORM_IMAGE_HEIGHT)
+        elif self.modelType == DLPO.DL_MODEL_NAME_VGG16:
+            predictRet = predictVGG16Image(modelPath = self.modelPath, imagePath = imagePath, imageWidth = DLPO.MODEL_TRANSFORM_IMAGE_WIDTH, imageHeight = DLPO.MODEL_TRANSFORM_IMAGE_HEIGHT)
+        elif self.modelType == DLPO.DL_MODEL_NAME_EFFICIENTNET:
+            predictRet = predictEfficientNetImage(modelPath = self.modelPath, imagePath = imagePath, imageWidth = DLPO.MODEL_TRANSFORM_IMAGE_WIDTH, imageHeight = DLPO.MODEL_TRANSFORM_IMAGE_HEIGHT)
+        elif self.modelType == DLPO.DL_MODEL_NAME_REGNET128:
+            predictRet = predictRegNetImage(modelPath = self.modelPath, imagePath = imagePath, imageWidth = DLPO.MODEL_TRANSFORM_IMAGE_WIDTH, imageHeight = DLPO.MODEL_TRANSFORM_IMAGE_HEIGHT)
+        elif self.modelType == DLPO.DL_MODEL_NAME_SWIN:
+            predictRet = predictSwinImage(modelPath = self.modelPath, imagePath = imagePath, imageWidth = DLPO.MODEL_TRANSFORM_IMAGE_WIDTH, imageHeight = DLPO.MODEL_TRANSFORM_IMAGE_HEIGHT)
         imageRet = VM.loadImage(imagePath, grayscale = False)
         imageRet = DM.drawMeasurementResult(imageRet, predictRet)
         return predictRet, imageRet
@@ -211,59 +238,6 @@ def predictYoloV8Image(modelPath, imagePath):
 
 #########################################################
 #RESNET18
-
-def createImageSplitFolders():
-    path = PATH_TEMP_SPLIT_IMAGES
-    try:
-        os.mkdir(path + "\\train")
-    except:
-        pass
-    try:
-        os.mkdir(path + "\\test")
-    except:
-        pass
-    try:
-        os.mkdir(path + "\\train\\" + DLPO.DL_CLASS_OK)
-    except:
-        pass
-    try:
-        os.mkdir(path + "\\train\\" + DLPO.DL_CLASS_NOK)
-    except:
-        pass
-    try:
-        os.mkdir(path + "\\test\\" + DLPO.DL_CLASS_OK)
-    except:
-        pass
-    try:
-        os.mkdir(path + "\\test\\" + DLPO.DL_CLASS_NOK)
-    except:
-        pass
-
-def prepareResnet18Files(okPath, nokPath, testTrainSplit): #ESTA FUNCION QUEDO PRACTICAMENTE IGUAL A LA DE YOLOV8 - VER DE UNIFICAR
-    if okPath == None or nokPath == None:
-        print("Error: Image paths not found")
-        return #return if paths have not been set
-    createImageSplitFolders()
-    #Delete existing images in train folders
-    deletePaths = [PATH_TEMP_SPLIT_IMAGES_TRAIN + "\\OK", PATH_TEMP_SPLIT_IMAGES_TRAIN + "\\NOK", PATH_TEMP_SPLIT_IMAGES_TEST + "\\OK", PATH_TEMP_SPLIT_IMAGES_TEST + "\\NOK"]
-    for folderPath in deletePaths:
-        deleteFolderFiles(folderPath)
-    #Split and copy the images
-    threshold = testTrainSplit / 100 #Write test Train Split as a float
-    for img in os.listdir(okPath): #Split OK Images
-        if os.path.isfile(okPath + "\\" + img):
-            if random.uniform(0,1) > threshold:
-                shutil.copy(okPath + "\\" + img, PATH_TEMP_SPLIT_IMAGES_TRAIN + "\\OK")
-            else:
-                shutil.copy(okPath + "\\" + img, PATH_TEMP_SPLIT_IMAGES_TEST + "\\OK")
-    for img in os.listdir(nokPath): #Split NOK Images
-        if os.path.isfile(nokPath + "\\" + img):
-            if random.uniform(0,1) > threshold:
-                shutil.copy(nokPath + "\\" + img, PATH_TEMP_SPLIT_IMAGES_TRAIN + "\\NOK")
-            else:
-                shutil.copy(nokPath + "\\" + img, PATH_TEMP_SPLIT_IMAGES_TEST + "\\NOK")
-
-
 def createResnet18StandardModel():
     weights = ResNet18_Weights.IMAGENET1K_V1
     model = resnet18(weights=weights)
@@ -273,7 +247,7 @@ def createResnet18StandardModel():
     for param in model.parameters():
         param.requires_grad = False
     last_layer_in_features = model.fc.in_features
-    model.fc = torch.nn.Linear(in_features=last_layer_in_features, out_features=2)
+    model.fc = torch.nn.Linear(in_features=last_layer_in_features, out_features = DLPO.CLASS_QUANTITY)
     return model
 
 def trainResnet18Model(epochs, batchSize, imageWidth, imageHeight):
@@ -281,10 +255,7 @@ def trainResnet18Model(epochs, batchSize, imageWidth, imageHeight):
     graphPath = DLPO.PATH_TEMP_MODEL_RESULTS + "\\" + 'modelResult.png'
 
     data_transforms = getStandardModelDataTransforms(imageWidth, imageHeight)
-    train_set = torchvision.datasets.ImageFolder(root = PATH_TEMP_SPLIT_IMAGES_TRAIN, transform=data_transforms)
-    valid_set = torchvision.datasets.ImageFolder(root = PATH_TEMP_SPLIT_IMAGES_TEST, transform=data_transforms)
-    train_loader = torch.utils.data.DataLoader(train_set, batch_size=batchSize, shuffle=True)
-    valid_loader = torch.utils.data.DataLoader(valid_set, batch_size=batchSize, shuffle=True)
+    train_set, train_set, train_loader, valid_loader = getModelSetsAndLoaders(batchSize = batchSize, data_transforms = data_transforms)
 
     resnet18_model = createResnet18StandardModel() #RESNET18
     optimizer = torch.optim.Adam(resnet18_model.parameters(), lr=0.00001)
@@ -308,16 +279,193 @@ def predictResnet18Image(modelPath, imagePath, imageWidth, imageHeight):
     model.load_state_dict(torch.load(modelPath))
     model.eval()
     image = Image.open(imagePath)
-    data_transforms = getStandardModelDataTransforms(imageWidth, imageHeight)
-    imageTransformed = data_transforms(image)
-    prediction = model(imageTransformed.unsqueeze(0)).squeeze(0).softmax(0)
-    class_id = prediction.argmax().item()
-    score = prediction[class_id].item()
-    if class_id == 1: #Class is identified as OK
-        predictRet = True
+    predictRet = makeTorchPrediction(model, image, imageWidth, imageHeight)
     return predictRet
 
 #RESNET18 END
+#########################################################
+
+
+#########################################################
+#VGG16
+def createVGG16StandardModel():
+    weights_vgg = VGG16_Weights.IMAGENET1K_V1
+    #transforms_vgg = weights_vgg.transforms()
+    vgg16_model = vgg16(weights=weights_vgg)
+    if torch.cuda.is_available():
+        vgg16_model.to("cuda")
+    for param in vgg16_model.parameters():
+        param.requires_grad = False
+    last_layer_in_features_vgg = vgg16_model.classifier[-1].in_features
+    vgg16_model.classifier[-1] = torch.nn.Linear(in_features=last_layer_in_features_vgg, out_features = DLPO.CLASS_QUANTITY)
+    return vgg16_model
+
+def trainVGG16Model(epochs, batchSize, imageWidth, imageHeight):
+    retPath = DLPO.PATH_TEMP_MODEL_SAVE + "\\" + "VGG16Model.pth"
+    graphPath = DLPO.PATH_TEMP_MODEL_RESULTS + "\\" + 'modelResult.png'
+
+    data_transforms = getStandardModelDataTransforms(imageWidth, imageHeight)
+    train_set, train_set, train_loader, valid_loader = getModelSetsAndLoaders(batchSize = batchSize, data_transforms = data_transforms)
+    vgg16_model = createVGG16StandardModel() #VGG16
+
+    optimizer_vgg = torch.optim.Adam(vgg16_model.parameters(), lr=0.00001)
+    loss_vgg = torch.nn.CrossEntropyLoss()
+    metric_vgg = torchmetrics.Accuracy(task='multiclass', num_classes = DLPO.CLASS_QUANTITY)
+    data_vgg = {"train": train_loader, "valid": valid_loader, "image_width": imageWidth, "image_height": imageHeight}
+    writer_vgg = {"train": SummaryWriter(log_dir = PATH_TEMP_LOG_TRAIN),
+            "valid": SummaryWriter(log_dir = PATH_TEMP_LOG_TEST)}
+    
+    history_vgg = train(model = vgg16_model.to("cpu"),optimizer = optimizer_vgg,
+                    criterion = loss_vgg, metric = metric_vgg, data = data_vgg,
+                    epochs = epochs, tb_writer = writer_vgg)
+    plotModelTrainHistory(history_vgg, graphPath)
+    torch.save(vgg16_model.state_dict(), retPath)
+    return history_vgg, retPath, graphPath
+
+def predictVGG16Image(modelPath, imagePath, imageWidth, imageHeight):
+    predictRet = False
+    model = createVGG16StandardModel()
+    model.load_state_dict(torch.load(modelPath))
+    model.eval()
+    image = Image.open(imagePath)
+    predictRet = makeTorchPrediction(model, image, imageWidth, imageHeight)
+    return predictRet
+#VGG16 END
+#########################################################
+
+#########################################################
+#EFFICIENTNET
+def createEfficientNetStandardModel():
+    weights_effnet = EfficientNet_V2_L_Weights.IMAGENET1K_V1
+    effnet_model = efficientnet_v2_l(weights=weights_effnet)
+    if torch.cuda.is_available():
+        effnet_model.to("cuda")
+    for param in effnet_model.parameters():
+        param.requires_grad = False
+    last_layer_in_features_effnet = effnet_model.classifier[-1].in_features
+    effnet_model.classifier[-1] = torch.nn.Linear(in_features=last_layer_in_features_effnet, out_features = DLPO.CLASS_QUANTITY)
+    return effnet_model
+
+def trainEfficientNetModel(epochs, batchSize, imageWidth, imageHeight):
+    retPath = DLPO.PATH_TEMP_MODEL_SAVE + "\\" + "EfficientNetModel.pth"
+    graphPath = DLPO.PATH_TEMP_MODEL_RESULTS + "\\" + 'modelResult.png'
+
+    data_transforms = getStandardModelDataTransforms(imageWidth, imageHeight)
+    train_set, train_set, train_loader, valid_loader = getModelSetsAndLoaders(batchSize = batchSize, data_transforms = data_transforms)
+    effnet_model = createEfficientNetStandardModel() #VGG16
+
+    optimizer_effnet = torch.optim.Adam(effnet_model.parameters(), lr=0.00001)
+    loss_effnet = torch.nn.CrossEntropyLoss()
+    metric_effnet = torchmetrics.Accuracy(task='multiclass', num_classes = DLPO.CLASS_QUANTITY)
+    data_effnet = {"train": train_loader, "valid": valid_loader, "image_width": imageWidth, "image_height": imageHeight}
+    writer_effnet = {"train": SummaryWriter(log_dir = PATH_TEMP_LOG_TRAIN),
+            "valid": SummaryWriter(log_dir = PATH_TEMP_LOG_TEST)}
+
+    history_effnet = train(model = effnet_model.to("cpu"), optimizer = optimizer_effnet,
+                    criterion = loss_effnet, metric = metric_effnet, data = data_effnet,
+                    epochs = epochs, tb_writer = writer_effnet)
+    
+    plotModelTrainHistory(history_effnet, graphPath)
+    torch.save(effnet_model.state_dict(), retPath)
+    return history_effnet, retPath, graphPath
+
+def predictEfficientNetImage(modelPath, imagePath, imageWidth, imageHeight):
+    predictRet = False
+    model = createEfficientNetStandardModel()
+    model.load_state_dict(torch.load(modelPath))
+    model.eval()
+    image = Image.open(imagePath)
+    predictRet = makeTorchPrediction(model, image, imageWidth, imageHeight)
+    return predictRet
+
+#EFFICIENTNET END
+#########################################################
+
+
+#########################################################
+#REGNET
+def createRegNetStandardModel():
+    weights_regnet = RegNet_Y_128GF_Weights.IMAGENET1K_SWAG_E2E_V1
+    transforms_regnet = weights_regnet.transforms()
+    regnet_model = regnet_y_128gf(weights=weights_regnet)
+    if torch.cuda.is_available():
+        regnet_model.to("cuda")
+    for param in regnet_model.parameters():
+        param.requires_grad = False
+    last_layer_in_features_regnet = regnet_model.fc.in_features
+    regnet_model.fc = torch.nn.Linear(in_features=last_layer_in_features_regnet, out_features = DLPO.CLASS_QUANTITY)
+    return regnet_model
+
+def trainRegNetModel(epochs, batchSize, imageWidth, imageHeight):
+    retPath = DLPO.PATH_TEMP_MODEL_SAVE + "\\" + "RegNetModel.pth"
+    graphPath = DLPO.PATH_TEMP_MODEL_RESULTS + "\\" + 'modelResult.png'
+    data_transforms = getStandardModelDataTransforms(imageWidth, imageHeight)
+    train_set, train_set, train_loader, valid_loader = getModelSetsAndLoaders(batchSize = batchSize, data_transforms = data_transforms)
+    regnet_model = createRegNetStandardModel() #REGNET
+    optimizer_regnet = torch.optim.Adam(regnet_model.parameters(), lr=0.00001)
+    loss_regnet = torch.nn.CrossEntropyLoss()
+    metric_regnet = torchmetrics.Accuracy(task='multiclass', num_classes = DLPO.CLASS_QUANTITY)
+    data_regnet = {"train": train_loader, "valid": valid_loader, "image_width": imageWidth, "image_height": imageHeight}
+    writer_regnet = {"train": SummaryWriter(log_dir = PATH_TEMP_LOG_TRAIN), "valid": SummaryWriter(log_dir = PATH_TEMP_LOG_TEST)}
+    history_regnet = train(model = regnet_model.to("cpu"),optimizer = optimizer_regnet,
+                    criterion = loss_regnet, metric = metric_regnet, data = data_regnet,
+                    epochs = epochs, tb_writer = writer_regnet)
+    plotModelTrainHistory(history_regnet, graphPath)
+    torch.save(regnet_model.state_dict(), retPath)
+    return history_regnet, retPath, graphPath
+
+def predictRegNetImage(modelPath, imagePath, imageWidth, imageHeight):
+    predictRet = False
+    model = createRegNetStandardModel()
+    model.load_state_dict(torch.load(modelPath))
+    model.eval()
+    image = Image.open(imagePath)
+    predictRet = makeTorchPrediction(model, image, imageWidth, imageHeight)
+    return predictRet
+#REGNET END
+#########################################################
+
+#########################################################
+#SWIN
+def createSwinStandardModel():
+    weights_swin = Swin_V2_B_Weights.IMAGENET1K_V1
+    transforms_swin = weights_swin.transforms()
+    swin_model = swin_v2_b(weights=weights_swin)
+    if torch.cuda.is_available():
+        swin_model.to("cuda")
+    for param in swin_model.parameters():
+        param.requires_grad = False
+    last_layer_in_features_swin = swin_model.head.in_features
+    swin_model.head = torch.nn.Linear(in_features=last_layer_in_features_swin, out_features = DLPO.CLASS_QUANTITY)
+    return swin_model
+
+def trainSwinModel(epochs, batchSize, imageWidth, imageHeight):
+    retPath = DLPO.PATH_TEMP_MODEL_SAVE + "\\" + "SwinModel.pth"
+    graphPath = DLPO.PATH_TEMP_MODEL_RESULTS + "\\" + 'modelResult.png'
+    data_transforms = getStandardModelDataTransforms(imageWidth, imageHeight)
+    train_set, train_set, train_loader, valid_loader = getModelSetsAndLoaders(batchSize = batchSize, data_transforms = data_transforms)
+    swin_model = createSwinStandardModel() #SWIN
+    optimizer_swin = torch.optim.Adam(swin_model.parameters(), lr=0.00001)
+    loss_swin = torch.nn.CrossEntropyLoss()
+    metric_swin = torchmetrics.Accuracy(task='multiclass', num_classes = DLPO.CLASS_QUANTITY)
+    data_swin = {"train": train_loader, "valid": valid_loader, "image_width": imageWidth, "image_height": imageHeight}
+    writer_swin = {"train": SummaryWriter(log_dir=PATH_TEMP_LOG_TRAIN), "valid": SummaryWriter(log_dir=PATH_TEMP_LOG_TEST)}
+    history_swin = train(model = swin_model.to("cpu"),optimizer = optimizer_swin,
+                    criterion = loss_swin, metric = metric_swin, data = data_swin,
+                    epochs = epochs, tb_writer = writer_swin)
+    plotModelTrainHistory(history_swin, graphPath)
+    torch.save(swin_model.state_dict(), retPath)
+    return history_swin, retPath, graphPath
+
+def predictSwinImage(modelPath, imagePath, imageWidth, imageHeight):
+    predictRet = False
+    model = createSwinStandardModel()
+    model.load_state_dict(torch.load(modelPath))
+    model.eval()
+    image = Image.open(imagePath)
+    predictRet = makeTorchPrediction(model, image, imageWidth, imageHeight)
+    return predictRet
+#SWIN END
 #########################################################
 
 ##################################################################################
@@ -415,6 +563,57 @@ def createAugment(augment, parameters):
 
 ##################################################################################
 #MULTI-MODEL FUNCTIONS
+def createImageSplitFolders():
+    path = PATH_TEMP_SPLIT_IMAGES
+    try:
+        os.mkdir(path + "\\train")
+    except:
+        pass
+    try:
+        os.mkdir(path + "\\test")
+    except:
+        pass
+    try:
+        os.mkdir(path + "\\train\\" + DLPO.DL_CLASS_OK)
+    except:
+        pass
+    try:
+        os.mkdir(path + "\\train\\" + DLPO.DL_CLASS_NOK)
+    except:
+        pass
+    try:
+        os.mkdir(path + "\\test\\" + DLPO.DL_CLASS_OK)
+    except:
+        pass
+    try:
+        os.mkdir(path + "\\test\\" + DLPO.DL_CLASS_NOK)
+    except:
+        pass
+
+def prepareTorchModelFiles(okPath, nokPath, testTrainSplit): #ESTA FUNCION QUEDO PRACTICAMENTE IGUAL A LA DE YOLOV8 - VER DE UNIFICAR
+    if okPath == None or nokPath == None:
+        print("Error: Image paths not found")
+        return #return if paths have not been set
+    createImageSplitFolders()
+    #Delete existing images in train folders
+    deletePaths = [PATH_TEMP_SPLIT_IMAGES_TRAIN + "\\OK", PATH_TEMP_SPLIT_IMAGES_TRAIN + "\\NOK", PATH_TEMP_SPLIT_IMAGES_TEST + "\\OK", PATH_TEMP_SPLIT_IMAGES_TEST + "\\NOK"]
+    for folderPath in deletePaths:
+        deleteFolderFiles(folderPath)
+    #Split and copy the images
+    threshold = testTrainSplit / 100 #Write test Train Split as a float
+    for img in os.listdir(okPath): #Split OK Images
+        if os.path.isfile(okPath + "\\" + img):
+            if random.uniform(0,1) > threshold:
+                shutil.copy(okPath + "\\" + img, PATH_TEMP_SPLIT_IMAGES_TRAIN + "\\OK")
+            else:
+                shutil.copy(okPath + "\\" + img, PATH_TEMP_SPLIT_IMAGES_TEST + "\\OK")
+    for img in os.listdir(nokPath): #Split NOK Images
+        if os.path.isfile(nokPath + "\\" + img):
+            if random.uniform(0,1) > threshold:
+                shutil.copy(nokPath + "\\" + img, PATH_TEMP_SPLIT_IMAGES_TRAIN + "\\NOK")
+            else:
+                shutil.copy(nokPath + "\\" + img, PATH_TEMP_SPLIT_IMAGES_TEST + "\\NOK")
+
 def train(model, optimizer, criterion, metric, data, epochs, tb_writer=None):
     train_loader = data["train"]
     valid_loader = data["valid"]
@@ -488,6 +687,13 @@ def getStandardModelDataTransforms(imageWidth, imageHeight):
                         ])
     return data_transforms
 
+def getModelSetsAndLoaders(batchSize, data_transforms):
+    train_set = torchvision.datasets.ImageFolder(root = PATH_TEMP_SPLIT_IMAGES_TRAIN, transform=data_transforms)
+    valid_set = torchvision.datasets.ImageFolder(root = PATH_TEMP_SPLIT_IMAGES_TEST, transform=data_transforms)
+    train_loader = torch.utils.data.DataLoader(train_set, batch_size=batchSize, shuffle=True)
+    valid_loader = torch.utils.data.DataLoader(valid_set, batch_size=batchSize, shuffle=True)
+    return train_set, valid_set, train_loader, valid_loader
+
 def plotModelTrainHistory(history, path):
     fig, axs = plt.subplots(2, 1, figsize=(8, 8))
     axs[0].plot(history["train_loss"]) 
@@ -500,5 +706,15 @@ def plotModelTrainHistory(history, path):
     axs[1].legend(['Train', 'Valid'])
     plt.savefig(path)
 
+def makeTorchPrediction(model, image, imageWidth, imageHeight):
+    predictRet = False
+    data_transforms = getStandardModelDataTransforms(imageWidth, imageHeight)
+    imageTransformed = data_transforms(image)
+    prediction = model(imageTransformed.unsqueeze(0)).squeeze(0).softmax(0)
+    class_id = prediction.argmax().item()
+    score = prediction[class_id].item()
+    if class_id == 1: #Class is identified as OK
+        predictRet = True
+    return predictRet
 #MULTI-MODEL FUNCTIONS END
 ##################################################################################
