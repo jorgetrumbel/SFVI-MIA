@@ -4,6 +4,7 @@ import matplotlib.image as mpimg
 import random
 import os
 import shutil
+import json
 
 import torch
 import torchvision
@@ -95,7 +96,7 @@ class modelDL():
         if self.modelPath == None or imagePath == None:
             return predictRet #return if paths have not been set
         if self.modelType == DLPO.DL_MODEL_NAME_YOLOV8:
-            predictRet = predictYoloV8Image(modelPath = str(self.modelPath) + "\\weights\\best.pt",imagePath = imagePath)
+            predictRet = predictYoloV8Image(modelPath = self.modelPath,imagePath = imagePath)
         elif self.modelType == DLPO.DL_MODEL_NAME_RESNET18:
             predictRet = predictResnet18Image(modelPath = self.modelPath, imagePath = imagePath, imageWidth = DLPO.MODEL_TRANSFORM_IMAGE_WIDTH, imageHeight = DLPO.MODEL_TRANSFORM_IMAGE_HEIGHT)
         elif self.modelType == DLPO.DL_MODEL_NAME_VGG16:
@@ -110,14 +111,57 @@ class modelDL():
         imageRet = DM.drawMeasurementResult(imageRet, predictRet)
         return predictRet, imageRet
     
+    def saveProgram(self, path):
+        program = {}
+        program[DLPO.DL_PROGRAM_DICT_MODEL] = self.modelType
+        program[DLPO.DL_PROGRAM_DICT_OKPATH] = self.okPath
+        program[DLPO.DL_PROGRAM_DICT_NOKPATH] = self.nokPath
+        program[DLPO.DL_PROGRAM_DICT_MODEL_PATH] = str(self.modelPath)
+        program[DLPO.DL_PROGRAM_DICT_MODEL_RESULT_PATH] = str(self.modelResultPath)
+        program[DLPO.DL_PROGRAM_DICT_AUGMENT_GROUPS] = self.augmentGroups
+        if self.modelPath != None:
+            shutil.copy(self.modelPath, str(path + "\\" + os.path.basename(os.path.normpath(self.modelPath))))
+            program[DLPO.DL_PROGRAM_DICT_MODEL_PATH] = str(path + "\\" + os.path.basename(os.path.normpath(self.modelPath)))
+        if self.modelResultPath != None:
+            shutil.copy(self.modelResultPath, path)
+            program[DLPO.DL_PROGRAM_DICT_MODEL_RESULT_PATH] = str(path + "\\" + os.path.basename(os.path.normpath(self.modelResultPath)))
+        with open(path + "\\DLModelConfig.json", "w") as write_file: #REVISAR - CAMBIAR NOMBRE DE GUARDADO
+            json.dump(program, write_file, indent=4)
+
+    def loadProgram(self, path):
+        with open(path, "r") as readFile:
+            jsonDict = json.load(readFile)
+        try:
+            self.modelType = jsonDict[DLPO.DL_PROGRAM_DICT_MODEL]
+            self.okPath = jsonDict[DLPO.DL_PROGRAM_DICT_OKPATH]
+            self.nokPath = jsonDict[DLPO.DL_PROGRAM_DICT_NOKPATH]
+            self.modelPath = jsonDict[DLPO.DL_PROGRAM_DICT_MODEL_PATH]
+            self.modelResultPath = jsonDict[DLPO.DL_PROGRAM_DICT_MODEL_RESULT_PATH]
+            self.augmentGroups = jsonDict[DLPO.DL_PROGRAM_DICT_AUGMENT_GROUPS]
+        except:
+            print("Load Program error")
+
+    def getProgramAttributes(self):
+        groups = []
+        augments = []
+        augmentsConfig = []
+        for group in self.augmentGroups.keys():
+            groupAugments = self.augmentGroups[group]
+            for augment in groupAugments.keys():
+                augments.append(augment)
+                groups.append(group)
+                augmentsConfig.append(groupAugments[augment])
+        return groups, augments, augmentsConfig
+
+
     def getNextAugmentGroupNumber(self):
         keyCounter = 1
         for key in self.augmentGroups.keys():
-            if keyCounter not in self.augmentGroups.keys():
+            if str(keyCounter) not in self.augmentGroups.keys():
                 break
             else:
                 keyCounter = keyCounter + 1
-        return keyCounter
+        return str(keyCounter)
     
     def getAugmentGroupQuantity(self):
         return len(self.augmentGroups.keys())
@@ -127,28 +171,28 @@ class modelDL():
         self.augmentGroups[nextNumber] = {}
         return nextNumber
 
-    def addAugment(self, groupIndex, augmentName):
-        augmentConfig = {DLPO.AUGMENT_CONFIG_VARIABLES_1: 0,
-                         DLPO.AUGMENT_CONFIG_VARIABLES_2: 0,
-                         DLPO.AUGMENT_CONFIG_VARIABLES_3: 0,
-                         DLPO.AUGMENT_CONFIG_VARIABLES_4: 0}
+    def addAugment(self, groupIndex:str, augmentName):
+        augmentConfig = {DLPO.AUGMENT_CONFIG_VARIABLES_1_KEY: 0,
+                         DLPO.AUGMENT_CONFIG_VARIABLES_2_KEY: 0,
+                         DLPO.AUGMENT_CONFIG_VARIABLES_3_KEY: 0,
+                         DLPO.AUGMENT_CONFIG_VARIABLES_4_KEY: 0}
         
         self.augmentGroups[groupIndex][augmentName] = augmentConfig
 
-    def removeAugment(self, groupIndex, augmentName:str):
+    def removeAugment(self, groupIndex:str, augmentName:str):
         if augmentName.startswith(DLPO.GROUP_NAME_STRING):
             del self.augmentGroups[groupIndex]
         else:
             del self.augmentGroups[groupIndex][augmentName]
 
-    def changeAugmentConfiguration(self, groupIndex, augmentName, configuration):
-        augmentConfig = {DLPO.AUGMENT_CONFIG_VARIABLES_1: configuration[0],
-                         DLPO.AUGMENT_CONFIG_VARIABLES_2: configuration[1],
-                         DLPO.AUGMENT_CONFIG_VARIABLES_3: configuration[2],
-                         DLPO.AUGMENT_CONFIG_VARIABLES_4: configuration[3]}
+    def changeAugmentConfiguration(self, groupIndex:str, augmentName:str, configuration):
+        augmentConfig = {DLPO.AUGMENT_CONFIG_VARIABLES_1_KEY: configuration[0],
+                         DLPO.AUGMENT_CONFIG_VARIABLES_2_KEY: configuration[1],
+                         DLPO.AUGMENT_CONFIG_VARIABLES_3_KEY: configuration[2],
+                         DLPO.AUGMENT_CONFIG_VARIABLES_4_KEY: configuration[3]}
         self.augmentGroups[groupIndex][augmentName] = augmentConfig
 
-    def getAugmentConfiguration(self, groupIndex, augmentName):
+    def getAugmentConfiguration(self, groupIndex:str, augmentName):
         return (self.augmentGroups[groupIndex][augmentName])
     
     def augmentImages(self, destinationFolder, nRuns):
@@ -197,7 +241,7 @@ def trainYoloV8Model(epochs):
     model = YOLO('yolov8n-cls.pt') # load a pretrained model
     result = model.train(data=PATH_TEMP_YOLO_V8_DATASET, epochs = epochs) # Train the model
     print(result)
-    return result.save_dir
+    return str(result.save_dir) + "\\weights\\best.pt"
 
 def prepareYoloV8Files(okPath, nokPath, testTrainSplit):
     if okPath == None or nokPath == None:
@@ -489,6 +533,13 @@ def copyFolderFiles(folderPath, destinationFolder):
         except:
             pass
 
+def checkIfFileIsDLProgram(path):
+    retBool = False
+    with open(path, "r") as readFile:
+        jsonDict = json.load(readFile)
+    if DLPO.DL_PROGRAM_DICT_MODEL in jsonDict.keys():
+        retBool = True
+    return retBool
 #FILE MANAGEMENT END
 ##################################################################################
 
@@ -540,8 +591,8 @@ def createAugment(augment, parameters):
         augmentRet = v2.RandomRotation(degrees = parameters[DLPO.AUGMENT_RANDOM_ROTATION_CONFIG_DEGREES])
     elif augment == DLPO.AUGMENT_OPTIONS_RANDOM_AFFINE:
         augmentRet = v2.RandomAffine(degrees = parameters[DLPO.AUGMENT_RANDOM_AFFINE_CONFIG_DEGREES],
-                                     translate = parameters[DLPO.AUGMENT_RANDOM_AFFINE_CONFIG_TRANSLATE],
-                                     scale = parameters[DLPO.AUGMENT_RANDOM_AFFINE_CONFIG_SCALE],
+                                     translate = (0, parameters[DLPO.AUGMENT_RANDOM_AFFINE_CONFIG_TRANSLATE]),
+                                     scale = (0, parameters[DLPO.AUGMENT_RANDOM_AFFINE_CONFIG_SCALE]),
                                      shear = parameters[DLPO.AUGMENT_RANDOM_AFFINE_CONFIG_SHEAR])
     elif augment == DLPO.AUGMENT_OPTIONS_RANDOM_PERSPECTIVE:
         augmentRet = v2.RandomPerspective(distortion_scale = parameters[DLPO.AUGMENT_RANDOM_PERSPECTIVE_CONFIG_DISTORTION_PERCENT] / 100,
@@ -557,6 +608,49 @@ def createAugment(augment, parameters):
     elif augment == DLPO.AUGMENT_OPTIONS_RANDOM_INVERT:
         augmentRet = v2.RandomInvert(p = parameters[DLPO.AUGMENT_RANDOM_INVERT_CONFIG_PERCENT] / 100)
     return augmentRet
+
+def getAugmentVariableNames(augment):
+    variableNames = []
+    if augment == DLPO.AUGMENT_OPTIONS_RESIZE:
+        variableNames.append(DLPO.augmentResizeNames[DLPO.AUGMENT_CONFIG_VARIABLES_1])
+        variableNames.append(DLPO.augmentResizeNames[DLPO.AUGMENT_CONFIG_VARIABLES_2])
+    elif augment == DLPO.AUGMENT_OPTIONS_RANDOM_RESIZE:
+        variableNames.append(DLPO.augmentRandomResizeNames[DLPO.AUGMENT_CONFIG_VARIABLES_1])
+        variableNames.append(DLPO.augmentRandomResizeNames[DLPO.AUGMENT_CONFIG_VARIABLES_2])
+    elif augment == DLPO.AUGMENT_OPTIONS_RANDOM_CROP:
+        variableNames.append(DLPO.augmentRandomCropNames[DLPO.AUGMENT_CONFIG_VARIABLES_1])
+        variableNames.append(DLPO.augmentRandomCropNames[DLPO.AUGMENT_CONFIG_VARIABLES_2])
+        variableNames.append(DLPO.augmentRandomCropNames[DLPO.AUGMENT_CONFIG_VARIABLES_3])
+    elif augment == DLPO.AUGMENT_OPTIONS_CENTER_CROP:
+        variableNames.append(DLPO.augmentCenterCropNames[DLPO.AUGMENT_CONFIG_VARIABLES_1])
+        variableNames.append(DLPO.augmentCenterCropNames[DLPO.AUGMENT_CONFIG_VARIABLES_2])
+    elif augment == DLPO.AUGMENT_OPTIONS_RANDOM_HORIZONTAL_FLIP:
+        variableNames.append(DLPO.augmentRandomHorizontalFlipNames[DLPO.AUGMENT_CONFIG_VARIABLES_1])
+    elif augment == DLPO.AUGMENT_OPTIONS_RANDOM_VERTICAL_FLIP:
+        variableNames.append(DLPO.augmentRandomVerticalFlipNames[DLPO.AUGMENT_CONFIG_VARIABLES_1])
+    elif augment == DLPO.AUGMENT_OPTIONS_PAD:
+        variableNames.append(DLPO.augmentPadNames[DLPO.AUGMENT_CONFIG_VARIABLES_1])
+    elif augment == DLPO.AUGMENT_OPTIONS_RANDOM_ROTATION:
+        variableNames.append(DLPO.augmentRandomRotationNames[DLPO.AUGMENT_CONFIG_VARIABLES_1])
+    elif augment == DLPO.AUGMENT_OPTIONS_RANDOM_AFFINE:
+        variableNames.append(DLPO.augmentRandomAffineNames[DLPO.AUGMENT_CONFIG_VARIABLES_1])
+        variableNames.append(DLPO.augmentRandomAffineNames[DLPO.AUGMENT_CONFIG_VARIABLES_2])
+        variableNames.append(DLPO.augmentRandomAffineNames[DLPO.AUGMENT_CONFIG_VARIABLES_3])
+        variableNames.append(DLPO.augmentRandomAffineNames[DLPO.AUGMENT_CONFIG_VARIABLES_4])
+    elif augment == DLPO.AUGMENT_OPTIONS_RANDOM_PERSPECTIVE:
+        variableNames.append(DLPO.augmentRandomPerspectiveNames[DLPO.AUGMENT_CONFIG_VARIABLES_1])
+        variableNames.append(DLPO.augmentRandomPerspectiveNames[DLPO.AUGMENT_CONFIG_VARIABLES_2])
+    elif augment == DLPO.AUGMENT_OPTIONS_COLOR_JITTER:
+        variableNames.append(DLPO.augmentColorJitterNames[DLPO.AUGMENT_CONFIG_VARIABLES_1])
+        variableNames.append(DLPO.augmentColorJitterNames[DLPO.AUGMENT_CONFIG_VARIABLES_2])
+        variableNames.append(DLPO.augmentColorJitterNames[DLPO.AUGMENT_CONFIG_VARIABLES_3])
+        variableNames.append(DLPO.augmentColorJitterNames[DLPO.AUGMENT_CONFIG_VARIABLES_4])
+    elif augment == DLPO.AUGMENT_OPTIONS_GAUSSIAN_BLUR:
+        variableNames.append(DLPO.augmentGaussianBlurNames[DLPO.AUGMENT_CONFIG_VARIABLES_1])
+        variableNames.append(DLPO.augmentGaussianBlurNames[DLPO.AUGMENT_CONFIG_VARIABLES_2])
+    elif augment == DLPO.AUGMENT_OPTIONS_RANDOM_INVERT:
+        variableNames.append(DLPO.augmentRandomInvertNames[DLPO.AUGMENT_CONFIG_VARIABLES_1])
+    return variableNames
 
 #IMAGE AUGMENTATION END
 ##################################################################################

@@ -1,5 +1,5 @@
 {
-    "File1": {
+    "File Select1": {
         "Name": "File Select1",
         "Type": "File Select",
         "Parent": "",
@@ -12,7 +12,7 @@
     "Gauss1": {
         "Name": "Gauss1",
         "Type": "Gauss",
-        "Parent": "File1",
+        "Parent": "File Select1",
         "Configuration": {
             "Name": "",
             "Kernel Rows": 33,

@@ -17,8 +17,9 @@ from VisionProgram import ProgramStructure
 import VisionProgram as VP
 import DeepLearningModule as DLM
 import DialogTrainOutput as DTO
+import UtilitiesModule as UM
 
-
+import json #FOR DEBUGGING
 import cv2 as cv #FOR DEBUGGING
 
 
@@ -103,8 +104,11 @@ class MainWindow(QMainWindow):
     #########################################################
     #ScreenProgrammingMain
     def ScreenProgrammingMainLogic(self):
+        self.loadListView()
+        self.listViewScreenProgrammingMain.clicked.connect(self.listViewClicked)
         self.buttonChangeToMonitorMain.clicked.connect(self.goToScreenMonitorMain)
         self.buttonNewProgramScreenProgrammingMain.clicked.connect(self.launchNewProgramDialog)
+        self.buttonEditProgramScreenProgrammingMain.clicked.connect(self.editProgramButtonAction)
 
     def goToScreenProgramEditor(self):
         self.stackWidget.setCurrentWidget(self.ScreenProgramEditor)
@@ -114,6 +118,37 @@ class MainWindow(QMainWindow):
 
     def goToScreenDLProgramEditor(self):
         self.stackWidget.setCurrentWidget(self.ScreenDLProgramEditor)
+
+    def loadListView(self):
+        #Setup listView itemModel
+        self.programListItemModel = QStandardItemModel()
+        self.listViewScreenProgrammingMain.setModel(self.programListItemModel)
+        #Get paths for items
+        paths = UM.searchSubfoldersForFilesEndingIn(endString = ".json", path = UM.PATH_SAVED_PROGRAMS)
+        for path in paths:
+            item = QStandardItem(str(path))
+            self.programListItemModel.appendRow(item)
+
+    def listViewClicked(self, index):
+        #Get configuration from currently selected index and show it in the label
+        selectedIndex = self.listViewScreenProgrammingMain.selectedIndexes()[0]
+        selectedItem = self.programListItemModel.itemFromIndex(selectedIndex)
+        programString = UM.getJsonStringFromFile(selectedItem.text())
+        self.labelScreenProgrammingMain.setText(programString)
+        
+    def editProgramButtonAction(self):
+        #Get selected index from list
+        selectedIndex = self.listViewScreenProgrammingMain.selectedIndexes()[0]
+        selectedItem = self.programListItemModel.itemFromIndex(selectedIndex)
+        programPath = selectedItem.text()
+        if DLM.checkIfFileIsDLProgram(programPath): #DL Program selected
+            self.DLmodel.loadProgram(programPath)
+            self.loadProgramToDLTreeViewScreenDLProgramEditor()
+            self.goToScreenDLProgramEditor()
+        elif VP.checkIfFileIsVisionProgram(programPath): #Classic vision program selected
+            self.visionProgramStructure.loadProgram(programPath)
+            self.loadProgramToTreeViewScreenProgramEditor()
+            self.goToScreenProgramEditor()
 
     def launchNewProgramDialog(self):
         #Launch dialog
@@ -126,6 +161,8 @@ class MainWindow(QMainWindow):
         elif programTypeString == VPO.VISION_PROGRAM_TYPES_DEEP_LEARNING:
             self.DLmodel.setSelectedModel(programReturnString)
             self.goToScreenDLProgramEditor()
+
+    programListItemModel = None
 
     #End ScreenProgrammingMain
     #########################################################
@@ -165,6 +202,25 @@ class MainWindow(QMainWindow):
         self.treeViewScreenProgramEditor.setModel(self.itemModel)
         self.stackedWidgetScreenProgramEditor.setCurrentWidget(self.stackCaptureOptions)
     
+    def loadProgramToTreeViewScreenProgramEditor(self):
+        self.itemModel.clear() #clear treeView itemModel
+        names, parents, config = self.visionProgramStructure.getProgramAttributes() #Get program
+        for index, name in enumerate(names):
+            self.addInstructionToTreeView(name, parents[index])
+            instructionType = self.visionProgramStructure.getInstructionType(name)
+            self.updateStackedWidgetScreenProgramEditor(instructionType, config[index])
+
+    def addInstructionToTreeView(self, instructionName, parentName):
+        if parentName == "":
+            parentItem = self.itemModel.invisibleRootItem()
+        else:
+            parentItem = self.itemModel.findItems(parentName, flags = Qt.MatchRecursive)
+            if len(parentItem) > 0:
+                parentItem = parentItem[0]
+        if parentItem:
+            item = QStandardItem(instructionName)
+            parentItem.appendRow(item)
+
     def treeViewClicked(self, index):
         #Get configuration from currently selected tree command and pass it to vision program
         previousItem = self.itemModel.itemFromIndex(self.treeIndex)
@@ -368,6 +424,7 @@ class MainWindow(QMainWindow):
         self.pushButtonDLProgramAddAugmentGroup.clicked.connect(self.addAugmentGroupToDLTreeView)
         self.pushButtonDLProgramRemoveAugment.clicked.connect(self.deleteAugmentFromDLTree)
         self.pushButtonDLProgramAugment.clicked.connect(self.augmentButtonAction)
+        self.pushButtonDLProgramSave.clicked.connect(self.saveButtonDLProgramAction)
 
     def loadDLTreeView(self):
         #Setup first item for TreeView and configure QTreeView
@@ -378,6 +435,29 @@ class MainWindow(QMainWindow):
         self.DLtreeIndex = item.index()
         self.treeViewDLProgramEditor.setModel(self.DLitemModel)
         self.DLmodel.addAugmentGroup()
+        self.treeViewDLProgramEditor.setCurrentIndex(self.DLtreeIndex)
+        self.DLtreeViewClicked(item.index())
+
+    def loadProgramToDLTreeViewScreenDLProgramEditor(self):
+        self.DLitemModel.clear() #clear treeView itemModel
+        groups, augments, augmentsConfig = self.DLmodel.getProgramAttributes() #Get program
+        for index, augment in enumerate(augments):
+            self.addAugmentToDLTreeView(groups[index], augment)
+            self.updateAugmentConfigurationDLTree(augmentsConfig[index])
+            self.DLtreeViewClicked(self.DLtreeIndex)
+
+    def addAugmentToDLTreeView(self, group, augment):
+        #Check if group exists or add it to the treeView
+        groupItem = self.DLitemModel.findItems(DLPO.GROUP_NAME_STRING + str(group))
+        if not groupItem:
+            parentItem = self.DLitemModel.invisibleRootItem()
+            groupItem = QStandardItem(DLPO.GROUP_NAME_STRING + str(group))
+            parentItem.appendRow(groupItem)
+        else:
+            groupItem = groupItem[0]
+        item = QStandardItem(augment)
+        groupItem.appendRow(item)
+        self.DLtreeIndex = item.index()
         self.treeViewDLProgramEditor.setCurrentIndex(self.DLtreeIndex)
         self.DLtreeViewClicked(item.index())
 
@@ -393,6 +473,7 @@ class MainWindow(QMainWindow):
         item = self.DLitemModel.itemFromIndex(index)
         groupNumber = self.getSelectedDLTreeViewGroupNumber()
         augmentType = item.text()
+        self.updateAugmentVariableNames(augmentType)
         if not augmentType.startswith(DLPO.GROUP_NAME_STRING):
             augmentConfiguration = self.DLmodel.getAugmentConfiguration(groupIndex = groupNumber, augmentName = augmentType)
             self.updateAugmentConfigurationDLTree(augmentConfiguration)
@@ -407,10 +488,10 @@ class MainWindow(QMainWindow):
         return instructionData
 
     def updateAugmentConfigurationDLTree(self, augmentConfig):
-        self.spinBoxVariable1DLProgramEditor.setValue(augmentConfig[DLPO.AUGMENT_CONFIG_VARIABLES_1])
-        self.spinBoxVariable2DLProgramEditor.setValue(augmentConfig[DLPO.AUGMENT_CONFIG_VARIABLES_2])
-        self.spinBoxVariable3DLProgramEditor.setValue(augmentConfig[DLPO.AUGMENT_CONFIG_VARIABLES_3])
-        self.spinBoxVariable4DLProgramEditor.setValue(augmentConfig[DLPO.AUGMENT_CONFIG_VARIABLES_4])
+        self.spinBoxVariable1DLProgramEditor.setValue(augmentConfig[DLPO.AUGMENT_CONFIG_VARIABLES_1_KEY])
+        self.spinBoxVariable2DLProgramEditor.setValue(augmentConfig[DLPO.AUGMENT_CONFIG_VARIABLES_2_KEY])
+        self.spinBoxVariable3DLProgramEditor.setValue(augmentConfig[DLPO.AUGMENT_CONFIG_VARIABLES_3_KEY])
+        self.spinBoxVariable4DLProgramEditor.setValue(augmentConfig[DLPO.AUGMENT_CONFIG_VARIABLES_4_KEY])
 
     def addAugmentToDLTree(self):
         #Launch dialog
@@ -449,7 +530,7 @@ class MainWindow(QMainWindow):
             groupItem = selectedItem
         groupName = groupItem.text()
         groupNumber = groupName[(groupName.rfind(" ")+1):]
-        return int(groupNumber)
+        return groupNumber
 
     def getAugmentGroupNumber(self, item):
         parentItem = item.parent()
@@ -459,7 +540,20 @@ class MainWindow(QMainWindow):
             groupItem = item
         groupName = groupItem.text()
         groupNumber = groupName[(groupName.rfind(" ")+1):]
-        return int(groupNumber)
+        return groupNumber
+
+    def updateAugmentVariableNames(self, augmentType):
+        variableNames = []
+        labels = [self.labelVariable1DLProgramEditor, self.labelVariable2DLProgramEditor, self.labelVariable3DLProgramEditor, self.labelVariable4DLProgramEditor]
+        spinBoxes = [self.spinBoxVariable1DLProgramEditor, self.spinBoxVariable2DLProgramEditor, self.spinBoxVariable3DLProgramEditor, self.spinBoxVariable4DLProgramEditor]
+        variableNames = DLM.getAugmentVariableNames(augmentType)
+        for index in range(len(labels)):
+            labels[index].setText("N/A")
+            if index < len(variableNames):
+                labels[index].setText(variableNames[index])
+                spinBoxes[index].setEnabled(True)
+            else:
+                spinBoxes[index].setEnabled(False)
 
     def deleteAugmentFromDLTree(self):
         selectedIndex = QModelIndex(self.treeViewDLProgramEditor.selectedIndexes()[0])
@@ -527,6 +621,12 @@ class MainWindow(QMainWindow):
         self.p2.start()
         #VER ACA SI CONVIENE HACER QUE EL OK PATH Y NOK PATH CAMBIEN AL DESTINATION PATH
 
+    def saveButtonDLProgramAction(self):
+        options = QFileDialog.Options()
+        options |= QFileDialog.DontUseNativeDialog
+        path = QFileDialog.getExistingDirectory(self,"Select Save Directory", options=options)
+        self.DLmodel.saveProgram(path)
+
     def setImageScreenDLProgramEditor(self, image):
         try:
             tempImagePath = "temp/programImage.png"
@@ -545,7 +645,7 @@ class MainWindow(QMainWindow):
     itemModel = None
     DLitemModel = None
     treeIndex = None
-    DLTreeIndex = None
+    DLtreeIndex = None
     tableModel = None
     visionProgramStructure = ProgramStructure()
     DLmodel = DLM.modelDL()

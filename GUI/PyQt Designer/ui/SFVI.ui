@@ -10,6 +10,12 @@
     <height>781</height>
    </rect>
   </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
   <property name="windowTitle">
    <string>SFVI - Sistema Flexible de Visión Industrial</string>
   </property>
@@ -82,7 +88,7 @@
     <item>
      <widget class="QStackedWidget" name="stackWidget">
       <property name="currentIndex">
-       <number>3</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="ScreenMonitorMain">
        <layout class="QVBoxLayout" name="verticalLayout">
@@ -123,8 +129,8 @@
              </font>
             </property>
             <property name="text">
-             <string>Configuración 
-General</string>
+             <string>General
+Configuration</string>
             </property>
            </widget>
           </item>
@@ -151,8 +157,8 @@ General</string>
              </font>
             </property>
             <property name="text">
-             <string>Seleccionar 
-Programa</string>
+             <string>Select 
+Program</string>
             </property>
            </widget>
           </item>
@@ -179,7 +185,7 @@ Programa</string>
              </font>
             </property>
             <property name="text">
-             <string>Contadores</string>
+             <string>Counters</string>
             </property>
            </widget>
           </item>
@@ -283,8 +289,8 @@ Programa</string>
              </font>
             </property>
             <property name="text">
-             <string>Interfaz de
-Programación</string>
+             <string>Programming
+Interface</string>
             </property>
            </widget>
           </item>
@@ -444,8 +450,8 @@ Fotos rechazadas: XXX</string>
              </font>
             </property>
             <property name="text">
-             <string>Editar
-Programa</string>
+             <string>Edit
+Program</string>
             </property>
            </widget>
           </item>
@@ -466,8 +472,8 @@ Programa</string>
              </font>
             </property>
             <property name="text">
-             <string>Nuevo
-Programa</string>
+             <string>New
+Program</string>
             </property>
            </widget>
           </item>
@@ -488,13 +494,17 @@ Programa</string>
              </font>
             </property>
             <property name="text">
-             <string>Interfaz de
-Monitoreo</string>
+             <string>Monitor
+Interface</string>
             </property>
            </widget>
           </item>
           <item row="0" column="4" colspan="4">
-           <widget class="QListView" name="listView"/>
+           <widget class="QListView" name="listViewScreenProgrammingMain">
+            <property name="editTriggers">
+             <set>QAbstractItemView::NoEditTriggers</set>
+            </property>
+           </widget>
           </item>
           <item row="1" column="5">
            <widget class="QPushButton" name="buttonEraseProgramScreenProgrammingMain">
@@ -513,8 +523,8 @@ Monitoreo</string>
              </font>
             </property>
             <property name="text">
-             <string>Borrar
-Programa</string>
+             <string>Delete
+Program</string>
             </property>
            </widget>
           </item>
@@ -535,15 +545,21 @@ Programa</string>
              </font>
             </property>
             <property name="text">
-             <string>Copiar
-Programa</string>
+             <string>Copy
+Program</string>
             </property>
            </widget>
           </item>
           <item row="0" column="9">
-           <widget class="QLabel" name="label">
+           <widget class="QLabel" name="labelScreenProgrammingMain">
             <property name="text">
-             <string>TextLabel</string>
+             <string/>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+            </property>
+            <property name="wordWrap">
+             <bool>true</bool>
             </property>
            </widget>
           </item>
@@ -672,7 +688,7 @@ Programa</string>
           <item row="5" column="3">
            <widget class="QPushButton" name="buttonExitScreenProgramEditor">
             <property name="text">
-             <string>Salir</string>
+             <string>Exit</string>
             </property>
            </widget>
           </item>
@@ -1185,21 +1201,21 @@ Programa</string>
           <item row="5" column="0">
            <widget class="QPushButton" name="buttonAddCommandScreenProgramEditor">
             <property name="text">
-             <string>Agregar Comando</string>
+             <string>Add Command</string>
             </property>
            </widget>
           </item>
           <item row="5" column="1">
            <widget class="QPushButton" name="buttonDeleteCommandScreenProgramEditor">
             <property name="text">
-             <string>Eliminar Comando</string>
+             <string>Delete Command</string>
             </property>
            </widget>
           </item>
           <item row="5" column="2">
            <widget class="QPushButton" name="buttonRunScreenProgramEditor">
             <property name="text">
-             <string>Ejecutar</string>
+             <string>Run Program</string>
             </property>
            </widget>
           </item>
@@ -1420,7 +1436,7 @@ Programa</string>
           <item row="3" column="3">
            <widget class="QPushButton" name="pushButtonDLProgramExit">
             <property name="text">
-             <string>Salir</string>
+             <string>Exit</string>
             </property>
            </widget>
           </item>
@@ -1434,14 +1450,14 @@ Programa</string>
           <item row="3" column="1">
            <widget class="QPushButton" name="pushButtonDLProgramSave">
             <property name="text">
-             <string>Guardar Programa</string>
+             <string>Save Program</string>
             </property>
            </widget>
           </item>
           <item row="3" column="0">
            <widget class="QPushButton" name="pushButtonDLProgramTrain">
             <property name="text">
-             <string>Entrenar</string>
+             <string>Train Model</string>
             </property>
            </widget>
           </item>
@@ -1455,7 +1471,11 @@ Programa</string>
              </widget>
             </item>
             <item row="0" column="1">
-             <widget class="QSpinBox" name="spinBoxVariable1DLProgramEditor"/>
+             <widget class="QSpinBox" name="spinBoxVariable1DLProgramEditor">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
+             </widget>
             </item>
             <item row="1" column="0">
              <widget class="QLabel" name="labelVariable2DLProgramEditor">

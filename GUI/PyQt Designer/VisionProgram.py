@@ -115,6 +115,16 @@ class ProgramStructure():
             jsonDict = json.load(readFile)
         self.programInstructionList = jsonDict
 
+    def getProgramAttributes(self):
+        parents = []
+        instructionNames = []
+        instructionConfig = []
+        for key in self.programInstructionList.keys():
+            parents.append(self.programInstructionList[key][VPO.INSTRUCTION_DATA_PARENT])
+            instructionNames.append(self.programInstructionList[key][VPO.INSTRUCTION_DATA_NAME])
+            instructionConfig.append(self.programInstructionList[key][VPO.INSTRUCTION_DATA_CONFIGURATION])
+        return instructionNames, parents, instructionConfig
+
     def selectTemplate(self, instructionName, parentInstructionName):
         self.runProgram(False, parentInstructionName)
         image = self.programInstructionList[parentInstructionName][VPO.INSTRUCTION_DATA_IMAGE]
@@ -384,3 +394,11 @@ def rearrageResultData(instructionType, lines, contours, values, locations, temp
         dataRet = list(zip(startPoints,endPoints,lines[1],lines[2]))
         dataRetType = VPO.FEATURE_DETECTION_OPTIONS_LINE_DETECTOR
     return dataRet, dataRetType
+
+def checkIfFileIsVisionProgram(path):
+    retBool = False
+    with open(path, "r") as readFile:
+        jsonDict = json.load(readFile)
+    if VPO.INSTRUCTION_DATA_TYPE in jsonDict[list(jsonDict.keys())[0]].keys():
+        retBool = True
+    return retBool
