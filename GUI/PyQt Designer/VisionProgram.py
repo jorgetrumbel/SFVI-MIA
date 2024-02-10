@@ -402,3 +402,82 @@ def checkIfFileIsVisionProgram(path):
     if VPO.INSTRUCTION_DATA_TYPE in jsonDict[list(jsonDict.keys())[0]].keys():
         retBool = True
     return retBool
+
+def getInstructionVariableNames(instructionType):
+    variableNames = []
+    if instructionType == VPO.FEATURE_DETECTION_OPTIONS_CONTOURS:
+        #variableNames.append(VPO.featureDetectionContoursNames[0])
+        pass
+    elif instructionType == VPO.FEATURE_DETECTION_OPTIONS_HOUGH:
+        variableNames.append(VPO.featureDetectionHoughLinesNames[0])
+        variableNames.append(VPO.featureDetectionHoughLinesNames[1])
+        variableNames.append(VPO.featureDetectionHoughLinesNames[2])
+    elif instructionType == VPO.FEATURE_DETECTION_OPTIONS_HOUGH_PROBABILISTIC:
+        variableNames.append(VPO.featureDetectionProbabilisticHoughLinesNames[0])
+        variableNames.append(VPO.featureDetectionProbabilisticHoughLinesNames[1])
+        variableNames.append(VPO.featureDetectionProbabilisticHoughLinesNames[2])
+    elif instructionType == VPO.FEATURE_DETECTION_OPTIONS_LINE_DETECTOR:
+        #variableNames.append(VPO.featureDetectionLineDetectorNames[0])
+        pass
+    elif instructionType == VPO.FEATURE_DETECTION_OPTIONS_TEMPLATE_MATCH:
+        #variableNames.append(VPO.featureDetectionTemplateMatchingNames[0])
+        pass
+    elif instructionType == VPO.FEATURE_DETECTION_OPTIONS_TEMPLATE_MATCH_MULTIPLE:
+        variableNames.append(VPO.featureDetectionTemplateMatchingMultipleNames[0])
+    elif instructionType == VPO.FEATURE_DETECTION_OPTIONS_TEMPLATE_MATCH_INVARIANT:
+        variableNames.append(VPO.featureDetectionTemplateMatchingInvariantNames[0])
+    elif instructionType == VPO.FEATURE_DETECTION_OPTIONS_CANNY_TEMPLATE_MATCH:
+        variableNames.append(VPO.featureDetectionTemplateMatchingCannyNames[0])
+        variableNames.append(VPO.featureDetectionTemplateMatchingCannyNames[1])
+    elif instructionType == VPO.FEATURE_DETECTION_OPTIONS_CANNY_TEMPLATE_MATCH_INVARIANT:
+        variableNames.append(VPO.featureDetectionTemplateMatchingCannyInvariantNames[0])
+        variableNames.append(VPO.featureDetectionTemplateMatchingCannyInvariantNames[1])
+        variableNames.append(VPO.featureDetectionTemplateMatchingCannyInvariantNames[2])
+    elif instructionType == VPO.DRAW_OPTIONS_CONTOURS:
+        #variableNames.append(VPO.drawOptionsContoursNames[0]) #NOT USED
+        pass
+    elif instructionType == VPO.DRAW_OPTIONS_BOUNDING_BOXES:
+        #variableNames.append(VPO.drawOptionsBoundingBoxesNames[0]) #NOT USED
+        pass
+    elif instructionType == VPO.DRAW_OPTIONS_MIN_AREA_RECTANGLES:
+        #variableNames.append(VPO.drawOptionsMinAreaRectanglesNames[0]) #NOT USED
+        pass
+    elif instructionType == VPO.DRAW_OPTIONS_CANNY:
+        variableNames.append(VPO.drawOptionsCannyOverImageNames[0])
+        variableNames.append(VPO.drawOptionsCannyOverImageNames[1])
+    elif instructionType == VPO.DRAW_OPTIONS_AUTO_CANNY:
+        #variableNames.append(VPO.drawOptionsAutoCannyNames[0]) #NOT USED
+        pass
+    elif instructionType == VPO.DRAW_OPTIONS_POINT_DISTANCE:
+        #variableNames.append(VPO.drawOptionsPointDistanceNames[0]) #NOT USED
+        pass
+    elif instructionType == VPO.DRAW_OPTIONS_SEGMENT_MIN_DISTANCE:
+        #variableNames.append(VPO.drawOptionsSegmentMinDistanceNames[0]) #NOT USED
+        pass
+    elif instructionType == VPO.DRAW_OPTIONS_DETECTED_HOUGH_LINES:
+        #variableNames.append(VPO.drawOptionsDetectedHoughLinesNames[0]) #NOT USED
+        pass
+    elif instructionType == VPO.DRAW_OPTIONS_DETECTED_PROBABILISTIC_HOUGH_LINES:
+        #variableNames.append(VPO.drawOptionsDetectedProbabilisticHoughLinesNames[0]) #NOT USED
+        pass
+    elif instructionType == VPO.DRAW_OPTIONS_SEGMENT_DETECTOR_LINES:
+        #variableNames.append(VPO.drawOptionsSegmentDetectorLinesNames[0]) #NOT USED
+        pass
+    elif instructionType == VPO.DRAW_OPTIONS_TEMPLATE_MATCH:
+        #variableNames.append(VPO.drawOptionsTemplateMatchingNames[0]) #NOT USED
+        pass
+    elif instructionType == VPO.DRAW_OPTIONS_MULTIPLE_TEMPLATE_MATCH:
+        #variableNames.append(VPO.drawOptionsTemplateMatchingMultipleNames[0]) #NOT USED
+        pass
+    elif instructionType == VPO.DRAW_OPTIONS_TEMPLATE_MATCH_INVARIANT:
+        #variableNames.append(VPO.drawOptionsTemplateMatchingInvariantNames[0]) #NOT USED
+        pass
+    elif instructionType == VPO.MEASUREMENT_OPTIONS_CONTOURS:
+        variableNames.append(VPO.measurementOptionsContoursNames[0])
+        variableNames.append(VPO.measurementOptionsContoursNames[1])
+        variableNames.append(VPO.measurementOptionsContoursNames[2])
+        variableNames.append(VPO.measurementOptionsContoursNames[3])
+    elif instructionType == VPO.MEASUREMENT_OPTIONS_LINE_DISTANCE:
+        variableNames.append(VPO.measurementOptionsLineDistanceNames[0])
+        variableNames.append(VPO.measurementOptionsLineDistanceNames[1])
+    return variableNames

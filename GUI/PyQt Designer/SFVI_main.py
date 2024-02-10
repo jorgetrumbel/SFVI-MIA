@@ -209,6 +209,7 @@ class MainWindow(QMainWindow):
             self.addInstructionToTreeView(name, parents[index])
             instructionType = self.visionProgramStructure.getInstructionType(name)
             self.updateStackedWidgetScreenProgramEditor(instructionType, config[index])
+            self.treeViewClicked(self.treeIndex)
 
     def addInstructionToTreeView(self, instructionName, parentName):
         if parentName == "":
@@ -220,6 +221,9 @@ class MainWindow(QMainWindow):
         if parentItem:
             item = QStandardItem(instructionName)
             parentItem.appendRow(item)
+            self.treeIndex = item.index()
+            self.treeViewScreenProgramEditor.setCurrentIndex(self.treeIndex)
+            self.treeViewClicked(item.index())
 
     def treeViewClicked(self, index):
         #Get configuration from currently selected tree command and pass it to vision program
@@ -231,6 +235,7 @@ class MainWindow(QMainWindow):
         item = self.itemModel.itemFromIndex(index)
         instructionType = self.visionProgramStructure.getInstructionType(item.text())
         instructionConfiguration = self.visionProgramStructure.getInstructionConfiguration(item.text())
+        self.updateInstructionVariableNames(instructionType = instructionType)
         self.updateStackedWidgetScreenProgramEditor(instructionType, instructionConfiguration)
 
     def updateStackedWidgetScreenProgramEditor(self, instructionType, instructionConfiguration):
@@ -323,6 +328,28 @@ class MainWindow(QMainWindow):
             instructionData = self.getStackMeasurementOptionsConfiguration()
         return instructionData
 
+    def updateInstructionVariableNames(self, instructionType):
+        variableNames = []
+        if instructionType in VPO.featureDetectionOptions:
+            labels = [self.labelFeatureDetectionVariable1, self.labelFeatureDetectionVariable2, self.labelFeatureDetectionVariable3]
+            spinBoxes = [self.spinBoxFeatureDetectionVariable1, self.spinBoxFeatureDetectionVariable2, self.spinBoxFeatureDetectionVariable3]
+        elif instructionType in VPO.drawOptions:
+            labels = [self.labelDrawOptionsVariable1, self.labelDrawOptionsVariable2, self.labelDrawOptionsVariable3]
+            spinBoxes = [self.spinBoxDrawOptionsVariable1, self.spinBoxDrawOptionsVariable2, self.spinBoxDrawOptionsVariable3]
+        elif instructionType in VPO.measurementOptions:
+            labels = [self.labelMeasurementOptionsVariable1, self.labelMeasurementOptionsVariable2, self.labelMeasurementOptionsVariable3, self.labelMeasurementOptionsVariable4]
+            spinBoxes = [self.spinBoxMeasurementOptionsVariable1, self.spinBoxMeasurementOptionsVariable2, self.spinBoxMeasurementOptionsVariable3, self.spinBoxMeasurementOptionsVariable4]
+        else:
+            return #Exit function if instruction type is not correct
+        variableNames = VP.getInstructionVariableNames(instructionType)
+        for index in range(len(labels)):
+            labels[index].setText("N/A")
+            if index < len(variableNames):
+                labels[index].setText(variableNames[index])
+                spinBoxes[index].setEnabled(True)
+            else:
+                spinBoxes[index].setEnabled(False)
+
     def getStackCaptureConfiguration(self):
         instructionData = {}
         instructionData[VPO.CAPTURE_CONFIGURATIONS_NAME] = self.lineEditCapturaName.text()
@@ -377,7 +404,6 @@ class MainWindow(QMainWindow):
     def updateTableView(self, data, dataType):
         headers = [0]
         tableModel = MyTableModel(data = data)
-        
         if dataType == VPO.FEATURE_DETECTION_OPTIONS_CONTOURS:
             headers = VPO.FEATURE_MEASUREMENT_CONTOURS_NAMES
         elif dataType == VPO.FEATURE_DETECTION_OPTIONS_TEMPLATE_MATCH:
@@ -386,7 +412,6 @@ class MainWindow(QMainWindow):
             headers = VPO.FEATURE_MEASUREMENT_HOUGH_NAMES
         elif dataType == VPO.FEATURE_DETECTION_OPTIONS_HOUGH_PROBABILISTIC or dataType == VPO.FEATURE_DETECTION_OPTIONS_LINE_DETECTOR:
             headers = VPO.FEATURE_MEASUREMENT_HOUGH_PROBABILISTIC_NAMES
-
         tableModel.getHeaders(headers, None)
         self.tableViewScreenProgramEditor.setModel(tableModel)
 
@@ -495,7 +520,7 @@ class MainWindow(QMainWindow):
 
     def addAugmentToDLTree(self):
         #Launch dialog
-        augmentSelectDialog = DialogAugmentSelection(self) #CREAR DIALOGO
+        augmentSelectDialog = DialogAugmentSelection(self)
         augmentSelectDialog.exec()
         dialogReturnString = augmentSelectDialog.getReturnString()
         parentItem = self.DLitemModel.itemFromIndex(self.DLtreeIndex)
@@ -568,9 +593,6 @@ class MainWindow(QMainWindow):
             item = self.DLitemModel.itemFromIndex(self.DLitemModel.index(counter, 0))
             counter = counter + 1
             self.DLtreeIndex = self.DLitemModel.indexFromItem(item)
-        #instructionType = self.visionProgramStructure.getInstructionType(item.text())
-        #instructionConfiguration = self.visionProgramStructure.getInstructionConfiguration(item.text())
-        #self.updateStackedWidgetScreenProgramEditor(instructionType, instructionConfiguration)
         self.DLtreeViewClicked(self.DLtreeIndex)
         self.treeViewDLProgramEditor.setCurrentIndex(self.DLtreeIndex)
 
