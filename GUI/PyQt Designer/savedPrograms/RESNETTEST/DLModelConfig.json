@@ -1,0 +1,10 @@
+{
+    "model": "Resnet18",
+    "okPath": "C:/Users/Alejandro/Desktop/MIA Trabajo final/Repositorio/SFVI-MIA/GUI/PyQt Designer/tests/datasets/leather/train/OK",
+    "nokPath": "C:/Users/Alejandro/Desktop/MIA Trabajo final/Repositorio/SFVI-MIA/GUI/PyQt Designer/tests/datasets/leather/train/NOK",
+    "modelPath": "C:/Users/Alejandro/Desktop/MIA Trabajo final/Repositorio/SFVI-MIA/GUI/PyQt Designer/savedPrograms/RESNETTEST\\ResNetModel.pth",
+    "modelResultPath": "C:/Users/Alejandro/Desktop/MIA Trabajo final/Repositorio/SFVI-MIA/GUI/PyQt Designer/savedPrograms/RESNETTEST\\modelResult.png",
+    "augmentGroups": {
+        "1": {}
+    }
+}

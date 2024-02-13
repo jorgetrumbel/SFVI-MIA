@@ -7,6 +7,7 @@ import DrawModule as DM
 import MeasurementModule as MM
 import GeometryModule as GM
 import CameraModulePC as CM
+import ProgramCommonPaths as PCP
 import numpy as np
 
 from PIL import Image as im
@@ -102,6 +103,7 @@ class ProgramStructure():
 
     def saveProgram(self, path):
         copyDict = self.programInstructionList
+        path = path + ".json"
         for key in copyDict.keys():
             try:
                 del copyDict[key][VPO.INSTRUCTION_DATA_IMAGE]
@@ -115,6 +117,9 @@ class ProgramStructure():
             jsonDict = json.load(readFile)
         self.programInstructionList = jsonDict
 
+    def clearProgram(self):
+        self.programInstructionList = {}
+
     def getProgramAttributes(self):
         parents = []
         instructionNames = []
@@ -122,7 +127,7 @@ class ProgramStructure():
         for key in self.programInstructionList.keys():
             parents.append(self.programInstructionList[key][VPO.INSTRUCTION_DATA_PARENT])
             instructionNames.append(self.programInstructionList[key][VPO.INSTRUCTION_DATA_NAME])
-            instructionConfig.append(self.programInstructionList[key][VPO.INSTRUCTION_DATA_CONFIGURATION])
+            instructionConfig.append(self.programInstructionList[key][VPO.INSTRUCTION_DATA_CONFIGURATION].copy())
         return instructionNames, parents, instructionConfig
 
     def selectTemplate(self, instructionName, parentInstructionName):
@@ -130,7 +135,7 @@ class ProgramStructure():
         image = self.programInstructionList[parentInstructionName][VPO.INSTRUCTION_DATA_IMAGE]
         template, points = IUM.image_crop(image)
         template = np.array(template)
-        tempTemplatePath = "temp/" + instructionName + "TemplateCrop.png"
+        tempTemplatePath = PCP.PATH_TEMP_FOLDER + instructionName + "TemplateCrop.png"
         self.programInstructionList[instructionName][VPO.INSTRUCTION_DATA_CONFIGURATION][VPO.FEATURE_DETECTION_CONFIGURATIONS_TEMPLATE_PATH] = tempTemplatePath
         data = im.fromarray(template)
         data.save(tempTemplatePath)
@@ -140,7 +145,7 @@ class ProgramStructure():
         image = self.programInstructionList[parentInstructionName][VPO.INSTRUCTION_DATA_IMAGE]
         cropImage, points = IUM.image_crop(image)
         cropImage = np.array(cropImage)
-        cropImagePath = "temp/" + instructionName + "Crop.png"
+        cropImagePath = PCP.PATH_TEMP_FOLDER + instructionName + "Crop.png"
         self.programInstructionList[instructionName][VPO.INSTRUCTION_DATA_CONFIGURATION][VPO.FILTER_CONFIGURATIONS_CROP_AREA] = points
         data = im.fromarray(cropImage)
         data.save(cropImagePath)
@@ -163,7 +168,9 @@ class ProgramStructure():
         instructionsToRun = None
         dataRet = [[0]]
         dataRetType = None
-        self.saveProgram("temp/program_file.json")
+        programResult = True
+        programIndividualResults = {}
+        self.saveProgram(PCP.PATH_TEMP_VISION_PROGRAM_FILE)
         if runFullProgram == True:
             instructionsToRun = self.programInstructionList
         else:
@@ -196,8 +203,13 @@ class ProgramStructure():
                 image, measurementResult, dataRet, dataRetType = runMeasurementInstruction(image, instructionType, instructionConfiguration, lines, contours, values, locations, templateSize)
                 image = DM.drawMeasurementResult(image, measurementResult)
                 instruction[VPO.INSTRUCTION_DATA_IMAGE] = image.copy()
+                programIndividualResults[VPO.INSTRUCTION_DATA_NAME] = measurementResult
 
-        return image, dataRet, dataRetType
+        for measurement in programIndividualResults.keys():
+            if programIndividualResults[measurement] == False:
+                programResult = False
+
+        return image, dataRet, dataRetType, programIndividualResults, programResult
 
     programInstructionList = {}
     program = {}
@@ -397,10 +409,13 @@ def rearrageResultData(instructionType, lines, contours, values, locations, temp
 
 def checkIfFileIsVisionProgram(path):
     retBool = False
-    with open(path, "r") as readFile:
-        jsonDict = json.load(readFile)
-    if VPO.INSTRUCTION_DATA_TYPE in jsonDict[list(jsonDict.keys())[0]].keys():
-        retBool = True
+    try:
+        with open(path, "r") as readFile:
+            jsonDict = json.load(readFile)
+        if VPO.INSTRUCTION_DATA_TYPE in jsonDict[list(jsonDict.keys())[0]].keys():
+            retBool = True
+    except:
+        pass
     return retBool
 
 def getInstructionVariableNames(instructionType):

@@ -20,11 +20,7 @@
             "Iterations": 0,
             "Threshold": 0,
             "Threshold 2": 0,
-            "Crop Area": 0,
-            "Variable 1": 13000,
-            "Variable 2": 14000,
-            "Variable 3": 400,
-            "Variable 4": 500
+            "Crop Area": 0
         }
     },
     "Contours1": {

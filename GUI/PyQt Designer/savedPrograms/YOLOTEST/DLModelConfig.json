@@ -1,0 +1,10 @@
+{
+    "model": "YOLOv8",
+    "okPath": "C:/Users/Alejandro/Desktop/MIA Trabajo final/Repositorio/SFVI-MIA/GUI/PyQt Designer/tests/datasets/leather/train/OK",
+    "nokPath": "C:/Users/Alejandro/Desktop/MIA Trabajo final/Repositorio/SFVI-MIA/GUI/PyQt Designer/tests/datasets/leather/train/NOK",
+    "modelPath": "C:/Users/Alejandro/Desktop/MIA Trabajo final/Repositorio/SFVI-MIA/GUI/PyQt Designer/savedPrograms/YOLOTEST\\best.pt",
+    "modelResultPath": "None",
+    "augmentGroups": {
+        "1": {}
+    }
+}

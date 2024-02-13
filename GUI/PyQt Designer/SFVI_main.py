@@ -1,6 +1,6 @@
 import sys
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QMainWindow, QFormLayout, QApplication, QHBoxLayout, QVBoxLayout, QWidget, QLabel, QDialog, QFileDialog
+from PyQt5.QtWidgets import QMainWindow, QFormLayout, QApplication, QHBoxLayout, QVBoxLayout, QWidget, QLabel, QDialog, QFileDialog, QMessageBox
 from PyQt5.QtGui import QIcon, QPixmap, QStandardItemModel, QStandardItem, QImage
 from PyQt5.QtCore import QModelIndex, QAbstractTableModel, Qt, QRunnable, QThreadPool
 from PyQt5.uic import loadUi
@@ -10,6 +10,7 @@ from DialogCommandSelection import DialogCommandSelection
 from DialogProgramSelection import DialogProgramSelection
 from DialogTrainOutput import DialogTrainOutput
 from DialogAugmentSelection import DialogAugmentSelection
+from DialogGeneralConfig import DialogGeneralConfig
 
 import VisionProgramOptions as VPO
 import DeepLearningProgramOptions as DLPO
@@ -18,6 +19,8 @@ import VisionProgram as VP
 import DeepLearningModule as DLM
 import DialogTrainOutput as DTO
 import UtilitiesModule as UM
+import ProgramCommonPaths as PCP
+import ProgramConfigOptions as PCO
 
 import json #FOR DEBUGGING
 import cv2 as cv #FOR DEBUGGING
@@ -53,32 +56,80 @@ class MainWindow(QMainWindow):
         self.ScreenProgramEditorLogic()
         self.ScreenDLProgramEditorLogic()
 
+
+    def resetProgramCounters(self):
+        self.programPicturesTaken = 0
+        self.programNOKPictures = 0
+
+    programOnlineStatus = PCO.PROGRAM_ONLINE_STATUS_OFFLINE
+    selectedProgram = None
+    selectedProgramName = None
+    selectedProgramType = None
+    programPicturesTaken = 0
+    programNOKPictures = 0
+
     #########################################################
     #ScreenMonitorMain
     def ScreenMonitorMainLogic(self):
+        self.updateProgramStatusForm()
         self.buttonChangeToProgrammingMain.clicked.connect(self.goToScreenProgrammingMain)
         self.buttonSelectProgramScreenMonitorMain.clicked.connect(self.getProgramFileName)
         self.buttonCounterScreenMonitorMain.clicked.connect(self.triggerProgramRun) #CORREGIR - NO VA EN ESTE BOTON
+        self.buttonConfigScreenMonitorMain.clicked.connect(self.configButtonAction)
 
     def goToScreenProgrammingMain(self):
         self.stackWidget.setCurrentWidget(self.ScreenProgrammingMain)
-
+        self.loadListView()
+        
     def getProgramFileName(self):
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
         file, _ = QFileDialog.getOpenFileName(self,"Select File", "","All Files (*);;Python Files (*.py)", options=options)
         if file:
             self.selectedProgram = file
-            self.visionProgramStructure.loadProgram(file)
+            self.selectedProgramName = UM.getFileNameFromPath(file)
+            if VP.checkIfFileIsVisionProgram(file): #Classic vision program selected
+                self.visionProgramStructure.loadProgram(file)
+                self.selectedProgramType = VPO.VISION_PROGRAM_TYPES_CLASSIC
+            elif DLM.checkIfFileIsDLProgram(file):
+                self.selectedProgramType = VPO.VISION_PROGRAM_TYPES_DEEP_LEARNING
+                self.DLmodel.loadProgram(file)
+            #AGREGAR ACA EN CASO DE QUE SEA UN PROGRAMA DE DL
+            #VER DE CARGAR EL MODELO DE DL Y DEJARLO CARGADO, EN VEZ DE TENER QUE CARGARLO CADA VEZ QUE SE HAGA UN RUN
+        self.updateProgramStatusForm()
     
+    def configButtonAction(self):
+        generalConfigDialog = DialogGeneralConfig(self)
+        generalConfigDialog.exec()
+        self.programOnlineStatus = generalConfigDialog.getProgramStatus()
+        if generalConfigDialog.checkIfResetWasPressed():
+            self.resetProgramCounters()
+        self.updateProgramStatusForm()
+
+    def updateProgramStatusForm(self):
+        self.lineEditProgramStatusScreenMonitorMain.setText(self.programOnlineStatus)
+        self.lineEditProgramNameScreenMonitorMain.setText(self.selectedProgramName)
+        self.lineEditPicturesTakenScreenMonitorMain.setText(str(self.programPicturesTaken))
+        self.lineEditNOKPicturesScreenMonitorMain.setText(str(self.programNOKPictures))
+
     def triggerProgramRun(self):
-        image, data, dataType = self.visionProgramStructure.runProgram(True)
-        #self.updateTableView(data, dataType) CORREGIR
+        if self.selectedProgramType == VPO.VISION_PROGRAM_TYPES_CLASSIC:
+            image, data, dataType, programIndividualResults, programResult = self.visionProgramStructure.runProgram(True)
+        elif self.selectedProgramType == VPO.VISION_PROGRAM_TYPES_DEEP_LEARNING:
+            options = QFileDialog.Options()
+            options |= QFileDialog.DontUseNativeDialog
+            file, _ = QFileDialog.getOpenFileName(self,"Select File", "","All Files (*);;Python Files (*.py)", options=options)
+            #CORREGIR - LA IMAGEN TENDRIA QUE SACARSE, NO ELEGIR DE LOS ARCHIVOS
+            programResult, image = self.DLmodel.loadedModelPredict(imagePath = file)
         self.setImageScreenMonitorMain(image)
+        self.programPicturesTaken = self.programPicturesTaken + 1
+        if programResult == False:
+            self.programNOKPictures = self.programNOKPictures + 1
+        self.updateProgramStatusForm()
         
     def setImageScreenMonitorMain(self, image):
         try:
-            tempImagePath = "temp/programImage.png"
+            tempImagePath = PCP.PATH_TEMP_VISION_PROGRAM_IMAGE
             data = im.fromarray(image)
             data.save(tempImagePath)
             pixmap = QPixmap(tempImagePath)
@@ -86,18 +137,6 @@ class MainWindow(QMainWindow):
         except FileNotFoundError:
             print("Image not found.")
 
-    '''
-    def setImageScreenMonitorMain(self):
-        image = "images/apple.PNG"
-        try:
-            with open(image):
-                pixmap = QPixmap(image)
-                self.labelImageScreenMonitorMain.setPixmap(pixmap)
-        except FileNotFoundError:
-            print("Image not found.")
-    '''
-
-    selectedProgram = None
     #End ScreenMonitorMain
     #########################################################
 
@@ -109,6 +148,8 @@ class MainWindow(QMainWindow):
         self.buttonChangeToMonitorMain.clicked.connect(self.goToScreenMonitorMain)
         self.buttonNewProgramScreenProgrammingMain.clicked.connect(self.launchNewProgramDialog)
         self.buttonEditProgramScreenProgrammingMain.clicked.connect(self.editProgramButtonAction)
+        self.buttonCopyProgramScreenProgrammingMain.clicked.connect(self.copyProgramButtonAction)
+        self.buttonEraseProgramScreenProgrammingMain.clicked.connect(self.deleteProgramButtonAction)
 
     def goToScreenProgramEditor(self):
         self.stackWidget.setCurrentWidget(self.ScreenProgramEditor)
@@ -124,7 +165,7 @@ class MainWindow(QMainWindow):
         self.programListItemModel = QStandardItemModel()
         self.listViewScreenProgrammingMain.setModel(self.programListItemModel)
         #Get paths for items
-        paths = UM.searchSubfoldersForFilesEndingIn(endString = ".json", path = UM.PATH_SAVED_PROGRAMS)
+        paths = UM.searchSubfoldersForFilesEndingIn(endString = ".json", path = PCP.PATH_SAVED_PROGRAMS)
         for path in paths:
             item = QStandardItem(str(path))
             self.programListItemModel.appendRow(item)
@@ -150,6 +191,33 @@ class MainWindow(QMainWindow):
             self.loadProgramToTreeViewScreenProgramEditor()
             self.goToScreenProgramEditor()
 
+    def copyProgramButtonAction(self):
+        options = QFileDialog.Options()
+        options |= QFileDialog.DontUseNativeDialog
+        file, filter = QFileDialog.getSaveFileName(self, caption = "Save File", directory = PCP.PATH_SAVED_PROGRAMS, filter = "Program Files (*.json);;All Files (*)", options = options)
+        #Get selected index from list
+        selectedIndex = self.listViewScreenProgrammingMain.selectedIndexes()[0]
+        selectedItem = self.programListItemModel.itemFromIndex(selectedIndex)
+        pathToCopyFile = selectedItem.text()
+        UM.copyProgram(file, pathToCopyFile)
+        self.loadListView()
+
+    def deleteProgramButtonAction(self):
+        #Show confirmation Dialog
+        buttonReply = QMessageBox.question(self, 'Delete Program', "Are you sure you want to delete the selected program?", QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+        if buttonReply == QMessageBox.Yes:
+            #Yes was clicked, delete program
+            #Get selected index from list
+            selectedIndex = self.listViewScreenProgrammingMain.selectedIndexes()[0]
+            selectedItem = self.programListItemModel.itemFromIndex(selectedIndex)
+            pathToDeleteFile = selectedItem.text()
+            UM.deleteProgram(pathToDeleteFile)
+            self.loadListView()
+        else:
+            #No was clicked, do nothing
+            pass 
+
+
     def launchNewProgramDialog(self):
         #Launch dialog
         programSelectDialog = DialogProgramSelection(self)
@@ -157,8 +225,11 @@ class MainWindow(QMainWindow):
         programReturnString = programSelectDialog.getReturnString()
         programTypeString = programSelectDialog.getProgramType()
         if programTypeString == VPO.VISION_PROGRAM_TYPES_CLASSIC:
+            self.launchNewVisionProgram()
             self.goToScreenProgramEditor()
         elif programTypeString == VPO.VISION_PROGRAM_TYPES_DEEP_LEARNING:
+            #AGREGAR QUE SE CREE UN NUEVO PROGRAMA - SE VACIE LA INFO EN PROGRAM EDITOR
+            self.launchNewDLProgram()
             self.DLmodel.setSelectedModel(programReturnString)
             self.goToScreenDLProgramEditor()
 
@@ -173,17 +244,18 @@ class MainWindow(QMainWindow):
         #self.setImageScreenProgramEditor()
         self.loadTreeView()
         self.treeViewScreenProgramEditor.clicked.connect(self.treeViewClicked)
-        self.buttonExitScreenProgramEditor.clicked.connect(self.goToScreenProgrammingMain)
+        self.buttonExitScreenProgramEditor.clicked.connect(self.exitVisionProgramEditorButtonAction)
         self.buttonAddCommandScreenProgramEditor.clicked.connect(self.addCommandToTree)
         self.buttonRunScreenProgramEditor.clicked.connect(self.runVisionProgram)
         self.buttonDeleteCommandScreenProgramEditor.clicked.connect(self.deleteCommandFromTree)
         self.buttonFeatureDetectionTemplate.clicked.connect(lambda: self.visionProgramStructure.selectTemplate(self.getSelectedInstructionName(), self.getSelectedInstructionParentName()))
         self.buttonFilterCropArea.clicked.connect(lambda: self.visionProgramStructure.selectCropArea(self.getSelectedInstructionName(), self.getSelectedInstructionParentName()))
         self.buttonCaptureSelectFile.clicked.connect(self.getCaptureFileName)
+        self.buttonSaveProgramScreenProgramEditor.clicked.connect(self.saveVisionProgramButtonAction)
 
     def setImageScreenProgramEditor(self, image):
         try:
-            tempImagePath = "temp/programImage.png"
+            tempImagePath = PCP.PATH_TEMP_VISION_PROGRAM_IMAGE
             data = im.fromarray(image)
             data.save(tempImagePath)
             pixmap = QPixmap(tempImagePath)
@@ -192,16 +264,19 @@ class MainWindow(QMainWindow):
             print("Image not found.")
 
     def loadTreeView(self):
-        #Setup first item for TreeView and configure QTreeView
+        #Configure QTreeView
         self.itemModel = QStandardItemModel()
-        parentItem = self.itemModel.invisibleRootItem()
-        item = QStandardItem("File Select1") #CORREGIR
-        parentItem.appendRow(item)
-        self.visionProgramStructure.addInstruction("File Select1", parentItem.text(), VPO.CAPTURE_OPTIONS_FILE_SELECT)
-        self.treeIndex = item.index()
         self.treeViewScreenProgramEditor.setModel(self.itemModel)
         self.stackedWidgetScreenProgramEditor.setCurrentWidget(self.stackCaptureOptions)
     
+    def launchNewVisionProgram(self):
+        self.itemModel.clear() #clear treeView itemModel
+        parentItem = self.itemModel.invisibleRootItem()
+        self.visionProgramStructure.clearProgram()
+        self.labelImageScreenProgramEditor.clear()
+        self.visionProgramStructure.addInstruction("File Select1", parentItem.text(), VPO.CAPTURE_OPTIONS_FILE_SELECT)
+        self.addInstructionToTreeView("File Select1", parentItem.text()) #CORREGIR
+
     def loadProgramToTreeViewScreenProgramEditor(self):
         self.itemModel.clear() #clear treeView itemModel
         names, parents, config = self.visionProgramStructure.getProgramAttributes() #Get program
@@ -229,7 +304,8 @@ class MainWindow(QMainWindow):
         #Get configuration from currently selected tree command and pass it to vision program
         previousItem = self.itemModel.itemFromIndex(self.treeIndex)
         configuration = self.getInstructionConfigurationFromTree()
-        self.visionProgramStructure.changeInstructionConfiguration(previousItem.text(), configuration)
+        if previousItem != None:
+            self.visionProgramStructure.changeInstructionConfiguration(previousItem.text(), configuration)
         self.treeIndex = index #Update treeIndex
         #Update currently displayed widget according to type of instruction selected
         item = self.itemModel.itemFromIndex(index)
@@ -294,7 +370,12 @@ class MainWindow(QMainWindow):
             instructionCounter = instructionCounter + 1
             dialogReturnStringTemp = dialogReturnString + str(instructionCounter)
         dialogReturnString = dialogReturnStringTemp
-        self.visionProgramStructure.addInstruction(dialogReturnString, parentItem.text(), instructionType)
+        if parentItem != None:
+            parentItemText = parentItem.text()
+        else:
+            parentItemText = ""
+            parentItem = self.itemModel.invisibleRootItem()
+        self.visionProgramStructure.addInstruction(dialogReturnString, parentItemText, instructionType)
         item = QStandardItem(dialogReturnString)
         parentItem.appendRow(item)
         #Select newly created index on treeView
@@ -308,10 +389,11 @@ class MainWindow(QMainWindow):
         self.itemModel.removeRow(selectedIndex.row(), selectedIndex.parent())
         self.treeIndex = selectedIndex.parent()
         item = self.itemModel.itemFromIndex(self.treeIndex)
-        instructionType = self.visionProgramStructure.getInstructionType(item.text())
-        instructionConfiguration = self.visionProgramStructure.getInstructionConfiguration(item.text())
-        self.updateStackedWidgetScreenProgramEditor(instructionType, instructionConfiguration)
-        self.treeViewClicked(self.treeIndex)
+        if item != None:
+            instructionType = self.visionProgramStructure.getInstructionType(item.text())
+            instructionConfiguration = self.visionProgramStructure.getInstructionConfiguration(item.text())
+            self.updateStackedWidgetScreenProgramEditor(instructionType, instructionConfiguration)
+            self.treeViewClicked(self.treeIndex)
         self.treeViewScreenProgramEditor.setCurrentIndex(self.treeIndex)
          
     def getInstructionConfigurationFromTree(self):
@@ -419,11 +501,10 @@ class MainWindow(QMainWindow):
         currentItem = self.itemModel.itemFromIndex(self.treeIndex)
         configuration = self.getInstructionConfigurationFromTree()
         self.visionProgramStructure.changeInstructionConfiguration(currentItem.text(), configuration)
-        image, data, dataType = self.visionProgramStructure.runProgram(False, currentItem.text())
+        image, data, dataType, programIndividualResults, programResult = self.visionProgramStructure.runProgram(False, currentItem.text())
         self.updateTableView(data, dataType)
         self.setImageScreenProgramEditor(image)
 
-    
     def getCaptureFileName(self):
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
@@ -431,6 +512,18 @@ class MainWindow(QMainWindow):
         if file:
             currentItem = self.itemModel.itemFromIndex(self.treeIndex)
             self.visionProgramStructure.getCaptureFileName(currentItem.text(), file)
+
+    def saveVisionProgramButtonAction(self):
+        options = QFileDialog.Options()
+        options |= QFileDialog.DontUseNativeDialog
+        file, filter = QFileDialog.getSaveFileName(self, caption = "Save File", directory = PCP.PATH_SAVED_PROGRAMS, filter = "Program Files (*.json);;All Files (*)", options = options)
+        self.visionProgramStructure.saveProgram(file)
+        
+    def exitVisionProgramEditorButtonAction(self):
+        self.visionProgramStructure.clearProgram()
+        self.labelImageScreenProgramEditor.clear()
+        self.updateTableView([[0]], None)
+        self.goToScreenProgrammingMain()
 
     #End ScreenProgramEditor
     #########################################################
@@ -452,24 +545,50 @@ class MainWindow(QMainWindow):
         self.pushButtonDLProgramSave.clicked.connect(self.saveButtonDLProgramAction)
 
     def loadDLTreeView(self):
-        #Setup first item for TreeView and configure QTreeView
+        #Configure QTreeView
         self.DLitemModel = QStandardItemModel()
-        parentItem = self.DLitemModel.invisibleRootItem()
-        item = QStandardItem(DLPO.GROUP_NAME_STRING + "1")
-        parentItem.appendRow(item)
-        self.DLtreeIndex = item.index()
         self.treeViewDLProgramEditor.setModel(self.DLitemModel)
+        
+    def launchNewDLProgram(self):
+        self.DLitemModel.clear() #clear treeView itemModel
+        self.DLmodel.clearProgram()
+        self.labelImageScreenDLProgramEditor.clear()
+        self.resetDLGeneralForm()
+        parentItem = self.DLitemModel.invisibleRootItem()
+        self.addInstructionToDLTreeView(DLPO.GROUP_NAME_STRING + "1", parentItem.text())
         self.DLmodel.addAugmentGroup()
-        self.treeViewDLProgramEditor.setCurrentIndex(self.DLtreeIndex)
-        self.DLtreeViewClicked(item.index())
+        
+    def resetDLGeneralForm(self):
+        self.spinBoxDLProgramBatchSize.setValue(0)
+        self.spinBoxDLProgramEpochs.setValue(0)
+        self.spinBoxDLProgramTrainTestSplit.setValue(0)
+        self.spinBoxDLProgramAugmentRuns.setValue(0)
+
+    def addInstructionToDLTreeView(self, instructionName, parentName):
+        if parentName == "":
+            parentItem = self.DLitemModel.invisibleRootItem()
+        else:
+            parentItem = self.DLitemModel.findItems(parentName, flags = Qt.MatchRecursive)
+            if len(parentItem) > 0:
+                parentItem = parentItem[0]
+        if parentItem:
+            item = QStandardItem(instructionName)
+            parentItem.appendRow(item)
+            self.DLtreeIndex = item.index()
+            self.treeViewDLProgramEditor.setCurrentIndex(self.DLtreeIndex)
+            self.DLtreeViewClicked(item.index())
 
     def loadProgramToDLTreeViewScreenDLProgramEditor(self):
         self.DLitemModel.clear() #clear treeView itemModel
+        self.resetDLGeneralForm()
         groups, augments, augmentsConfig = self.DLmodel.getProgramAttributes() #Get program
         for index, augment in enumerate(augments):
             self.addAugmentToDLTreeView(groups[index], augment)
             self.updateAugmentConfigurationDLTree(augmentsConfig[index])
             self.DLtreeViewClicked(self.DLtreeIndex)
+        if len(augments) == 0:
+            parentItem = self.DLitemModel.invisibleRootItem()
+            self.addInstructionToDLTreeView(DLPO.GROUP_NAME_STRING + "1", parentItem.text())
 
     def addAugmentToDLTreeView(self, group, augment):
         #Check if group exists or add it to the treeView
@@ -646,7 +765,7 @@ class MainWindow(QMainWindow):
     def saveButtonDLProgramAction(self):
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
-        path = QFileDialog.getExistingDirectory(self,"Select Save Directory", options=options)
+        path, filter = QFileDialog.getSaveFileName(self, "Save File", directory = PCP.PATH_SAVED_PROGRAMS, filter = "Program Files (*.json);;All Files (*)", options = options)
         self.DLmodel.saveProgram(path)
 
     def setImageScreenDLProgramEditor(self, image):

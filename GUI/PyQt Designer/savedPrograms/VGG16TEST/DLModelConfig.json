@@ -1,0 +1,10 @@
+{
+    "model": "VGG16",
+    "okPath": "C:/Users/Alejandro/Desktop/MIA Trabajo final/Repositorio/SFVI-MIA/GUI/PyQt Designer/tests/datasets/leather/test/OK",
+    "nokPath": "C:/Users/Alejandro/Desktop/MIA Trabajo final/Repositorio/SFVI-MIA/GUI/PyQt Designer/tests/datasets/leather/test/NOK",
+    "modelPath": "C:/Users/Alejandro/Desktop/MIA Trabajo final/Repositorio/SFVI-MIA/GUI/PyQt Designer/savedPrograms/VGG16TEST\\VGG16Model.pth",
+    "modelResultPath": "C:/Users/Alejandro/Desktop/MIA Trabajo final/Repositorio/SFVI-MIA/GUI/PyQt Designer/savedPrograms/VGG16TEST\\modelResult.png",
+    "augmentGroups": {
+        "1": {}
+    }
+}

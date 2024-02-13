@@ -1,0 +1,30 @@
+{
+    "File Select1": {
+        "Name": "File Select1",
+        "Type": "File Select",
+        "Parent": "",
+        "Configuration": {
+            "Name": "",
+            "Exposure": 0,
+            "File Path": 0,
+            "Variable 1": 0,
+            "Variable 2": 0,
+            "Variable 3": 0,
+            "Variable 4": 500
+        }
+    },
+    "Blur1": {
+        "Name": "Blur1",
+        "Type": "Blur",
+        "Parent": "File Select1",
+        "Configuration": {
+            "Name": null,
+            "Kernel Rows": 0,
+            "Kernel Columns": 0,
+            "Iterations": 0,
+            "Threshold": 0,
+            "Threshold 2": 0,
+            "Crop Area": 0
+        }
+    }
+}
