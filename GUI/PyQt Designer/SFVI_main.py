@@ -94,8 +94,6 @@ class MainWindow(QMainWindow):
             elif DLM.checkIfFileIsDLProgram(file):
                 self.selectedProgramType = VPO.VISION_PROGRAM_TYPES_DEEP_LEARNING
                 self.DLmodel.loadProgram(file)
-            #AGREGAR ACA EN CASO DE QUE SEA UN PROGRAMA DE DL
-            #VER DE CARGAR EL MODELO DE DL Y DEJARLO CARGADO, EN VEZ DE TENER QUE CARGARLO CADA VEZ QUE SE HAGA UN RUN
         self.updateProgramStatusForm()
     
     def configButtonAction(self):
