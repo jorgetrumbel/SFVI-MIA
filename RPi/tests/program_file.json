@@ -1,0 +1,10 @@
+{
+    "2blur": {
+        "name": "Blur",
+        "parent": 1,
+        "configuration": {
+            "kernel rows": 3,
+            "kernel columns": 3
+        }
+    }
+}

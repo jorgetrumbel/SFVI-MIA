@@ -1,0 +1,23 @@
+{
+    "model": "VGG16",
+    "okPath": "C:/Users/Alejandro/Desktop/MIA Trabajo final/Repositorio/SFVI-MIA/GUI/PyQt Designer/tests/datasets/leather/test/OK",
+    "nokPath": "C:/Users/Alejandro/Desktop/MIA Trabajo final/Repositorio/SFVI-MIA/GUI/PyQt Designer/tests/datasets/leather/test/NOK",
+    "modelPath": "C:/Users/Alejandro/Desktop/MIA Trabajo final/Repositorio/SFVI-MIA/GUI/PyQt Designer/savedPrograms/DLPrograms\\VGG16Model.pth",
+    "modelResultPath": "C:/Users/Alejandro/Desktop/MIA Trabajo final/Repositorio/SFVI-MIA/GUI/PyQt Designer/savedPrograms/DLPrograms\\modelResult.png",
+    "augmentGroups": {
+        "1": {
+            "Random Horizontal Flip": {
+                "0": 12,
+                "1": 0,
+                "2": 0,
+                "3": 0
+            },
+            "Random Perspective": {
+                "0": 0,
+                "1": 0,
+                "2": 0,
+                "3": 0
+            }
+        }
+    }
+}

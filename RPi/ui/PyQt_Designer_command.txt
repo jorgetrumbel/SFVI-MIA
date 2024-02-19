@@ -1,0 +1,3 @@
+From a CMD:
+
+pyuic5 filename.ui -o filename.py
