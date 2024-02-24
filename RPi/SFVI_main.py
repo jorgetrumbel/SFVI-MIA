@@ -1,8 +1,8 @@
 import sys
-from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QMainWindow, QFormLayout, QApplication, QHBoxLayout, QVBoxLayout, QWidget, QLabel, QDialog, QFileDialog, QMessageBox
-from PyQt5.QtGui import QIcon, QPixmap, QStandardItemModel, QStandardItem, QImage
-from PyQt5.QtCore import QModelIndex, QAbstractTableModel, Qt, QRunnable, QThreadPool
+from PyQt5 import QtCore, QtWidgets
+from PyQt5.QtWidgets import QMainWindow, QFileDialog, QMessageBox
+from PyQt5.QtGui import QIcon, QPixmap, QStandardItemModel, QStandardItem
+from PyQt5.QtCore import QModelIndex, Qt, QRunnable, QThreadPool
 from PyQt5.uic import loadUi
 from PIL import Image as im
 
@@ -11,6 +11,7 @@ from DialogProgramSelection import DialogProgramSelection
 from DialogTrainOutput import DialogTrainOutput
 from DialogAugmentSelection import DialogAugmentSelection
 from DialogGeneralConfig import DialogGeneralConfig
+from DialogCameraConfig import DialogCameraConfig
 
 import VisionProgramOptions as VPO
 import DeepLearningProgramOptions as DLPO
@@ -21,6 +22,7 @@ import DialogTrainOutput as DTO
 import UtilitiesModule as UM
 import ProgramCommonPaths as PCP
 import ProgramConfigOptions as PCO
+import CameraModule as CM
 
 import json #FOR DEBUGGING
 import cv2 as cv #FOR DEBUGGING
@@ -67,6 +69,7 @@ class MainWindow(QMainWindow):
     selectedProgramType = None
     programPicturesTaken = 0
     programNOKPictures = 0
+    camera = CM.Camera()
 
     #########################################################
     #ScreenMonitorMain
@@ -76,6 +79,7 @@ class MainWindow(QMainWindow):
         self.buttonSelectProgramScreenMonitorMain.clicked.connect(self.getProgramFileName)
         self.buttonCounterScreenMonitorMain.clicked.connect(self.triggerProgramRun) #CORREGIR - NO VA EN ESTE BOTON
         self.buttonConfigScreenMonitorMain.clicked.connect(self.configButtonAction)
+        self.buttonCameraConfigurationScreenMonitorMain.clicked.connect(self.cameraConfigButtonAction)
 
     def goToScreenProgrammingMain(self):
         self.stackWidget.setCurrentWidget(self.ScreenProgrammingMain)
@@ -103,6 +107,21 @@ class MainWindow(QMainWindow):
         if generalConfigDialog.checkIfResetWasPressed():
             self.resetProgramCounters()
         self.updateProgramStatusForm()
+
+    def cameraConfigButtonAction(self):
+        cameraConfigDialog = DialogCameraConfig(self)
+        if UM.isRPi():
+            #RPI
+            cameraConfigDialog.loadCameraConfig(self.camera.getControlConfig())
+        else:
+            #Windows
+            cameraConfigDialog.loadCameraConfig(CM.getControlDefaults())        
+        cameraConfigDialog.exec()
+        cameraOptions = cameraConfigDialog.getFormsValuesTransformed()
+        if cameraConfigDialog.getDialogResult():
+            #Ok Clicked - Change camera config
+            if UM.isRPi():
+                self.camera.loadControlConfig(cameraOptions)
 
     def updateProgramStatusForm(self):
         self.lineEditProgramStatusScreenMonitorMain.setText(self.programOnlineStatus)
@@ -250,6 +269,7 @@ class MainWindow(QMainWindow):
         self.buttonFilterCropArea.clicked.connect(lambda: self.visionProgramStructure.selectCropArea(self.getSelectedInstructionName(), self.getSelectedInstructionParentName()))
         self.buttonCaptureSelectFile.clicked.connect(self.getCaptureFileName)
         self.buttonSaveProgramScreenProgramEditor.clicked.connect(self.saveVisionProgramButtonAction)
+        self.buttonCaptureCameraConfig.clicked.connect(self.cameraConfigProgramEditorButtonAction)
 
     def setImageScreenProgramEditor(self, image):
         try:
@@ -432,7 +452,7 @@ class MainWindow(QMainWindow):
 
     def getStackCaptureConfiguration(self):
         instructionData = {}
-        instructionData[VPO.CAPTURE_CONFIGURATIONS_NAME] = self.lineEditCapturaName.text()
+        instructionData[VPO.CAPTURE_CONFIGURATIONS_NAME] = self.lineEditCaptureName.text()
         instructionData[VPO.CAPTURE_CONFIGURATIONS_EXPOSURE] = self.spinBoxExposure.value()
         return instructionData
     
@@ -510,6 +530,22 @@ class MainWindow(QMainWindow):
         if file:
             currentItem = self.itemModel.itemFromIndex(self.treeIndex)
             self.visionProgramStructure.getCaptureFileName(currentItem.text(), file)
+
+    def cameraConfigProgramEditorButtonAction(self):
+        cameraConfigDialog = DialogCameraConfig(self)
+        if UM.isRPi():
+            #RPI
+            cameraConfigDialog.loadCameraConfig(self.camera.getControlConfig())
+        else:
+            #Windows
+            cameraConfigDialog.loadCameraConfig(CM.getControlDefaults())        
+        cameraConfigDialog.exec()
+        cameraOptions = cameraConfigDialog.getFormsValuesTransformed()
+        if cameraConfigDialog.getDialogResult():
+            #Ok Clicked - Change camera config
+            if UM.isRPi():
+                pass
+                #self.camera.loadControlConfig(cameraOptions)
 
     def saveVisionProgramButtonAction(self):
         options = QFileDialog.Options()

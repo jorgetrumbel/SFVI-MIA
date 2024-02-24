@@ -1,7 +1,13 @@
-from picamera2 import Picamera2, Preview
+try:
+    from picamera2 import Picamera2, Preview
+except ImportError:
+    print("Not working on RPi")
+
 from io import BytesIO
 from time import sleep
 from PIL import Image
+
+import CameraOptions as CO
 
 #CAMERA SENSOR CONFIGURATIONS
 '''
@@ -62,8 +68,11 @@ from PIL import Image
 class Camera():
     def __init__(self):
         self.stream = BytesIO()
-        self.camera = Picamera2()
-        self.configureCameraMode()
+        try:
+            self.camera = Picamera2()
+            self.configureCameraMode()
+        except:
+            print("Couldnt create camera object")
 
     def startCamera(self):
         self.camera.start(config = self.config)
@@ -96,6 +105,9 @@ class Camera():
     def setCameraOutputSize(self, height, width):
         self.config["main"]["size"] = (height, width)
         self.camera.configure(self.config)
+    
+    def getCameraOutputSize(self):
+        return self.config["main"]["size"]
 
     def printCameraConfigurations(self):
         #the reported information will require the camera to be stopped
@@ -108,11 +120,17 @@ class Camera():
         self.camera.set_controls({"ExposureTime": exposureTime})
         self.config['controls']["ExposureTime"] = exposureTime
         sleep(1)
+
+    def getExposureTime(self):
+        return self.config['controls']["ExposureTime"]
     
     def modifyAnalogueGain(self, analogueGain):
         self.camera.set_controls({"AnalogueGain": analogueGain})
         self.config['controls']["AnalogueGain"] = analogueGain
         sleep(1)
+
+    def getAnalogueGain(self):
+        return self.config['controls']["AnalogueGain"]
 
     def modifyAWB(self, enable, mode):
         self.camera.set_controls({"AwbEnable": enable})
@@ -121,36 +139,114 @@ class Camera():
         self.config['controls']["AwbMode"] = mode
         sleep(1)
 
+    def getAWBMode(self):
+        return self.config['controls']["AwbMode"]
+
+    def getAWBEnable(self):
+        return self.config['controls']["AwbEnable"]
+
     def modifySharpness(self, sharpness):
         self.camera.set_controls({"Sharpness": sharpness})
         self.config['controls']["Sharpness"] = sharpness
         sleep(1)
+
+    def getSharpness(self):
+        return self.config['controls']["Sharpness"]
 
     def modifyContrast(self, contrast):
         self.camera.set_controls({"Contrast": contrast})
         self.config['controls']["Contrast"] = contrast
         sleep(1)
 
+    def getContrast(self):
+        return self.config['controls']["Contrast"]
+
     def modifySaturation(self, saturation):
         self.camera.set_controls({"Saturation": saturation})
         self.config['controls']["Saturation"] = saturation
         sleep(1)
+
+    def getSaturation(self):
+        return self.config['controls']["Saturation"]
 
     def modifyBrightness(self, brightness):
         self.camera.set_controls({"Brightness": brightness})
         self.config['controls']["Brightness"] = brightness
         sleep(1)
 
+    def getBrightness(self):
+        return self.config['controls']["Brightness"]
+
     def modifyColourGains(self, colourGains):
         self.camera.set_controls({"ColourGains": colourGains})
         self.config['controls']["ColourGains"] = colourGains
         sleep(1)
+
+    def getColourGains(self):
+        return self.config['controls']["ColourGains"]
+
+    def getControlConfig(self):
+        defaultDict = {CO.CAMERA_CONTROL_OUTPUT_HEIGHT_NAME: self.config["main"]["size"][0],
+                        CO.CAMERA_CONTROL_OUTPUT_WIDTH_NAME: self.config["main"]["size"][1],
+                        CO.CAMERA_CONTROL_EXPOSURE_TIME_NAME: self.config['controls']["ExposureTime"],
+                        CO.CAMERA_CONTROL_ANALOG_GAIN_NAME: self.config['controls']["AnalogueGain"],
+                        CO.CAMERA_CONTROL_AWB_ENABLE_NAME: self.config['controls']["AwbEnable"],
+                        CO.CAMERA_CONTROL_AWB_MODE_NAME: self.config['controls']["AwbMode"],
+                        CO.CAMERA_CONTROL_SHARPNESS_NAME: self.config['controls']["Sharpness"],
+                        CO.CAMERA_CONTROL_CONTRAST_NAME: self.config['controls']["Contrast"],
+                        CO.CAMERA_CONTROL_SATURATION_NAME: self.config['controls']["Saturation"],
+                        CO.CAMERA_CONTROL_BRIGHTNESS_NAME: self.config['controls']["Brightness"],
+                        CO.CAMERA_CONTROL_COLOR_GAIN_NAME: self.config['controls']["ColourGains"]}
+        return defaultDict
+
+    def loadControlConfig(self, config):
+        self.stopCamera()   
+        self.config["main"]["size"][0] = config[CO.CAMERA_CONTROL_OUTPUT_HEIGHT_NAME]
+        self.config["main"]["size"][1] = config[CO.CAMERA_CONTROL_OUTPUT_WIDTH_NAME]
+        self.config['controls']["ExposureTime"] = config[CO.CAMERA_CONTROL_EXPOSURE_TIME_NAME]
+        self.config['controls']["AnalogueGain"] = config[CO.CAMERA_CONTROL_ANALOG_GAIN_NAME]
+        self.config['controls']["AwbEnable"] = config[CO.CAMERA_CONTROL_AWB_ENABLE_NAME]
+        self.config['controls']["AwbMode"] = config[CO.CAMERA_CONTROL_AWB_MODE_NAME]
+        self.config['controls']["Sharpness"] = config[CO.CAMERA_CONTROL_SHARPNESS_NAME]
+        self.config['controls']["Contrast"] = config[CO.CAMERA_CONTROL_CONTRAST_NAME]
+        self.config['controls']["Saturation"] = config[CO.CAMERA_CONTROL_SATURATION_NAME]
+        self.config['controls']["Brightness"] = config[CO.CAMERA_CONTROL_BRIGHTNESS_NAME]
+        self.config['controls']["ColourGains"] = config[CO.CAMERA_CONTROL_COLOR_GAIN_NAME]
+        self.camera.configure(self.config) #Apply changes
+        sleep(1)
+        self.startCamera() #Restart Camera
 
     camera = None
     config = None
     stream = None
 
 
+def getControlDefaults():
+    outputHeightDefault = 3040
+    outputWidthDefault = 4056
+    exposureTimeDefault = 100
+    awbModeDefault = 0
+    analogueGainDefault = 100
+    sharpnessDefault = 10
+    awbEnableDefault = False
+    contrastDefault = 10
+    saturationDefault = 10
+    brightnessDefault = 0
+    colorGainsDefault = 0
+    defaultDict = {CO.CAMERA_CONTROL_OUTPUT_HEIGHT_NAME: outputHeightDefault,
+                    CO.CAMERA_CONTROL_OUTPUT_WIDTH_NAME: outputWidthDefault,
+                    CO.CAMERA_CONTROL_EXPOSURE_TIME_NAME: exposureTimeDefault,
+                    CO.CAMERA_CONTROL_ANALOG_GAIN_NAME: analogueGainDefault,
+                    CO.CAMERA_CONTROL_AWB_ENABLE_NAME: awbEnableDefault,
+                    CO.CAMERA_CONTROL_AWB_MODE_NAME: awbModeDefault,
+                    CO.CAMERA_CONTROL_SHARPNESS_NAME: sharpnessDefault,
+                    CO.CAMERA_CONTROL_CONTRAST_NAME: contrastDefault,
+                    CO.CAMERA_CONTROL_SATURATION_NAME: saturationDefault,
+                    CO.CAMERA_CONTROL_BRIGHTNESS_NAME: brightnessDefault,
+                    CO.CAMERA_CONTROL_COLOR_GAIN_NAME: colorGainsDefault}
+    return defaultDict
+
+'''
 #TEST CODE
 camera = Camera()
 camera.setCameraOutputSize(300,300)
@@ -183,3 +279,4 @@ camera.stopCamera()
 
 #camera.printCameraConfigurations()
 #camera.printCameraControls()
+'''

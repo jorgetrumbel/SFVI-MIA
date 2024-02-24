@@ -88,7 +88,7 @@
     <item>
      <widget class="QStackedWidget" name="stackWidget">
       <property name="currentIndex">
-       <number>3</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="ScreenMonitorMain">
        <layout class="QVBoxLayout" name="verticalLayout">
@@ -106,6 +106,124 @@
         </property>
         <item>
          <layout class="QGridLayout" name="gridLayoutScreenMonitorMain">
+          <item row="0" column="7">
+           <layout class="QFormLayout" name="formLayoutScreenMonitorMain">
+            <item row="0" column="0">
+             <widget class="QLabel" name="labelProgramNameScreenMonitorMain">
+              <property name="text">
+               <string>Program Name</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QLineEdit" name="lineEditProgramNameScreenMonitorMain">
+              <property name="readOnly">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="labelProgramStatusScreenMonitorMain">
+              <property name="text">
+               <string>Status</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QLineEdit" name="lineEditProgramStatusScreenMonitorMain">
+              <property name="readOnly">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <widget class="QLabel" name="labelPicturesTakenScreenMonitorMain">
+              <property name="text">
+               <string>Pictures Taken</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1">
+             <widget class="QLineEdit" name="lineEditPicturesTakenScreenMonitorMain">
+              <property name="dragEnabled">
+               <bool>false</bool>
+              </property>
+              <property name="readOnly">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="0">
+             <widget class="QLabel" name="labelNOKPicturesScreenMonitorMain">
+              <property name="text">
+               <string>NOK Pictures</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="1">
+             <widget class="QLineEdit" name="lineEditNOKPicturesScreenMonitorMain">
+              <property name="readOnly">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item row="1" column="7">
+           <widget class="QPushButton" name="buttonChangeToProgrammingMain">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+              <horstretch>2</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>50</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <family>Sitka</family>
+              <pointsize>11</pointsize>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>Programming
+Interface</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="3">
+           <widget class="QPushButton" name="buttonCounterScreenMonitorMain">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+              <horstretch>1</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>50</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <family>Sitka</family>
+              <pointsize>11</pointsize>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>Counters</string>
+            </property>
+           </widget>
+          </item>
           <item row="1" column="0">
            <widget class="QPushButton" name="buttonConfigScreenMonitorMain">
             <property name="sizePolicy">
@@ -134,62 +252,7 @@ Configuration</string>
             </property>
            </widget>
           </item>
-          <item row="1" column="1">
-           <widget class="QPushButton" name="buttonSelectProgramScreenMonitorMain">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-              <horstretch>1</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>50</height>
-             </size>
-            </property>
-            <property name="font">
-             <font>
-              <family>Sitka</family>
-              <pointsize>11</pointsize>
-              <weight>75</weight>
-              <bold>true</bold>
-             </font>
-            </property>
-            <property name="text">
-             <string>Select 
-Program</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="2">
-           <widget class="QPushButton" name="buttonCounterScreenMonitorMain">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-              <horstretch>1</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>50</height>
-             </size>
-            </property>
-            <property name="font">
-             <font>
-              <family>Sitka</family>
-              <pointsize>11</pointsize>
-              <weight>75</weight>
-              <bold>true</bold>
-             </font>
-            </property>
-            <property name="text">
-             <string>Counters</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="0" colspan="3">
+          <item row="0" column="0" colspan="4">
            <widget class="QLabel" name="labelImageScreenMonitorMain">
             <property name="palette">
              <palette>
@@ -266,11 +329,11 @@ Program</string>
             </property>
            </widget>
           </item>
-          <item row="1" column="6">
-           <widget class="QPushButton" name="buttonChangeToProgrammingMain">
+          <item row="1" column="2">
+           <widget class="QPushButton" name="buttonSelectProgramScreenMonitorMain">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-              <horstretch>2</horstretch>
+              <horstretch>1</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
@@ -289,73 +352,38 @@ Program</string>
              </font>
             </property>
             <property name="text">
-             <string>Programming
-Interface</string>
+             <string>Select 
+Program</string>
             </property>
            </widget>
           </item>
-          <item row="0" column="6">
-           <layout class="QFormLayout" name="formLayoutScreenMonitorMain">
-            <item row="0" column="0">
-             <widget class="QLabel" name="labelProgramNameScreenMonitorMain">
-              <property name="text">
-               <string>Program Name</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="1">
-             <widget class="QLineEdit" name="lineEditProgramNameScreenMonitorMain">
-              <property name="readOnly">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="0">
-             <widget class="QLabel" name="labelProgramStatusScreenMonitorMain">
-              <property name="text">
-               <string>Status</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="1">
-             <widget class="QLineEdit" name="lineEditProgramStatusScreenMonitorMain">
-              <property name="readOnly">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="0">
-             <widget class="QLabel" name="labelPicturesTakenScreenMonitorMain">
-              <property name="text">
-               <string>Pictures Taken</string>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="1">
-             <widget class="QLineEdit" name="lineEditPicturesTakenScreenMonitorMain">
-              <property name="dragEnabled">
-               <bool>false</bool>
-              </property>
-              <property name="readOnly">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="0">
-             <widget class="QLabel" name="labelNOKPicturesScreenMonitorMain">
-              <property name="text">
-               <string>NOK Pictures</string>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="1">
-             <widget class="QLineEdit" name="lineEditNOKPicturesScreenMonitorMain">
-              <property name="readOnly">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-           </layout>
+          <item row="1" column="1">
+           <widget class="QPushButton" name="buttonCameraConfigurationScreenMonitorMain">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+              <horstretch>1</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>50</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <family>Sitka</family>
+              <pointsize>11</pointsize>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>Camera
+Configuration</string>
+            </property>
+           </widget>
           </item>
          </layout>
         </item>
@@ -558,7 +586,7 @@ Program</string>
              </sizepolicy>
             </property>
             <property name="currentIndex">
-             <number>4</number>
+             <number>0</number>
             </property>
             <widget class="QWidget" name="stackCaptureOptions">
              <property name="palette">
@@ -646,26 +674,34 @@ Program</string>
                  </widget>
                 </item>
                 <item row="0" column="1">
-                 <widget class="QLineEdit" name="lineEditCapturaName"/>
+                 <widget class="QLineEdit" name="lineEditCaptureName"/>
                 </item>
-                <item row="2" column="0">
+                <item row="3" column="0">
                  <widget class="QLabel" name="labelCaptureSelectFile">
                   <property name="text">
                    <string>Select File</string>
                   </property>
                  </widget>
                 </item>
+                <item row="2" column="0">
+                 <widget class="QLabel" name="labelCaptureCameraConfig">
+                  <property name="text">
+                   <string>Camera Config</string>
+                  </property>
+                 </widget>
+                </item>
                 <item row="2" column="1">
-                 <widget class="QWidget" name="widgetCaptureSelectFile" native="true">
-                  <layout class="QVBoxLayout" name="verticalLayout_11">
-                   <item>
-                    <widget class="QPushButton" name="buttonCaptureSelectFile">
-                     <property name="text">
-                      <string>Select File</string>
-                     </property>
-                    </widget>
-                   </item>
-                  </layout>
+                 <widget class="QPushButton" name="buttonCaptureCameraConfig">
+                  <property name="text">
+                   <string>Configurate</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="3" column="1">
+                 <widget class="QPushButton" name="buttonCaptureSelectFile">
+                  <property name="text">
+                   <string>Select File</string>
+                  </property>
                  </widget>
                 </item>
                </layout>

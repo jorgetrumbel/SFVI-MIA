@@ -1,0 +1,13 @@
+{
+    "Output Height": 100,
+    "Output Width": 120,
+    "Exposure Time": 500,
+    "Analog Gain": 555,
+    "AWB Enable": false,
+    "AWB Mode": 5,
+    "Sharpness": 55,
+    "Contrast": 55,
+    "Saturation": 55,
+    "Brightness": 55,
+    "Color Gain": 55
+}

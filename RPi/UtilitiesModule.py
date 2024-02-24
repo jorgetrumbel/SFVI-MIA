@@ -50,3 +50,19 @@ def checkIfPathExists(path):
 
 def getFileSuffix(path):
     return pathlib.Path(path).suffix
+
+def saveJsonDict(path, jsonDict):
+    path = path + ".json"
+    with open(path, "w") as write_file:
+        json.dump(jsonDict, write_file, indent=4)
+
+def loadJsonDict(path):
+    with open(path, "r") as readFile:
+        jsonDict = json.load(readFile)
+    return jsonDict
+
+def isRPi():
+    retVal = False
+    if os.name == 'posix':
+        retVal = True
+    return retVal
