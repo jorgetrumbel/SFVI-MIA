@@ -65,9 +65,9 @@ CAPTURE_OPTIONS_FLASH = captureOptions[1]
 CAPTURE_OPTIONS_FILE = captureOptions[2]
 CAPTURE_OPTIONS_FILE_SELECT = captureOptions[3]
 
-captureConfigurations = ("Name", "Exposure", "File Path")
+captureConfigurations = ("Name", "Camera Config", "File Path")
 CAPTURE_CONFIGURATIONS_NAME = captureConfigurations[0]
-CAPTURE_CONFIGURATIONS_EXPOSURE = captureConfigurations[1]
+CAPTURE_CONFIGURATIONS_CAMERA = captureConfigurations[1]
 CAPTURE_CONFIGURATIONS_FILE_PATH = captureConfigurations[2]
 
 #FEATURE DETECTION OPTIONS

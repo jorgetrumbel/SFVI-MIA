@@ -656,16 +656,6 @@ Program</string>
              <layout class="QVBoxLayout" name="verticalLayout_4">
               <item>
                <layout class="QFormLayout" name="formLayoutCaptureOptions">
-                <item row="1" column="0">
-                 <widget class="QLabel" name="labelExposure">
-                  <property name="text">
-                   <string>Exposure</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="1" column="1">
-                 <widget class="QSpinBox" name="spinBoxExposure"/>
-                </item>
                 <item row="0" column="0">
                  <widget class="QLabel" name="labelCaptureName">
                   <property name="text">
@@ -676,28 +666,28 @@ Program</string>
                 <item row="0" column="1">
                  <widget class="QLineEdit" name="lineEditCaptureName"/>
                 </item>
-                <item row="3" column="0">
-                 <widget class="QLabel" name="labelCaptureSelectFile">
-                  <property name="text">
-                   <string>Select File</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="2" column="0">
+                <item row="1" column="0">
                  <widget class="QLabel" name="labelCaptureCameraConfig">
                   <property name="text">
                    <string>Camera Config</string>
                   </property>
                  </widget>
                 </item>
-                <item row="2" column="1">
+                <item row="1" column="1">
                  <widget class="QPushButton" name="buttonCaptureCameraConfig">
                   <property name="text">
-                   <string>Configurate</string>
+                   <string>Configure</string>
                   </property>
                  </widget>
                 </item>
-                <item row="3" column="1">
+                <item row="2" column="0">
+                 <widget class="QLabel" name="labelCaptureSelectFile">
+                  <property name="text">
+                   <string>Select File</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="1">
                  <widget class="QPushButton" name="buttonCaptureSelectFile">
                   <property name="text">
                    <string>Select File</string>

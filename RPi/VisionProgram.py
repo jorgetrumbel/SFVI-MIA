@@ -6,8 +6,10 @@ import VisionDetectionModule as VDM
 import DrawModule as DM
 import MeasurementModule as MM
 import GeometryModule as GM
-import CameraModulePC as CM
+import CameraModulePC as CMPC
+import CameraModule as CM
 import ProgramCommonPaths as PCP
+import UtilitiesModule as UM
 import numpy as np
 
 from PIL import Image as im
@@ -18,6 +20,9 @@ class ProgramStructure():
     def __init__(self):
         pass
 
+    def getCamera(self, camera:CM.Camera):
+        self.camera = camera
+
     def addInstruction(self, instructionName, parentName, instructionType):
         instructionData = {VPO.INSTRUCTION_DATA_NAME: instructionName,
                             VPO.INSTRUCTION_DATA_TYPE: instructionType,
@@ -27,7 +32,7 @@ class ProgramStructure():
         
         if instructionType in  VPO.captureOptions:
             instructionData[VPO.INSTRUCTION_DATA_CONFIGURATION] = {VPO.FILTER_CONFIGURATIONS_NAME: None,
-                                                                   VPO.CAPTURE_CONFIGURATIONS_EXPOSURE: 0,
+                                                                   VPO.CAPTURE_CONFIGURATIONS_CAMERA: CM.getControlDefaults(),
                                                                    VPO.CAPTURE_CONFIGURATIONS_FILE_PATH: 0}
 
         elif instructionType in VPO.filterOptions:
@@ -88,6 +93,12 @@ class ProgramStructure():
     def changeInstructionConfiguration(self, instructionName, instructionConfiguration):
         for key in instructionConfiguration.keys():
             self.programInstructionList[instructionName][VPO.INSTRUCTION_DATA_CONFIGURATION][key] = instructionConfiguration[key]
+
+    def changeCameraConfigurations(self, instructionName, cameraConfig):
+        self.programInstructionList[instructionName][VPO.INSTRUCTION_DATA_CONFIGURATION][VPO.CAPTURE_CONFIGURATIONS_CAMERA] = cameraConfig
+
+    def getCameraConfig(self, instructionName):
+        return self.programInstructionList[instructionName][VPO.INSTRUCTION_DATA_CONFIGURATION][VPO.CAPTURE_CONFIGURATIONS_CAMERA]
 
     def changeInstructionName(self, instructionID, instructionName):
         pass
@@ -183,7 +194,7 @@ class ProgramStructure():
                 image = self.programInstructionList[instructionParent][VPO.INSTRUCTION_DATA_IMAGE].copy()
             if instruction[VPO.INSTRUCTION_DATA_TYPE] in VPO.captureOptions:
                 #image = VM.loadImage("images/hearts_card.png", grayscale=True) #FOR DEBUGGING
-                image = runCaptureInstruction(instructionType, instructionConfiguration)
+                image = runCaptureInstruction(instructionType, instructionConfiguration, self.camera)
                 instruction[VPO.INSTRUCTION_DATA_IMAGE] = image.copy()
 
             elif instruction[VPO.INSTRUCTION_DATA_TYPE] in VPO.filterOptions:
@@ -214,16 +225,22 @@ class ProgramStructure():
     programInstructionList = {}
     program = {}
     programIndex = 0
+    camera:CM.Camera = None
 
-def runCaptureInstruction(type, configuration):
-    exposure = configuration[VPO.CAPTURE_CONFIGURATIONS_EXPOSURE]
+def runCaptureInstruction(type, configuration, camera:CM.Camera):
     filePath = configuration[VPO.CAPTURE_CONFIGURATIONS_FILE_PATH]
+    cameraConfig = configuration[VPO.CAPTURE_CONFIGURATIONS_CAMERA]
     if type == VPO.CAPTURE_OPTIONS_CAMERA:
-        image = CM.takePicturePC()
+        if UM.isRPi():
+            if camera.getControlConfig() != cameraConfig:
+                camera.loadControlConfig(cameraConfig)
+            image = camera.takeArray()
+        else:
+            image = CMPC.takePicturePC()
     elif type == VPO.CAPTURE_OPTIONS_FILE:
         image = VM.loadImage(filePath, grayscale=True)
     elif type == VPO.CAPTURE_OPTIONS_FILE_SELECT:
-        filePath = CM.getImageFile()
+        filePath = CMPC.getImageFile()
         image = VM.loadImage(filePath, grayscale=True)
     return image
 

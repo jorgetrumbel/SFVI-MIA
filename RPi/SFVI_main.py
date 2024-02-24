@@ -357,7 +357,7 @@ class MainWindow(QMainWindow):
         self.spinBoxThreshold2.setValue(configuration[VPO.FILTER_CONFIGURATIONS_THRESHOLD2])
 
     def loadStackCaptureOptions(self, configuration):
-        self.spinBoxExposure.setValue(configuration[VPO.CAPTURE_CONFIGURATIONS_EXPOSURE])
+        pass
     
     def loadStackFeatureDetectionOptions(self, configuration):
         self.spinBoxFeatureDetectionVariable1.setValue(configuration[VPO.FEATURE_DETECTION_CONFIGURATIONS_VARIABLE_1])
@@ -453,7 +453,6 @@ class MainWindow(QMainWindow):
     def getStackCaptureConfiguration(self):
         instructionData = {}
         instructionData[VPO.CAPTURE_CONFIGURATIONS_NAME] = self.lineEditCaptureName.text()
-        instructionData[VPO.CAPTURE_CONFIGURATIONS_EXPOSURE] = self.spinBoxExposure.value()
         return instructionData
     
     def getStackFilterConfiguration(self):
@@ -533,19 +532,16 @@ class MainWindow(QMainWindow):
 
     def cameraConfigProgramEditorButtonAction(self):
         cameraConfigDialog = DialogCameraConfig(self)
-        if UM.isRPi():
-            #RPI
-            cameraConfigDialog.loadCameraConfig(self.camera.getControlConfig())
-        else:
-            #Windows
-            cameraConfigDialog.loadCameraConfig(CM.getControlDefaults())        
+        currentItem = self.itemModel.itemFromIndex(self.treeIndex)
+        previousCameraConfig = self.visionProgramStructure.getCameraConfig(currentItem.text())
+        cameraConfigDialog.loadCameraConfigTransformed(previousCameraConfig)        
         cameraConfigDialog.exec()
         cameraOptions = cameraConfigDialog.getFormsValuesTransformed()
         if cameraConfigDialog.getDialogResult():
             #Ok Clicked - Change camera config
+            self.visionProgramStructure.changeCameraConfigurations(currentItem.text(), cameraOptions)
             if UM.isRPi():
-                pass
-                #self.camera.loadControlConfig(cameraOptions)
+                self.camera.loadControlConfig(cameraOptions)
 
     def saveVisionProgramButtonAction(self):
         options = QFileDialog.Options()

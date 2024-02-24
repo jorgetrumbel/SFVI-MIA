@@ -5,7 +5,19 @@
         "Parent": "",
         "Configuration": {
             "Name": "",
-            "Exposure": 0,
+            "Camera Config": {
+                "Output Height": 30,
+                "Output Width": 30,
+                "Exposure Time": 100,
+                "Analog Gain": 2.22,
+                "AWB Enable": false,
+                "AWB Mode": 2,
+                "Sharpness": 2.2,
+                "Contrast": 2.2,
+                "Saturation": 2.2,
+                "Brightness": 0.22,
+                "Color Gain": 2.2
+            },
             "File Path": "C:/Users/Alejandro/Desktop/MIA Trabajo final/Repositorio/SFVI-MIA/GUI/PyQt Designer/images/coins.png"
         }
     },

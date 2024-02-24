@@ -43,6 +43,15 @@ class DialogCameraConfig(QDialog):
         self.cameraConfig = cameraDict
         self.updateForms()
     
+    def loadCameraConfigTransformed(self, cameraDict):
+        cameraDict[CO.CAMERA_CONTROL_ANALOG_GAIN_NAME] = int(cameraDict[CO.CAMERA_CONTROL_ANALOG_GAIN_NAME] * 100)
+        cameraDict[CO.CAMERA_CONTROL_SHARPNESS_NAME] = int(cameraDict[CO.CAMERA_CONTROL_SHARPNESS_NAME] * 10)
+        cameraDict[CO.CAMERA_CONTROL_CONTRAST_NAME] = int(cameraDict[CO.CAMERA_CONTROL_CONTRAST_NAME] * 10)
+        cameraDict[CO.CAMERA_CONTROL_SATURATION_NAME] = int(cameraDict[CO.CAMERA_CONTROL_SATURATION_NAME] * 10)
+        cameraDict[CO.CAMERA_CONTROL_BRIGHTNESS_NAME] = int(cameraDict[CO.CAMERA_CONTROL_BRIGHTNESS_NAME] * 100)
+        cameraDict[CO.CAMERA_CONTROL_COLOR_GAIN_NAME] = int(cameraDict[CO.CAMERA_CONTROL_COLOR_GAIN_NAME] * 10)               
+        self.cameraConfig = cameraDict
+        self.updateForms()
 
     def getFormsValuesTransformed(self):
         cameraDict = {CO.CAMERA_CONTROL_OUTPUT_HEIGHT_NAME: self.spinBoxOutputHeight.value(),
