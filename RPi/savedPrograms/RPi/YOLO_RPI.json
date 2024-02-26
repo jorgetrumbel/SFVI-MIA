@@ -1,0 +1,10 @@
+{
+    "model": "YOLOv8",
+    "okPath": "/home/alejandro/Desktop/SFVI/SFVI-MIA/RPi/tests/datasets/leather/Test/OK",
+    "nokPath": "/home/alejandro/Desktop/SFVI/SFVI-MIA/RPi/tests/datasets/leather/Test/NOK",
+    "modelPath": "/home/alejandro/Desktop/SFVI/SFVI-MIA/RPi/savedPrograms/RPi/YOLO_RPI.pt",
+    "modelResultPath": "None",
+    "augmentGroups": {
+        "1": {}
+    }
+}

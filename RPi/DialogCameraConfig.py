@@ -37,7 +37,7 @@ class DialogCameraConfig(QDialog):
         self.spinBoxContrast.setValue(self.cameraConfig[CO.CAMERA_CONTROL_CONTRAST_NAME])
         self.spinBoxSaturation.setValue(self.cameraConfig[CO.CAMERA_CONTROL_SATURATION_NAME])
         self.spinBoxBrightness.setValue(self.cameraConfig[CO.CAMERA_CONTROL_BRIGHTNESS_NAME])
-        self.spinBoxColorGains.setValue(self.cameraConfig[CO.CAMERA_CONTROL_COLOR_GAIN_NAME])
+        #self.spinBoxColorGains.setValue(self.cameraConfig[CO.CAMERA_CONTROL_COLOR_GAIN_NAME])
 
     def loadCameraConfig(self, cameraDict):
         self.cameraConfig = cameraDict
@@ -49,7 +49,7 @@ class DialogCameraConfig(QDialog):
         cameraDict[CO.CAMERA_CONTROL_CONTRAST_NAME] = int(cameraDict[CO.CAMERA_CONTROL_CONTRAST_NAME] * 10)
         cameraDict[CO.CAMERA_CONTROL_SATURATION_NAME] = int(cameraDict[CO.CAMERA_CONTROL_SATURATION_NAME] * 10)
         cameraDict[CO.CAMERA_CONTROL_BRIGHTNESS_NAME] = int(cameraDict[CO.CAMERA_CONTROL_BRIGHTNESS_NAME] * 100)
-        cameraDict[CO.CAMERA_CONTROL_COLOR_GAIN_NAME] = int(cameraDict[CO.CAMERA_CONTROL_COLOR_GAIN_NAME] * 10)               
+        #cameraDict[CO.CAMERA_CONTROL_COLOR_GAIN_NAME] = int(cameraDict[CO.CAMERA_CONTROL_COLOR_GAIN_NAME] * 10)               
         self.cameraConfig = cameraDict
         self.updateForms()
 
@@ -63,8 +63,8 @@ class DialogCameraConfig(QDialog):
                         CO.CAMERA_CONTROL_SHARPNESS_NAME: self.spinBoxSharpness.value() / 10.0,
                         CO.CAMERA_CONTROL_CONTRAST_NAME: self.spinBoxContrast.value() / 10.0,
                         CO.CAMERA_CONTROL_SATURATION_NAME: self.spinBoxSaturation.value() / 10.0,
-                        CO.CAMERA_CONTROL_BRIGHTNESS_NAME: self.spinBoxBrightness.value() / 100.0,
-                        CO.CAMERA_CONTROL_COLOR_GAIN_NAME: self.spinBoxColorGains.value() / 10.0}
+                        CO.CAMERA_CONTROL_BRIGHTNESS_NAME: self.spinBoxBrightness.value() / 100.0,}
+                        #CO.CAMERA_CONTROL_COLOR_GAIN_NAME: self.spinBoxColorGains.value() / 10.0}
         return cameraDict
 
     def getFormsValues(self):
@@ -77,8 +77,8 @@ class DialogCameraConfig(QDialog):
                         CO.CAMERA_CONTROL_SHARPNESS_NAME: self.spinBoxSharpness.value(),
                         CO.CAMERA_CONTROL_CONTRAST_NAME: self.spinBoxContrast.value(),
                         CO.CAMERA_CONTROL_SATURATION_NAME: self.spinBoxSaturation.value(),
-                        CO.CAMERA_CONTROL_BRIGHTNESS_NAME: self.spinBoxBrightness.value(),
-                        CO.CAMERA_CONTROL_COLOR_GAIN_NAME: self.spinBoxColorGains.value()}
+                        CO.CAMERA_CONTROL_BRIGHTNESS_NAME: self.spinBoxBrightness.value(),}
+                        #CO.CAMERA_CONTROL_COLOR_GAIN_NAME: self.spinBoxColorGains.value()}
         return cameraDict
 
     def saveButtonAction(self):

@@ -71,13 +71,18 @@ class Camera():
         try:
             self.camera = Picamera2()
             self.configureCameraMode()
+            self.loadControlConfig(getControlDefaults())
         except:
             print("Couldnt create camera object")
-
+        
+        
     def startCamera(self):
-        self.camera.start(config = self.config)
-        #self.camera.start()
-        sleep(1) #CORREGIR
+        try:
+            self.camera.start(config = self.config)
+            #self.camera.start()
+            sleep(1) #CORREGIR
+        except:
+            print("Camera already started")
 
     def stopCamera(self):
         self.camera.stop()
@@ -195,14 +200,14 @@ class Camera():
                         CO.CAMERA_CONTROL_SHARPNESS_NAME: self.config['controls']["Sharpness"],
                         CO.CAMERA_CONTROL_CONTRAST_NAME: self.config['controls']["Contrast"],
                         CO.CAMERA_CONTROL_SATURATION_NAME: self.config['controls']["Saturation"],
-                        CO.CAMERA_CONTROL_BRIGHTNESS_NAME: self.config['controls']["Brightness"],
-                        CO.CAMERA_CONTROL_COLOR_GAIN_NAME: self.config['controls']["ColourGains"]}
+                        CO.CAMERA_CONTROL_BRIGHTNESS_NAME: self.config['controls']["Brightness"],}
+                        #CO.CAMERA_CONTROL_COLOR_GAIN_NAME: self.config['controls']["ColourGains"]}
         return defaultDict
 
     def loadControlConfig(self, config):
         self.stopCamera()   
-        self.config["main"]["size"][0] = config[CO.CAMERA_CONTROL_OUTPUT_HEIGHT_NAME]
-        self.config["main"]["size"][1] = config[CO.CAMERA_CONTROL_OUTPUT_WIDTH_NAME]
+        self.config["main"]["size"] = (config[CO.CAMERA_CONTROL_OUTPUT_HEIGHT_NAME],
+                                       config[CO.CAMERA_CONTROL_OUTPUT_WIDTH_NAME])
         self.config['controls']["ExposureTime"] = config[CO.CAMERA_CONTROL_EXPOSURE_TIME_NAME]
         self.config['controls']["AnalogueGain"] = config[CO.CAMERA_CONTROL_ANALOG_GAIN_NAME]
         self.config['controls']["AwbEnable"] = config[CO.CAMERA_CONTROL_AWB_ENABLE_NAME]
@@ -211,7 +216,7 @@ class Camera():
         self.config['controls']["Contrast"] = config[CO.CAMERA_CONTROL_CONTRAST_NAME]
         self.config['controls']["Saturation"] = config[CO.CAMERA_CONTROL_SATURATION_NAME]
         self.config['controls']["Brightness"] = config[CO.CAMERA_CONTROL_BRIGHTNESS_NAME]
-        self.config['controls']["ColourGains"] = config[CO.CAMERA_CONTROL_COLOR_GAIN_NAME]
+        #self.config['controls']["ColourGains"] = config[CO.CAMERA_CONTROL_COLOR_GAIN_NAME]
         self.camera.configure(self.config) #Apply changes
         sleep(1)
         self.startCamera() #Restart Camera
@@ -222,16 +227,16 @@ class Camera():
 
 
 def getControlDefaults():
-    outputHeightDefault = 3040
-    outputWidthDefault = 4056
-    exposureTimeDefault = 100
+    outputHeightDefault = 2028
+    outputWidthDefault = 1080
+    exposureTimeDefault = 66657
     awbModeDefault = 0
-    analogueGainDefault = 100
-    sharpnessDefault = 10
+    analogueGainDefault = 8.0
+    sharpnessDefault = 1.0
     awbEnableDefault = False
-    contrastDefault = 10
-    saturationDefault = 10
-    brightnessDefault = 0
+    contrastDefault = 1.0
+    saturationDefault = 1.0
+    brightnessDefault = 0.0
     colorGainsDefault = 0
     defaultDict = {CO.CAMERA_CONTROL_OUTPUT_HEIGHT_NAME: outputHeightDefault,
                     CO.CAMERA_CONTROL_OUTPUT_WIDTH_NAME: outputWidthDefault,
@@ -242,15 +247,15 @@ def getControlDefaults():
                     CO.CAMERA_CONTROL_SHARPNESS_NAME: sharpnessDefault,
                     CO.CAMERA_CONTROL_CONTRAST_NAME: contrastDefault,
                     CO.CAMERA_CONTROL_SATURATION_NAME: saturationDefault,
-                    CO.CAMERA_CONTROL_BRIGHTNESS_NAME: brightnessDefault,
-                    CO.CAMERA_CONTROL_COLOR_GAIN_NAME: colorGainsDefault}
+                    CO.CAMERA_CONTROL_BRIGHTNESS_NAME: brightnessDefault,}
+                    #CO.CAMERA_CONTROL_COLOR_GAIN_NAME: colorGainsDefault}
     return defaultDict
 
 '''
 #TEST CODE
 camera = Camera()
-camera.setCameraOutputSize(300,300)
-camera.startCamera()
+#camera.setCameraOutputSize(300,300)
+#camera.startCamera()
 #camera.modifyExposureTime(100)
 #camera.modifyAnalogueGain(1.0)
 #camera.modifyAWB(False, 0)
@@ -260,8 +265,8 @@ camera.startCamera()
 #camera.modifyBrightness(-0.9)
 #camera.modifyColourGains(1.0)
 
-image = camera.takePIL()
-image.show()
+#image = camera.takePIL()
+#image.show()
 
 #camera.modifyExposureTime(5000)
 #camera.modifyAnalogueGain(15.0)
@@ -272,11 +277,13 @@ image.show()
 #camera.modifyBrightness(0.9)
 #camera.modifyColourGains(30.0)
 
-#camera.startCamera()
+camera.startCamera()
 image = camera.takePIL()
 image.show()
 camera.stopCamera()
 
+#metadata = camera.camera.capture_metadata()
+#print(metadata)
 #camera.printCameraConfigurations()
 #camera.printCameraControls()
 '''

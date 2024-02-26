@@ -23,6 +23,7 @@ import UtilitiesModule as UM
 import ProgramCommonPaths as PCP
 import ProgramConfigOptions as PCO
 import CameraModule as CM
+import GPIOModule as IO
 
 import json #FOR DEBUGGING
 import cv2 as cv #FOR DEBUGGING
@@ -70,11 +71,13 @@ class MainWindow(QMainWindow):
     programPicturesTaken = 0
     programNOKPictures = 0
     camera = CM.Camera()
+    boardIO = IO.IO()
 
     #########################################################
     #ScreenMonitorMain
     def ScreenMonitorMainLogic(self):
         self.updateProgramStatusForm()
+        self.boardIO.setTriggerPinFunc(self.triggerProgramRun) #MOVER DE ACA?? REVISAR
         self.buttonChangeToProgrammingMain.clicked.connect(self.goToScreenProgrammingMain)
         self.buttonSelectProgramScreenMonitorMain.clicked.connect(self.getProgramFileName)
         self.buttonCounterScreenMonitorMain.clicked.connect(self.triggerProgramRun) #CORREGIR - NO VA EN ESTE BOTON
@@ -260,6 +263,7 @@ class MainWindow(QMainWindow):
     def ScreenProgramEditorLogic(self):
         #self.setImageScreenProgramEditor()
         self.loadTreeView()
+        self.visionProgramStructure.getCamera(self.camera)
         self.treeViewScreenProgramEditor.clicked.connect(self.treeViewClicked)
         self.buttonExitScreenProgramEditor.clicked.connect(self.exitVisionProgramEditorButtonAction)
         self.buttonAddCommandScreenProgramEditor.clicked.connect(self.addCommandToTree)
