@@ -143,7 +143,7 @@ class modelDL():
         if self.modelResultPath not in (None, "None"):
             suffix = UM.getFileSuffix(self.modelResultPath)
             shutil.copy(self.modelResultPath, str(path + suffix))
-            program[DLPO.DL_PROGRAM_DICT_MODEL_PATH] = str(path + suffix)
+            program[DLPO.DL_PROGRAM_DICT_MODEL_RESULT_PATH] = str(path + suffix)
         with open(path + ".json", "w") as write_file:
             json.dump(program, write_file, indent=4)
 

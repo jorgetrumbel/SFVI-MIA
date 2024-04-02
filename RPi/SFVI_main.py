@@ -22,8 +22,15 @@ import DialogTrainOutput as DTO
 import UtilitiesModule as UM
 import ProgramCommonPaths as PCP
 import ProgramConfigOptions as PCO
-import CameraModule as CM
-import GPIOModule as IO
+
+
+if UM.isRPi():
+    #Working on RPi
+    import GPIOModule as IO
+    import CameraModule as CM
+else:
+    import GPIOModuleDummy as IO
+    import CameraModuleDummy as CM
 
 import json #FOR DEBUGGING
 import cv2 as cv #FOR DEBUGGING

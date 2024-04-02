@@ -1,0 +1,10 @@
+{
+    "model": "VGG16",
+    "okPath": "C:/Users/Alejandro/Desktop/MIA Trabajo final/Repositorio/SFVI-MIA/RPi/tests/datasets/leather/test/OK",
+    "nokPath": "C:/Users/Alejandro/Desktop/MIA Trabajo final/Repositorio/SFVI-MIA/RPi/tests/datasets/leather/test/NOK",
+    "modelPath": "C:/Users/Alejandro/Desktop/MIA Trabajo final/Repositorio/SFVI-MIA/RPi/savedPrograms/SAVETEST/teest.png",
+    "modelResultPath": "./temp/DeepLearning/Results/modelResult.png",
+    "augmentGroups": {
+        "1": {}
+    }
+}

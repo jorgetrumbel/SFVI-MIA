@@ -6,11 +6,18 @@ import VisionDetectionModule as VDM
 import DrawModule as DM
 import MeasurementModule as MM
 import GeometryModule as GM
-import CameraModulePC as CMPC
-import CameraModule as CM
 import ProgramCommonPaths as PCP
 import UtilitiesModule as UM
 import numpy as np
+
+if UM.isRPi():
+    #Working on RPi
+    import CameraModulePC as CMPC
+    import CameraModule as CM
+else:
+    import CameraModuleDummy as CM
+    import CameraModulePC as CMPC
+
 
 from PIL import Image as im
 import ImageUtilsModule as IUM #FOR DEBUGGING

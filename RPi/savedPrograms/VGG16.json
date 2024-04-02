@@ -1,0 +1,45 @@
+{
+    "model": "VGG16",
+    "okPath": "C:/Users/Alejandro/Desktop/MIA Trabajo final/Repositorio/SFVI-MIA/RPi/tests/datasets/leather/train/OK",
+    "nokPath": "C:/Users/Alejandro/Desktop/MIA Trabajo final/Repositorio/SFVI-MIA/RPi/tests/datasets/leather/train/NOK",
+    "modelPath": "C:/Users/Alejandro/Desktop/MIA Trabajo final/Repositorio/SFVI-MIA/RPi/savedPrograms/VGG16.pth",
+    "modelResultPath": "./temp/DeepLearning/Results/modelResult.png",
+    "augmentGroups": {
+        "1": {
+            "Resize": {
+                "0": 30,
+                "1": 30,
+                "2": 0,
+                "3": 0
+            }
+        },
+        "2": {
+            "Random Crop": {
+                "0": 15,
+                "1": 15,
+                "2": 5,
+                "3": 0
+            },
+            "Random Rotation": {
+                "0": 30,
+                "1": 0,
+                "2": 0,
+                "3": 0
+            }
+        },
+        "3": {
+            "Random Horizontal Flip": {
+                "0": 30,
+                "1": 0,
+                "2": 0,
+                "3": 0
+            },
+            "Center Crop": {
+                "0": 0,
+                "1": 0,
+                "2": 0,
+                "3": 0
+            }
+        }
+    }
+}
