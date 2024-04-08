@@ -200,7 +200,6 @@ class ProgramStructure():
             if instructionParent != "":
                 image = self.programInstructionList[instructionParent][VPO.INSTRUCTION_DATA_IMAGE].copy()
             if instruction[VPO.INSTRUCTION_DATA_TYPE] in VPO.captureOptions:
-                #image = VM.loadImage("images/hearts_card.png", grayscale=True) #FOR DEBUGGING
                 image = runCaptureInstruction(instructionType, instructionConfiguration, self.camera)
                 instruction[VPO.INSTRUCTION_DATA_IMAGE] = image.copy()
 
@@ -326,7 +325,7 @@ def runFeatureDetectionInstruction(image, type, configuration, templatePath):
     elif type == VPO.FEATURE_DETECTION_OPTIONS_TEMPLATE_MATCH_INVARIANT:
         values, location = VDM.matchTemplateInvariant(image, template, threshold = var1, scaleValues = None, rotationAngles = None) #CORREGIR
     elif type == VPO.FEATURE_DETECTION_OPTIONS_CANNY_TEMPLATE_MATCH:
-        values, location = VDM.cannyTemplateMatch(image, template, iterations = var1, threshold = var2)
+        values, location = VDM.cannyTemplateMatch(image, template, iterations = var1 , threshold = var2)
     elif type == VPO.FEATURE_DETECTION_OPTIONS_CANNY_TEMPLATE_MATCH_INVARIANT:
         values, location = VDM.cannyTemplateMatchInvariant(image, template, iterations = var1, threshold = var2, rotationAngles = None, scaleValues = None)
     return linesRet, contoursRet, values, location, templateSize
@@ -393,6 +392,14 @@ def runMeasurementInstruction(image, type, configuration, lines, contours, value
             linesArranged, dataType = rearrageResultData(type, lines, contours, values, locations, templateSize)
             dataRet = linesArranged[0:2]
             dataRetType = VPO.FEATURE_DETECTION_OPTIONS_HOUGH_PROBABILISTIC
+    elif type == VPO.MEASUREMENT_OPTIONS_PATTERN_COUNT:
+        count, result = MM.checkPatternNumber(locations = locations, patternCountInput = var1)
+        if count > 0:
+            imageRet = DM.drawMultipleTemplateMatch(imageRet, loc = locations, templateWidth = templateSize[1], templateHeight = templateSize[0])
+        if result:
+            locationsArraged, dataType = rearrageResultData(type, lines, contours, values, locations, templateSize)
+            dataRet = locationsArraged
+            dataRetType = VPO.FEATURE_DETECTION_OPTIONS_TEMPLATE_MATCH
     return imageRet, result, dataRet, dataRetType
 
 
@@ -407,7 +414,8 @@ def rearrageResultData(instructionType, lines, contours, values, locations, temp
         dataRet = [[locations,int(values*100)]]
         dataRetType = VPO.FEATURE_DETECTION_OPTIONS_TEMPLATE_MATCH
     elif instructionType == VPO.FEATURE_DETECTION_OPTIONS_TEMPLATE_MATCH_MULTIPLE or \
-    instructionType == VPO.FEATURE_DETECTION_OPTIONS_CANNY_TEMPLATE_MATCH:
+    instructionType == VPO.FEATURE_DETECTION_OPTIONS_CANNY_TEMPLATE_MATCH or \
+    instructionType == VPO.MEASUREMENT_OPTIONS_PATTERN_COUNT:
         loc = list(zip(locations[0],locations[1]))
         dataRet = list(zip(loc,values))
         dataRetType = VPO.FEATURE_DETECTION_OPTIONS_TEMPLATE_MATCH
@@ -519,4 +527,6 @@ def getInstructionVariableNames(instructionType):
     elif instructionType == VPO.MEASUREMENT_OPTIONS_LINE_DISTANCE:
         variableNames.append(VPO.measurementOptionsLineDistanceNames[0])
         variableNames.append(VPO.measurementOptionsLineDistanceNames[1])
+    elif instructionType == VPO.MEASUREMENT_OPTIONS_PATTERN_COUNT:
+        variableNames.append(VPO.measurementOptionsPatternNumberNames[0])
     return variableNames

@@ -1,0 +1,45 @@
+{
+    "model": "VGG16",
+    "okPath": "C:/Users/Alejandro/Desktop/MIA Trabajo final/Repositorio/SFVI-MIA/RPi/tests/datasets/leather/train/Augment/OK",
+    "nokPath": "C:/Users/Alejandro/Desktop/MIA Trabajo final/Repositorio/SFVI-MIA/RPi/tests/datasets/leather/train/Augment/NOK",
+    "modelPath": "C:/Users/Alejandro/Desktop/MIA Trabajo final/Repositorio/SFVI-MIA/RPi/savedPrograms/Memoria/VGG16Model.pth",
+    "modelResultPath": "C:/Users/Alejandro/Desktop/MIA Trabajo final/Repositorio/SFVI-MIA/RPi/savedPrograms/Memoria/VGG16Model.png",
+    "augmentGroups": {
+        "1": {
+            "Random Rotation": {
+                "0": 90,
+                "1": 0,
+                "2": 0,
+                "3": 0
+            }
+        },
+        "2": {
+            "Random Crop": {
+                "0": 95,
+                "1": 95,
+                "2": 1,
+                "3": 0
+            },
+            "Random Horizontal Flip": {
+                "0": 50,
+                "1": 0,
+                "2": 0,
+                "3": 0
+            }
+        },
+        "3": {
+            "Random Vertical Flip": {
+                "0": 70,
+                "1": 0,
+                "2": 0,
+                "3": 0
+            },
+            "Random Horizontal Flip": {
+                "0": 70,
+                "1": 0,
+                "2": 0,
+                "3": 0
+            }
+        }
+    }
+}

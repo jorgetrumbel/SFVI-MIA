@@ -7,10 +7,14 @@ import math
 from imutils.object_detection import non_max_suppression
 
 def drawContours(image, contours):
+    if len(image.shape) < 3:
+        image = cv.cvtColor(image, cv.COLOR_GRAY2BGR)
     cv.drawContours(image, contours = contours, contourIdx = -1, color = (0,255,0), thickness = 3)
     return image
 
 def drawContoursCentroids(image, points):
+    if len(image.shape) < 3:
+        image = cv.cvtColor(image, cv.COLOR_GRAY2BGR)
     centroidNumber = 0
     for point in points:
         centroidNumber = centroidNumber + 1
@@ -20,6 +24,8 @@ def drawContoursCentroids(image, points):
     return image
 
 def drawContoursInfo(image, points, areas, perimeters):
+    if len(image.shape) < 3:
+        image = cv.cvtColor(image, cv.COLOR_GRAY2BGR)
     for point, area, perimeter in points, areas, perimeters:
         text = "Area: " + str(area)
         image = cv.putText(image, text, point - (0,20), cv.FONT_HERSHEY_SIMPLEX, 4,(255,255,255),2,cv.LINE_AA)
@@ -28,6 +34,8 @@ def drawContoursInfo(image, points, areas, perimeters):
     return image
 
 def drawBoundingBoxes(image, boundingBoxes):
+    if len(image.shape) < 3:
+        image = cv.cvtColor(image, cv.COLOR_GRAY2BGR)
     for box in boundingBoxes:
         cv.rectangle(image, pt1 = (int(box[0]), int(box[1])), pt2 = (int(box[0]) + int(box[2]), int(box[1]) + int(box[3])), color = (255, 0, 0), thickness = 2, lineType = cv.FILLED)
         midPoint = GM.midpoint((int(box[0]), int(box[1])), (int(box[0]) + int(box[2]), int(box[1]) + int(box[3])))
@@ -35,6 +43,8 @@ def drawBoundingBoxes(image, boundingBoxes):
     return image
 
 def drawMinAreaRectangles(image, minAreaRectangles):
+    if len(image.shape) < 3:
+        image = cv.cvtColor(image, cv.COLOR_GRAY2BGR)
     for box in minAreaRectangles:
         box = np.intp(box)
         cv.drawContours(image, [box], 0, (255, 0, 0))
@@ -117,6 +127,8 @@ def drawSegmentDetectorLines(image, lines):
     return retImage
 
 def drawMultipleTemplateMatch(image, loc, templateWidth, templateHeight):
+    if len(image.shape) < 3:
+        image = cv.cvtColor(image, cv.COLOR_GRAY2BGR)
     rects = []
     for (x, y) in zip(loc[1], loc[0]):
         rects.append((x, y, x + templateWidth, y + templateHeight))

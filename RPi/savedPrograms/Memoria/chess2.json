@@ -17,7 +17,7 @@
                 "Saturation": 1.0,
                 "Brightness": 0.0
             },
-            "File Path": "C:/Users/Alejandro/Desktop/MIA Trabajo final/Repositorio/SFVI-MIA/RPi/tests/datasets/chess/separado/1b1b2Bk-5n2-K7-1N1B4-2R5-p7-2BB4-4r3.jpeg"
+            "File Path": "C:/Users/Alejandro/Desktop/MIA Trabajo final/Repositorio/SFVI-MIA/RPi/tests/datasets/chess/separado/1B1b4-7p-8-r2p4-K4B1k-8-1Pp5-N2r4.jpeg"
         }
     },
     "Erosion1": {
@@ -99,12 +99,7 @@
             "Variable 1": 50,
             "Variable 2": 0,
             "Variable 3": 0,
-            "Template Path": "./temp/Template Matching Multiple1TemplateCrop.png",
-            "Kernel Rows": 1,
-            "Kernel Columns": 1,
-            "Iterations": 1,
-            "Threshold": 0,
-            "Threshold 2": 0
+            "Template Path": "./temp/Template Matching Multiple1TemplateCrop.png"
         }
     },
     "Draw Multiple Template Match1": {
@@ -116,18 +111,6 @@
             "Variable 1": 0,
             "Variable 2": 0,
             "Variable 3": 0
-        }
-    },
-    "Pattern Count1": {
-        "Name": "Pattern Count1",
-        "Type": "Pattern Count",
-        "Parent": "Draw Multiple Template Match1",
-        "Configuration": {
-            "Name": "",
-            "Variable 1": 0,
-            "Variable 2": 0,
-            "Variable 3": 0,
-            "Variable 4": 0
         }
     }
 }

@@ -109,7 +109,7 @@ def matchTemplate(image, template):
 def matchTemplateMultiple(image, template, threshold):
     #imageGray = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
     #templateGray = cv.cvtColor(template, cv.COLOR_BGR2GRAY)
-    threshold = threshold / 100
+    threshold = threshold / 100.0
     result = cv.matchTemplate(image, template,	cv.TM_CCOEFF_NORMED)
     (y, x) = np.where(result >= threshold)
     values, locations = cleanMultipleMatches(result[y,x], (y,x), template.shape)
@@ -118,7 +118,7 @@ def matchTemplateMultiple(image, template, threshold):
 def matchTemplateInvariantRotation(image, template, threshold, rotationAngles):
     resultList = []
     resultCoordinateList = []
-    threshold = threshold / 100
+    threshold = threshold / 100.0
     for angle in rotationAngles:
         rotatedTemplate = IUM.rotateImageWithoutCropping(template, angle)
         result = cv.matchTemplate(image, rotatedTemplate, cv.TM_CCOEFF_NORMED)
@@ -130,7 +130,7 @@ def matchTemplateInvariantRotation(image, template, threshold, rotationAngles):
 def matchTemplateInvariantScale(image, template, threshold, scaleValues):
     resultList = []
     resultCoordinateList = []
-    threshold = threshold / 100
+    threshold = threshold / 100.0
     for scale in scaleValues:
         scaledTemplate = IUM.scaleImage(template, scale)
         result = cv.matchTemplate(image, scaledTemplate, cv.TM_CCOEFF_NORMED)
@@ -142,7 +142,7 @@ def matchTemplateInvariantScale(image, template, threshold, scaleValues):
 def matchTemplateInvariant(image, template, threshold, scaleValues, rotationAngles):
     resultList = []
     resultCoordinateList = []
-    threshold = threshold / 100
+    threshold = threshold / 100.0
     for angle in rotationAngles:
         rotatedTemplate = IUM.rotateImageWithoutCropping(template, angle)
         for scale in scaleValues:
@@ -179,17 +179,18 @@ def cleanMultipleMatches(values, locations, templateSize):
     locList = list(zip(locList,values))
     sortedList = sorted(locList, key=lambda x: (-x[1]))
     retList = []
-    retList.append(sortedList[0])
-    templateCompareSize = int((templateSize[0]*2)/3)
-    for item in retList:
-        removeList = []
-        for sortedItem in sortedList:
-            if cdist(np.array(item[0]).reshape(1,2),np.array(sortedItem[0]).reshape(1,2)) < templateCompareSize: #CORREGIR
-                removeList.append(sortedItem)
-        for removeItem in removeList:
-            sortedList.remove(removeItem)
-        if len(sortedList) > 0:
-            retList.append(sortedList[0])
+    if len(sortedList) > 0:
+        retList.append(sortedList[0])
+        templateCompareSize = int((templateSize[0]*2)/3)
+        for item in retList:
+            removeList = []
+            for sortedItem in sortedList:
+                if cdist(np.array(item[0]).reshape(1,2),np.array(sortedItem[0]).reshape(1,2)) < templateCompareSize: #CORREGIR
+                    removeList.append(sortedItem)
+            for removeItem in removeList:
+                sortedList.remove(removeItem)
+            if len(sortedList) > 0:
+                retList.append(sortedList[0])
 
     for i in range(0,len(retList)):
         locRetX.append(retList[i][0][0])

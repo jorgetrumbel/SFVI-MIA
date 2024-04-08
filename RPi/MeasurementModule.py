@@ -31,3 +31,11 @@ def checkLineDistance(line1, line2, minDistance, maxDistance):
     if distance > minDistance and distance < maxDistance:
         result = True
     return distance, result
+
+#PATTERN MEASUREMENT FUNCTIONS
+def checkPatternNumber(locations, patternCountInput):
+    result = False
+    patternCount = len(locations[0])
+    if patternCount > patternCountInput:
+        result = True
+    return patternCount, result

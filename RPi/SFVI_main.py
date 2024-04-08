@@ -794,7 +794,7 @@ class MainWindow(QMainWindow):
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
         path = QFileDialog.getExistingDirectory(self,"Select Directory", options=options)
-        augmentRuns = self.spinBoxDLProgramAaugmentRuns.value()
+        augmentRuns = self.spinBoxDLProgramAugmentRuns.value()
         self.DLtreeViewClicked(self.DLtreeIndex)
         #Launch dialog
         augmentOutputDialog = DialogTrainOutput(self)
@@ -850,7 +850,10 @@ class MyTableModel(QtCore.QAbstractTableModel):
                 return "ID " + str(section+1)
 
     def columnCount(self, parent=None):
-        return len(self.data[0])
+        if len(self.data)  > 0:
+            return len(self.data[0])
+        else:
+            return 0
 
     def rowCount(self, parent=None):
         return len(self.data)

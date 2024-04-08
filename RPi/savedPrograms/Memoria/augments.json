@@ -1,0 +1,99 @@
+{
+    "model": "YOLOv8",
+    "okPath": "C:/Users/Alejandro/Desktop/MIA Trabajo final/Repositorio/SFVI-MIA/RPi/tests/augment/OK",
+    "nokPath": "C:/Users/Alejandro/Desktop/MIA Trabajo final/Repositorio/SFVI-MIA/RPi/tests/augment/NOK",
+    "modelPath": "None",
+    "modelResultPath": "None",
+    "augmentGroups": {
+        "1": {
+            "Random Resize": {
+                "0": 50,
+                "1": 99,
+                "2": 0,
+                "3": 0
+            }
+        },
+        "2": {
+            "Random Crop": {
+                "0": 99,
+                "1": 99,
+                "2": 1,
+                "3": 0
+            }
+        },
+        "3": {
+            "Center Crop": {
+                "0": 70,
+                "1": 70,
+                "2": 0,
+                "3": 0
+            }
+        },
+        "4": {
+            "Random Horizontal Flip": {
+                "0": 99,
+                "1": 0,
+                "2": 0,
+                "3": 0
+            }
+        },
+        "5": {
+            "Random Vertical Flip": {
+                "0": 99,
+                "1": 0,
+                "2": 0,
+                "3": 0
+            }
+        },
+        "6": {},
+        "7": {},
+        "8": {
+            "Random Rotation": {
+                "0": 0,
+                "1": 0,
+                "2": 0,
+                "3": 0
+            }
+        },
+        "9": {
+            "Random Affine": {
+                "0": 50,
+                "1": 50,
+                "2": 3,
+                "3": 50
+            }
+        },
+        "10": {
+            "Random Perspective": {
+                "0": 50,
+                "1": 99,
+                "2": 0,
+                "3": 0
+            }
+        },
+        "11": {
+            "Color Jitter": {
+                "0": 50,
+                "1": 50,
+                "2": 50,
+                "3": 50
+            }
+        },
+        "12": {
+            "Gaussian Blur": {
+                "0": 9,
+                "1": 1,
+                "2": 0,
+                "3": 0
+            }
+        },
+        "13": {
+            "Random Invert": {
+                "0": 99,
+                "1": 0,
+                "2": 0,
+                "3": 0
+            }
+        }
+    }
+}

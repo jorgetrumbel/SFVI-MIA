@@ -202,9 +202,10 @@ drawOptionsTemplateMatchingMultipleNames = ()
 drawOptionsTemplateMatchingInvariantNames = ()
 
 #MEASUREMENT OPTIONS
-measurementOptions = ("Measure Contours", "Line distance")
+measurementOptions = ("Measure Contours", "Line distance", "Pattern Count")
 MEASUREMENT_OPTIONS_CONTOURS = measurementOptions[0]
 MEASUREMENT_OPTIONS_LINE_DISTANCE = measurementOptions[1]
+MEASUREMENT_OPTIONS_PATTERN_COUNT = measurementOptions[2]
 
 measurementOptionsConfigurations = ("Name", "Variable 1", "Variable 2", "Variable 3", "Variable 4")
 MEASUREMENT_OPTIONS_CONFIGURATIONS_NAME = measurementOptionsConfigurations[0]
@@ -225,3 +226,7 @@ MEASUREMENT_OPTIONS_CONTOURS_MAX_PERIMETER = MEASUREMENT_OPTIONS_CONFIGURATIONS_
 measurementOptionsLineDistanceNames = ("Min Distance", "Max Distance")
 MEASUREMENT_OPTIONS_LINE_DISTANCE_MIN_DISTANCE = MEASUREMENT_OPTIONS_CONFIGURATIONS_VARIABLE_1
 MEASUREMENT_OPTIONS_LINE_DISTANCE_MAX_DISTANCE = MEASUREMENT_OPTIONS_CONFIGURATIONS_VARIABLE_2
+
+#PATTERN NUMBER
+measurementOptionsPatternNumberNames = ("Pattern Count", "")
+MEASUREMENT_OPTIONS_PATTERN_NUMBER_COUNT = MEASUREMENT_OPTIONS_CONFIGURATIONS_VARIABLE_1

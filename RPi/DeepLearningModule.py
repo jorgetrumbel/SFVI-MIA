@@ -670,12 +670,12 @@ def createAugment(augment, parameters):
         augmentRet = v2.RandomRotation(degrees = parameters[DLPO.AUGMENT_RANDOM_ROTATION_CONFIG_DEGREES])
     elif augment == DLPO.AUGMENT_OPTIONS_RANDOM_AFFINE:
         augmentRet = v2.RandomAffine(degrees = parameters[DLPO.AUGMENT_RANDOM_AFFINE_CONFIG_DEGREES],
-                                     translate = (0, parameters[DLPO.AUGMENT_RANDOM_AFFINE_CONFIG_TRANSLATE]),
-                                     scale = (0, parameters[DLPO.AUGMENT_RANDOM_AFFINE_CONFIG_SCALE]),
+                                     translate = (0, parameters[DLPO.AUGMENT_RANDOM_AFFINE_CONFIG_TRANSLATE] / 100),
+                                     scale = (1, parameters[DLPO.AUGMENT_RANDOM_AFFINE_CONFIG_SCALE]),
                                      shear = parameters[DLPO.AUGMENT_RANDOM_AFFINE_CONFIG_SHEAR])
     elif augment == DLPO.AUGMENT_OPTIONS_RANDOM_PERSPECTIVE:
         augmentRet = v2.RandomPerspective(distortion_scale = parameters[DLPO.AUGMENT_RANDOM_PERSPECTIVE_CONFIG_DISTORTION_PERCENT] / 100,
-                                          p = parameters[DLPO.AUGMENT_RANDOM_PERSPECTIVE_CONFIG_PROBABILITY])
+                                          p = parameters[DLPO.AUGMENT_RANDOM_PERSPECTIVE_CONFIG_PROBABILITY] / 100)
     elif augment == DLPO.AUGMENT_OPTIONS_COLOR_JITTER:
         augmentRet = v2.ColorJitter(brightness = parameters[DLPO.AUGMENT_COLOR_JITTER_CONFIG_BRIGHTNESS] / 100,
                                     contrast = parameters[DLPO.AUGMENT_COLOR_JITTER_CONFIG_CONTRAST] / 100,

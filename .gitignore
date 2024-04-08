@@ -159,3 +159,7 @@ cython_debug/
 
 runs*/
 Log*/
+*.jpeg
+*.svg
+*.afpub
+*.zip

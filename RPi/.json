@@ -1,0 +1,37 @@
+{
+    "File1": {
+        "Name": "File1",
+        "Type": "File",
+        "Parent": "",
+        "Configuration": {
+            "Name": "",
+            "Camera Config": {
+                "Output Height": 2028,
+                "Output Width": 1080,
+                "Exposure Time": 66657,
+                "Analog Gain": 8.0,
+                "AWB Enable": false,
+                "AWB Mode": 0,
+                "Sharpness": 1.0,
+                "Contrast": 1.0,
+                "Saturation": 1.0,
+                "Brightness": 0.0
+            },
+            "File Path": "C:/Users/Alejandro/Desktop/MIA Trabajo final/Repositorio/SFVI-MIA/RPi/tests/datasets/chess/train/1B1b1R2-1b2R3-p7-3N4-4b3-n1BP1k2-2K5-6q1.jpeg"
+        }
+    },
+    "Sobel1": {
+        "Name": "Sobel1",
+        "Type": "Sobel",
+        "Parent": "File1",
+        "Configuration": {
+            "Name": "",
+            "Kernel Rows": 0,
+            "Kernel Columns": 0,
+            "Iterations": 0,
+            "Threshold": 0,
+            "Threshold 2": 0,
+            "Crop Area": 0
+        }
+    }
+}
