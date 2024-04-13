@@ -11,6 +11,11 @@ def loadImage(path, grayscale = False):
         image = cv.imread(imagePath, cv.IMREAD_GRAYSCALE)
     return image
 
+def grayscaleImage(image):
+    if len(image.shape) > 1:
+        image = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
+    return image
+
 #BASIC FILTERING OPERATIONS
 def applyBlurFilter(image, kRows = 3, kColumns = 3):
     retImage = cv.blur(image, [kRows, kColumns])

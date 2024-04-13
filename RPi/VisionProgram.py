@@ -241,6 +241,7 @@ def runCaptureInstruction(type, configuration, camera:CM.Camera):
             if camera.getControlConfig() != cameraConfig:
                 camera.loadControlConfig(cameraConfig)
             image = camera.takeArray()
+            image = VM.grayscaleImage(image)
         else:
             image = CMPC.takePicturePC()
     elif type == VPO.CAPTURE_OPTIONS_FILE:
