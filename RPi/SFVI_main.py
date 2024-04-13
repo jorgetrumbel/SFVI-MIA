@@ -122,10 +122,12 @@ class MainWindow(QMainWindow):
         cameraConfigDialog = DialogCameraConfig(self)
         if UM.isRPi():
             #RPI
-            cameraConfigDialog.loadCameraConfig(self.camera.getControlConfig())
+            #cameraConfigDialog.loadCameraConfig(self.camera.getControlConfig())
+            cameraConfigDialog.loadCameraConfigTransformed(self.camera.getControlConfig())
         else:
             #Windows
-            cameraConfigDialog.loadCameraConfig(CM.getControlDefaults())        
+            #cameraConfigDialog.loadCameraConfig(CM.getControlDefaults())  
+            cameraConfigDialog.loadCameraConfigTransformed(CM.getControlDefaults())       
         cameraConfigDialog.exec()
         cameraOptions = cameraConfigDialog.getFormsValuesTransformed()
         if cameraConfigDialog.getDialogResult():
