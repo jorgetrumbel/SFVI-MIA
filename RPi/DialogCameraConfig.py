@@ -116,7 +116,10 @@ class DialogCameraConfig(QDialog):
             for file in filteredFiles:
                 number = UM.get_trailing_number(file)
                 numbers.append(number)
-            self.imageCounter = max(numbers) + 1
+            if len(numbers) > 0:
+                self.imageCounter = max(numbers) + 1
+            else:
+                self.imageCounter = 0
             
 
     def captureButtonAction(self):
