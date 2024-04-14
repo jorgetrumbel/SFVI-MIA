@@ -1,0 +1,10 @@
+{
+    "model": "VGG16",
+    "okPath": "C:/Users/Alejandro/Desktop/MIA Trabajo final/Repositorio/SFVI-MIA/RPi/images/Tuerca/Tuerca/OK",
+    "nokPath": "C:/Users/Alejandro/Desktop/MIA Trabajo final/Repositorio/SFVI-MIA/RPi/images/Tuerca/Tuerca/NOK",
+    "modelPath": "C:/Users/Alejandro/Desktop/MIA Trabajo final/Repositorio/SFVI-MIA/RPi/savedPrograms/Memoria/VGG16Tuercas.pth",
+    "modelResultPath": "C:/Users/Alejandro/Desktop/MIA Trabajo final/Repositorio/SFVI-MIA/RPi/savedPrograms/Memoria/VGG16Tuercas.png",
+    "augmentGroups": {
+        "1": {}
+    }
+}
