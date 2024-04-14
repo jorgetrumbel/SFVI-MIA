@@ -4,9 +4,13 @@ from PyQt5.QtGui import QIcon, QStandardItemModel, QStandardItem
 from PyQt5.QtWidgets import QFileDialog
 from PyQt5.uic import loadUi
 
+from PIL import Image as im
+
 import ProgramCommonPaths as PCP
 import CameraOptions as CO
 import UtilitiesModule as UM
+
+CAPTURE_IMAGE_STRING = "captureImage"
 
 #############################################################
 # DialogCameraConfig   
@@ -26,6 +30,8 @@ class DialogCameraConfig(QDialog):
         self.buttonSave.clicked.connect(self.saveButtonAction)
         self.ButtonLoad.clicked.connect(self.loadButtonAction)
         self.buttonBox.accepted.connect(self.okButtonAction)
+        self.buttonSelectFolder.clicked.connect(self.capturePathName)
+        self.buttonCapture.clicked.connect(self.captureButtonAction)
 
     def updateForms(self):
         self.spinBoxOutputHeight.setValue(self.cameraConfig[CO.CAMERA_CONTROL_OUTPUT_HEIGHT_NAME])
@@ -97,14 +103,44 @@ class DialogCameraConfig(QDialog):
             self.cameraConfig = UM.loadJsonDict(file)
             self.updateForms()
 
+    def capturePathName(self):
+        options = QFileDialog.Options()
+        options |= QFileDialog.DontUseNativeDialog
+        path = QFileDialog.getExistingDirectory(self,"Select Directory", options=options)
+        if path:
+            self.capturePath = path
+            files = UM.getDirFiles(path)
+            filteredFiles = UM.searchForStringsStartingWith(CAPTURE_IMAGE_STRING, files)
+            filteredFiles = UM.removeFileListExtensions(filteredFiles)
+            numbers = []
+            for file in filteredFiles:
+                number = UM.get_trailing_number(file)
+                numbers.append(number)
+            self.imageCounter = max(numbers) + 1
+            
+
+    def captureButtonAction(self):
+        image = self.captureFunc()
+        if image is not None:
+            data = im.fromarray(image)
+            imagePath = self.capturePath + "/" + CAPTURE_IMAGE_STRING + str(self.imageCounter) + ".png"
+            self.imageCounter = self.imageCounter + 1
+            data.save(imagePath)
+
     def getDialogResult(self):
         return self.buttonBoxVal
 
     def okButtonAction(self):
         self.buttonBoxVal = True
 
+    def setCaptureFunc(self, func):
+        self.captureFunc = func
+
     cameraConfig = {}
     buttonBoxVal = False
+    capturePath = None
+    captureFunc = None
+    imageCounter = 0
 
 # End DialogCommandSelection
 #############################################################

@@ -3,6 +3,7 @@ import sys
 import json
 import shutil
 import pathlib
+import re
 
 def searchSubfoldersForFilesEndingIn(endString, path):
     retPaths = []
@@ -10,6 +11,17 @@ def searchSubfoldersForFilesEndingIn(endString, path):
         for filename in [f for f in filenames if f.endswith(endString)]:
             retPaths.append(os.path.join(dirpath, filename))
     return retPaths
+
+def searchForStringsStartingWith(startString, strings:str):
+    retStrings = [string for string in strings if string.startswith(startString)]
+    return retStrings
+
+def removeFileListExtensions(files):
+    retFiles = []
+    for file in files:
+       base, extension = os.path.splitext(file)
+       retFiles.append(base)
+    return retFiles
 
 def getJsonStringFromFile(path):
     with open(path, "r") as readFile:
@@ -66,3 +78,11 @@ def isRPi():
     if os.name == 'posix':
         retVal = True
     return retVal
+
+def get_trailing_number(s):
+        m = re.search(r'\d+$', s)
+        return int(m.group()) if m else None
+
+def getDirFiles(path):
+    files = [f for f in os.listdir(path) if os.path.isfile(os.path.join(path, f))]
+    return files

@@ -2,6 +2,7 @@
 PATH_SAVED_PROGRAMS = "./savedPrograms/"
 PATH_TEMP_FOLDER = "./temp/"
 PATH_SAVED_CAMERA_CONFIGURATIONS = "./CameraConfigurations"
+PATH_TEMP_CAPTURE_IMAGE = "./temp/captureImage.png"
 
 #VISIONPROGRAM PATHS
 PATH_TEMP_VISION_PROGRAM_FILE = "./temp/program_file"

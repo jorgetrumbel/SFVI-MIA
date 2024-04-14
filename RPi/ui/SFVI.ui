@@ -88,7 +88,7 @@
     <item>
      <widget class="QStackedWidget" name="stackWidget">
       <property name="currentIndex">
-       <number>3</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="ScreenMonitorMain">
        <layout class="QVBoxLayout" name="verticalLayout">
@@ -1599,6 +1599,9 @@ Augmentation</string>
                 <pointsize>10</pointsize>
                </font>
               </property>
+              <property name="maximum">
+               <number>1000</number>
+              </property>
              </widget>
             </item>
             <item row="1" column="0">
@@ -1621,6 +1624,9 @@ Augmentation</string>
                <font>
                 <pointsize>10</pointsize>
                </font>
+              </property>
+              <property name="maximum">
+               <number>1000</number>
               </property>
              </widget>
             </item>
@@ -1645,6 +1651,9 @@ Augmentation</string>
                 <pointsize>10</pointsize>
                </font>
               </property>
+              <property name="maximum">
+               <number>1000</number>
+              </property>
              </widget>
             </item>
             <item row="3" column="0">
@@ -1667,6 +1676,9 @@ Augmentation</string>
                <font>
                 <pointsize>10</pointsize>
                </font>
+              </property>
+              <property name="maximum">
+               <number>1000</number>
               </property>
              </widget>
             </item>

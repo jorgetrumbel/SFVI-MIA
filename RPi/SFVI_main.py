@@ -12,6 +12,7 @@ from DialogTrainOutput import DialogTrainOutput
 from DialogAugmentSelection import DialogAugmentSelection
 from DialogGeneralConfig import DialogGeneralConfig
 from DialogCameraConfig import DialogCameraConfig
+from DialogCaptureView import DialogCaptureView
 
 import VisionProgramOptions as VPO
 import DeepLearningProgramOptions as DLPO
@@ -31,6 +32,7 @@ if UM.isRPi():
 else:
     import GPIOModuleDummy as IO
     import CameraModuleDummy as CM
+    import CameraModulePC as CMPC
 
 import json #FOR DEBUGGING
 import cv2 as cv #FOR DEBUGGING
@@ -118,8 +120,22 @@ class MainWindow(QMainWindow):
             self.resetProgramCounters()
         self.updateProgramStatusForm()
 
+    def captureAction(self):
+        image = None
+        if UM.isRPi():
+            #RPI
+            image = self.camera.takeArray()
+        else:
+            #Windows
+            image = CMPC.takePicturePC()
+        captureViewDialog = DialogCaptureView(self)
+        captureViewDialog.setImage(image)
+        captureViewDialog.exec()
+        return image
+
     def cameraConfigButtonAction(self):
         cameraConfigDialog = DialogCameraConfig(self)
+        cameraConfigDialog.setCaptureFunc(self.captureAction)
         if UM.isRPi():
             #RPI
             #cameraConfigDialog.loadCameraConfig(self.camera.getControlConfig())
@@ -127,7 +143,7 @@ class MainWindow(QMainWindow):
         else:
             #Windows
             #cameraConfigDialog.loadCameraConfig(CM.getControlDefaults())  
-            cameraConfigDialog.loadCameraConfigTransformed(CM.getControlDefaults())       
+            cameraConfigDialog.loadCameraConfigTransformed(CM.getControlDefaults())  
         cameraConfigDialog.exec()
         cameraOptions = cameraConfigDialog.getFormsValuesTransformed()
         if cameraConfigDialog.getDialogResult():
