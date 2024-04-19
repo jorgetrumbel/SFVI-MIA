@@ -218,14 +218,14 @@ class ProgramStructure():
 
             elif instruction[VPO.INSTRUCTION_DATA_TYPE] in VPO.measurementOptions:
                 image, measurementResult, dataRet, dataRetType = runMeasurementInstruction(image, instructionType, instructionConfiguration, lines, contours, values, locations, templateSize)
-                image = DM.drawMeasurementResult(image, measurementResult)
+                #image = DM.drawMeasurementResult(image, measurementResult)
                 instruction[VPO.INSTRUCTION_DATA_IMAGE] = image.copy()
-                programIndividualResults[VPO.INSTRUCTION_DATA_NAME] = measurementResult
+                programIndividualResults[instruction[VPO.INSTRUCTION_DATA_NAME]] = measurementResult
 
         for measurement in programIndividualResults.keys():
             if programIndividualResults[measurement] == False:
                 programResult = False
-
+        image = DM.drawMeasurementResult(image, programResult)
         return image, dataRet, dataRetType, programIndividualResults, programResult
 
     programInstructionList = {}
