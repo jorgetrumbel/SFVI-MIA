@@ -177,3 +177,12 @@ def drawMeasurementResult(image, result):
         image = cv.putText(image, text = "FAIL", org = (0, 50), fontFace = cv.FONT_HERSHEY_SIMPLEX, 
                            fontScale = 1, color = (0,0,255), thickness = 2, lineType = cv.LINE_AA)
     return image
+
+def drawMeasurementAreaResult(image, result, area):
+    if len(image.shape) < 3:
+        image = cv.cvtColor(image, cv.COLOR_GRAY2BGR)
+    if result == True:
+        image = cv.rectangle(image, pt1 = area[0], pt2 = area[1], thickness = 2, color = (0,255,0))
+    else:
+        image = cv.rectangle(image, pt1 = area[0], pt2 = area[1], thickness = 2, color = (0,0,255))
+    return image

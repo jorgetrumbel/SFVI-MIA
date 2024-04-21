@@ -181,6 +181,32 @@ class ProgramStructure():
         retInstructions = dict(reversed(list(retInstructions.items())))
         return retInstructions
 
+    def getCropFinalSection(self, instructionList):
+        cropList = []
+        for instruction in instructionList.values():
+            '''
+            if instruction[VPO.INSTRUCTION_DATA_TYPE] in VPO.captureOptions:
+                imageSizeY = len(instruction[VPO.INSTRUCTION_DATA_IMAGE])
+                imageSizeX = len(instruction[VPO.INSTRUCTION_DATA_IMAGE][0])
+            '''
+            if instruction[VPO.INSTRUCTION_DATA_TYPE] in VPO.filterOptions:
+                cropList.append(instruction[VPO.INSTRUCTION_DATA_CONFIGURATION][VPO.FILTER_CONFIGURATIONS_CROP_AREA])
+        totalCrop = [[0,0],[0,0]]
+        for cropSize in cropList:
+            if totalCrop == []:
+                totalCrop[0][0] = cropSize[0][0]
+                totalCrop[0][1] = cropSize[0][1]
+                totalCrop[1][0] = cropSize[1][0]
+                totalCrop[1][1] = cropSize[1][1]
+            else:
+                totalCrop[1][0] = totalCrop[0][0] + cropSize[1][0]
+                totalCrop[1][1] = totalCrop[0][1] + cropSize[1][1]
+
+                totalCrop[0][0] = totalCrop[0][0] + cropSize[0][0]
+                totalCrop[0][1] = totalCrop[0][1] + cropSize[0][1]
+
+        return totalCrop
+
     def runProgram(self, runFullProgram, instructionStop = None):
         #HAY QUE REVISAR EL ORDEN DE EJECUCION EN UN PROGRAMA FULL
         instructionsToRun = None
@@ -188,6 +214,7 @@ class ProgramStructure():
         dataRetType = None
         programResult = True
         programIndividualResults = {}
+        executionPaths = {}
         self.saveProgram(PCP.PATH_TEMP_VISION_PROGRAM_FILE)
         if runFullProgram == True:
             instructionsToRun = self.programInstructionList
@@ -197,12 +224,16 @@ class ProgramStructure():
             instructionConfiguration = instruction[VPO.INSTRUCTION_DATA_CONFIGURATION]
             instructionType = instruction[VPO.INSTRUCTION_DATA_TYPE]
             instructionParent = instruction[VPO.INSTRUCTION_DATA_PARENT]
+            children = self.checkChildren(instruction[VPO.INSTRUCTION_DATA_NAME])
+            if len(children) == 0:
+                executionPath = self.getAllParentInstructions(instruction[VPO.INSTRUCTION_DATA_NAME])
+                executionPaths[instruction[VPO.INSTRUCTION_DATA_NAME]] = executionPath
             if instructionParent != "":
                 image = self.programInstructionList[instructionParent][VPO.INSTRUCTION_DATA_IMAGE].copy()
             if instruction[VPO.INSTRUCTION_DATA_TYPE] in VPO.captureOptions:
                 image = runCaptureInstruction(instructionType, instructionConfiguration, self.camera)
                 instruction[VPO.INSTRUCTION_DATA_IMAGE] = image.copy()
-
+                capturedImage = image.copy() #Separate captured image
             elif instruction[VPO.INSTRUCTION_DATA_TYPE] in VPO.filterOptions:
                 image = runFilterInstruction(image, instructionType, instructionConfiguration)
                 instruction[VPO.INSTRUCTION_DATA_IMAGE] = image.copy()
@@ -218,14 +249,20 @@ class ProgramStructure():
 
             elif instruction[VPO.INSTRUCTION_DATA_TYPE] in VPO.measurementOptions:
                 image, measurementResult, dataRet, dataRetType = runMeasurementInstruction(image, instructionType, instructionConfiguration, lines, contours, values, locations, templateSize)
-                #image = DM.drawMeasurementResult(image, measurementResult)
+                image = DM.drawMeasurementResult(image, measurementResult)
                 instruction[VPO.INSTRUCTION_DATA_IMAGE] = image.copy()
                 programIndividualResults[instruction[VPO.INSTRUCTION_DATA_NAME]] = measurementResult
 
         for measurement in programIndividualResults.keys():
+            cropArea = self.getCropFinalSection(executionPaths[measurement])
+            capturedImage = DM.drawMeasurementAreaResult(capturedImage, programIndividualResults[measurement], cropArea)
             if programIndividualResults[measurement] == False:
                 programResult = False
-        image = DM.drawMeasurementResult(image, programResult)
+        if runFullProgram == True:
+            #AGREGAR ACA PARA QUE DIBUJE CADA MEASUREMENT POR SEPARADO O PENSAR 
+            #COMO VER TODOS LOS CAMINOS DE EJECUCION, VIENDO SI LA INSTRUCCION TIENE HIJOS O NO 
+            
+            image = DM.drawMeasurementResult(capturedImage, programResult)
         return image, dataRet, dataRetType, programIndividualResults, programResult
 
     programInstructionList = {}

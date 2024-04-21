@@ -1,0 +1,205 @@
+{
+    "File Select1": {
+        "Name": "File Select1",
+        "Type": "File Select",
+        "Parent": "",
+        "Configuration": {
+            "Name": "",
+            "Camera Config": {
+                "Output Height": 2028,
+                "Output Width": 1080,
+                "Exposure Time": 66657,
+                "Analog Gain": 8.0,
+                "AWB Enable": false,
+                "AWB Mode": 0,
+                "Sharpness": 1.0,
+                "Contrast": 1.0,
+                "Saturation": 1.0,
+                "Brightness": 0.0
+            },
+            "File Path": 0
+        }
+    },
+    "Histogram1": {
+        "Name": "Histogram1",
+        "Type": "Histogram",
+        "Parent": "File Select1",
+        "Configuration": {
+            "Name": "",
+            "Kernel Rows": 0,
+            "Kernel Columns": 0,
+            "Iterations": 0,
+            "Threshold": 0,
+            "Threshold 2": 0,
+            "Crop Area": [
+                [
+                    70,
+                    53
+                ],
+                [
+                    582,
+                    353
+                ],
+                [
+                    338,
+                    272
+                ]
+            ]
+        }
+    },
+    "Range Threshold1": {
+        "Name": "Range Threshold1",
+        "Type": "Range Threshold",
+        "Parent": "Histogram1",
+        "Configuration": {
+            "Name": "",
+            "Kernel Rows": 0,
+            "Kernel Columns": 0,
+            "Iterations": 0,
+            "Threshold": 250,
+            "Threshold 2": 255,
+            "Crop Area": [
+                [
+                    300,
+                    16
+                ],
+                [
+                    415,
+                    85
+                ]
+            ]
+        }
+    },
+    "Template Matching Multiple1": {
+        "Name": "Template Matching Multiple1",
+        "Type": "Template Matching Multiple",
+        "Parent": "Range Threshold1",
+        "Configuration": {
+            "Name": "",
+            "Variable 1": 50,
+            "Variable 2": 0,
+            "Variable 3": 0,
+            "Template Path": "./temp/Template Matching Multiple1TemplateCrop.png",
+            "Kernel Rows": 0,
+            "Kernel Columns": 0,
+            "Iterations": 0,
+            "Threshold": 250,
+            "Threshold 2": 255
+        }
+    },
+    "Pattern Count1": {
+        "Name": "Pattern Count1",
+        "Type": "Pattern Count",
+        "Parent": "Template Matching Multiple1",
+        "Configuration": {
+            "Name": "",
+            "Variable 1": 0,
+            "Variable 2": 0,
+            "Variable 3": 0,
+            "Variable 4": 0
+        }
+    },
+    "Range Threshold2": {
+        "Name": "Range Threshold2",
+        "Type": "Range Threshold",
+        "Parent": "Histogram1",
+        "Configuration": {
+            "Name": "",
+            "Kernel Rows": 0,
+            "Kernel Columns": 0,
+            "Iterations": 0,
+            "Threshold": 220,
+            "Threshold 2": 255,
+            "Crop Area": [
+                [
+                    162,
+                    95
+                ],
+                [
+                    266,
+                    160
+                ]
+            ],
+            "Variable 1": 0,
+            "Variable 2": 0,
+            "Variable 3": 0,
+            "Variable 4": 0
+        }
+    },
+    "Template Matching Multiple2": {
+        "Name": "Template Matching Multiple2",
+        "Type": "Template Matching Multiple",
+        "Parent": "Range Threshold2",
+        "Configuration": {
+            "Name": "",
+            "Variable 1": 50,
+            "Variable 2": 0,
+            "Variable 3": 0,
+            "Template Path": "./temp/Template Matching Multiple2TemplateCrop.png",
+            "Kernel Rows": 0,
+            "Kernel Columns": 0,
+            "Iterations": 0,
+            "Threshold": 220,
+            "Threshold 2": 255
+        }
+    },
+    "Pattern Count2": {
+        "Name": "Pattern Count2",
+        "Type": "Pattern Count",
+        "Parent": "Template Matching Multiple2",
+        "Configuration": {
+            "Name": "",
+            "Variable 1": 0,
+            "Variable 2": 0,
+            "Variable 3": 0,
+            "Variable 4": 0
+        }
+    },
+    "Range Threshold3": {
+        "Name": "Range Threshold3",
+        "Type": "Range Threshold",
+        "Parent": "Histogram1",
+        "Configuration": {
+            "Name": "",
+            "Kernel Rows": 0,
+            "Kernel Columns": 0,
+            "Iterations": 0,
+            "Threshold": 220,
+            "Threshold 2": 255,
+            "Crop Area": [
+                [
+                    232,
+                    205
+                ],
+                [
+                    338,
+                    272
+                ]
+            ]
+        }
+    },
+    "Template Matching Multiple3": {
+        "Name": "Template Matching Multiple3",
+        "Type": "Template Matching Multiple",
+        "Parent": "Range Threshold3",
+        "Configuration": {
+            "Name": "",
+            "Variable 1": 50,
+            "Variable 2": 0,
+            "Variable 3": 0,
+            "Template Path": "./temp/Template Matching Multiple3TemplateCrop.png"
+        }
+    },
+    "Pattern Count3": {
+        "Name": "Pattern Count3",
+        "Type": "Pattern Count",
+        "Parent": "Template Matching Multiple3",
+        "Configuration": {
+            "Name": "",
+            "Variable 1": 0,
+            "Variable 2": 0,
+            "Variable 3": 0,
+            "Variable 4": 0
+        }
+    }
+}

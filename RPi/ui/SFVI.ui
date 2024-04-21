@@ -20,6 +20,12 @@
    <string>SFVI - Sistema Flexible de Visión Industrial</string>
   </property>
   <widget class="QWidget" name="centralwidget">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+     <horstretch>1</horstretch>
+     <verstretch>1</verstretch>
+    </sizepolicy>
+   </property>
    <property name="palette">
     <palette>
      <active>
@@ -88,7 +94,7 @@
     <item>
      <widget class="QStackedWidget" name="stackWidget">
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="ScreenMonitorMain">
        <layout class="QVBoxLayout" name="verticalLayout">

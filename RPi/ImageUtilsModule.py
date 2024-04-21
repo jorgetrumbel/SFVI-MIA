@@ -58,7 +58,7 @@ def click_and_crop(event, x, y, flags, param):
         point = (x, y)
         cv.rectangle(image_copy, box_points[0], point, (0, 255, 0), 2)
         cv.imshow("Image Cropper - Press C to Crop", image_copy)
-    elif event == cv.EVENT_LBUTTONUP:
+    elif (event == cv.EVENT_LBUTTONUP) and (button_down == True):
         button_down = False
         box_points.append((x, y))
         cv.rectangle(param, box_points[0], box_points[1], (0, 255, 0), 2)
