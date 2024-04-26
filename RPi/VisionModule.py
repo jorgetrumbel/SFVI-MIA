@@ -16,6 +16,11 @@ def grayscaleImage(image):
         image = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
     return image
 
+
+def changeRGBtoBGR(image):
+    image = cv.cvtColor(image, cv.COLOR_RGB2BGR)
+    return image
+
 #BASIC FILTERING OPERATIONS
 def applyBlurFilter(image, kRows = 3, kColumns = 3):
     retImage = cv.blur(image, [kRows, kColumns])

@@ -125,6 +125,7 @@ class modelDL():
         elif self.loadedModelType == DLPO.DL_MODEL_TYPE_YOLO:
             predictRet = predictLoadedModelYoloV8Image(model = self.loadedModel, imagePath = imagePath)
         imageRet = VM.loadImage(imagePath, grayscale = False)
+        imageRet = VM.changeRGBtoBGR(imageRet)
         imageRet = DM.drawMeasurementResult(imageRet, predictRet)
         return predictRet, imageRet
 
