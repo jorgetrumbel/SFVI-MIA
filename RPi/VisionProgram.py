@@ -193,17 +193,18 @@ class ProgramStructure():
                 cropList.append(instruction[VPO.INSTRUCTION_DATA_CONFIGURATION][VPO.FILTER_CONFIGURATIONS_CROP_AREA])
         totalCrop = [[0,0],[0,0]]
         for cropSize in cropList:
-            if totalCrop == []:
-                totalCrop[0][0] = cropSize[0][0]
-                totalCrop[0][1] = cropSize[0][1]
-                totalCrop[1][0] = cropSize[1][0]
-                totalCrop[1][1] = cropSize[1][1]
-            else:
-                totalCrop[1][0] = totalCrop[0][0] + cropSize[1][0]
-                totalCrop[1][1] = totalCrop[0][1] + cropSize[1][1]
+            if cropSize != 0:
+                if totalCrop == []:
+                    totalCrop[0][0] = cropSize[0][0]
+                    totalCrop[0][1] = cropSize[0][1]
+                    totalCrop[1][0] = cropSize[1][0]
+                    totalCrop[1][1] = cropSize[1][1]
+                else:
+                    totalCrop[1][0] = totalCrop[0][0] + cropSize[1][0]
+                    totalCrop[1][1] = totalCrop[0][1] + cropSize[1][1]
 
-                totalCrop[0][0] = totalCrop[0][0] + cropSize[0][0]
-                totalCrop[0][1] = totalCrop[0][1] + cropSize[0][1]
+                    totalCrop[0][0] = totalCrop[0][0] + cropSize[0][0]
+                    totalCrop[0][1] = totalCrop[0][1] + cropSize[0][1]
 
         return totalCrop
 
