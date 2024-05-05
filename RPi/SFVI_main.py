@@ -158,6 +158,7 @@ class MainWindow(QMainWindow):
         self.lineEditNOKPicturesScreenMonitorMain.setText(str(self.programNOKPictures))
 
     def triggerProgramRun(self):
+        self.boardIO.setBusyPinFunc(True)
         if self.selectedProgramType == VPO.VISION_PROGRAM_TYPES_CLASSIC:
             image, data, dataType, programIndividualResults, programResult = self.visionProgramStructure.runProgram(True)
         elif self.selectedProgramType == VPO.VISION_PROGRAM_TYPES_DEEP_LEARNING:
@@ -170,7 +171,11 @@ class MainWindow(QMainWindow):
         self.programPicturesTaken = self.programPicturesTaken + 1
         if programResult == False:
             self.programNOKPictures = self.programNOKPictures + 1
+            self.boardIO.NOKPinFunc()
+        else:
+            self.boardIO.OKPinFunc()
         self.updateProgramStatusForm()
+        self.boardIO.setBusyPinFunc(False)
         
     def setImageScreenMonitorMain(self, image):
         try:
