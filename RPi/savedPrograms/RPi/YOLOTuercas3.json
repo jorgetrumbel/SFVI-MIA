@@ -1,0 +1,10 @@
+{
+    "model": "YOLOv8",
+    "okPath": "/home/alejandro/Desktop/SFVI/SFVI-MIA/RPi/images/Tuerca/OK",
+    "nokPath": "/home/alejandro/Desktop/SFVI/SFVI-MIA/RPi/images/Tuerca/NOK",
+    "modelPath": "/home/alejandro/Desktop/SFVI/SFVI-MIA/RPi/savedPrograms/RPi/YOLOTuercas3.pt",
+    "modelResultPath": "None",
+    "augmentGroups": {
+        "1": {}
+    }
+}

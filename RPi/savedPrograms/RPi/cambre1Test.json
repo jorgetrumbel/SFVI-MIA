@@ -1,0 +1,69 @@
+{
+    "Camera1": {
+        "Name": "Camera1",
+        "Type": "Camera",
+        "Parent": "",
+        "Configuration": {
+            "Name": "",
+            "Camera Config": {
+                "Output Height": 1000,
+                "Output Width": 500,
+                "Exposure Time": 50000,
+                "Analog Gain": 15.0,
+                "AWB Enable": false,
+                "AWB Mode": 0,
+                "Sharpness": 1.0,
+                "Contrast": 1.0,
+                "Saturation": 0.0,
+                "Brightness": 0.06
+            },
+            "File Path": 0
+        }
+    },
+    "Gauss1": {
+        "Name": "Gauss1",
+        "Type": "Gauss",
+        "Parent": "Camera1",
+        "Configuration": {
+            "Name": "",
+            "Kernel Rows": 5,
+            "Kernel Columns": 5,
+            "Iterations": 0,
+            "Threshold": 0,
+            "Threshold 2": 0,
+            "Crop Area": [
+                [
+                    279,
+                    48
+                ],
+                [
+                    900,
+                    376
+                ]
+            ]
+        }
+    },
+    "Template Matching Multiple1": {
+        "Name": "Template Matching Multiple1",
+        "Type": "Template Matching Multiple",
+        "Parent": "Gauss1",
+        "Configuration": {
+            "Name": "",
+            "Variable 1": 50,
+            "Variable 2": 0,
+            "Variable 3": 0,
+            "Template Path": "./temp/Template Matching Multiple1TemplateCrop.png"
+        }
+    },
+    "Draw Multiple Template Match1": {
+        "Name": "Draw Multiple Template Match1",
+        "Type": "Draw Multiple Template Match",
+        "Parent": "Template Matching Multiple1",
+        "Configuration": {
+            "Name": "",
+            "Variable 1": 0,
+            "Variable 2": 0,
+            "Variable 3": 0
+        }
+    }
+}

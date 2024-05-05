@@ -2,7 +2,7 @@ import sys
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtWidgets import QMainWindow, QFileDialog, QMessageBox
 from PyQt5.QtGui import QIcon, QPixmap, QStandardItemModel, QStandardItem
-from PyQt5.QtCore import QModelIndex, Qt, QRunnable, QThreadPool
+from PyQt5.QtCore import QModelIndex, Qt, QRunnable, QThreadPool, pyqtSignal
 from PyQt5.uic import loadUi
 from PIL import Image as im
 
@@ -81,12 +81,14 @@ class MainWindow(QMainWindow):
     programNOKPictures = 0
     camera = CM.Camera()
     boardIO = IO.IO()
+    programTriggerSignal = pyqtSignal()
 
     #########################################################
     #ScreenMonitorMain
     def ScreenMonitorMainLogic(self):
         self.updateProgramStatusForm()
-        self.boardIO.setTriggerPinFunc(self.triggerProgramRun) #MOVER DE ACA?? REVISAR
+        self.programTriggerSignal.connect(self.triggerProgramRun)
+        self.boardIO.setTriggerPinFunc(self.programTrigger) #MOVER DE ACA?? REVISAR
         self.buttonChangeToProgrammingMain.clicked.connect(self.goToScreenProgrammingMain)
         self.buttonSelectProgramScreenMonitorMain.clicked.connect(self.getProgramFileName)
         self.buttonCounterScreenMonitorMain.clicked.connect(self.triggerProgramRun) #CORREGIR - NO VA EN ESTE BOTON
@@ -156,6 +158,9 @@ class MainWindow(QMainWindow):
         self.lineEditProgramNameScreenMonitorMain.setText(self.selectedProgramName)
         self.lineEditPicturesTakenScreenMonitorMain.setText(str(self.programPicturesTaken))
         self.lineEditNOKPicturesScreenMonitorMain.setText(str(self.programNOKPictures))
+
+    def programTrigger(self):
+        self.programTriggerSignal.emit()
 
     def triggerProgramRun(self):
         self.boardIO.setBusyPinFunc(True)
