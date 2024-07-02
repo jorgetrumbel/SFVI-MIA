@@ -1,0 +1,10 @@
+{
+    "model": "YOLOv8",
+    "okPath": "/home/alejandro/Desktop/SFVI/SFVI-MIA/RPi/images/proteccionCambre/OK",
+    "nokPath": "/home/alejandro/Desktop/SFVI/SFVI-MIA/RPi/images/proteccionCambre/NOK",
+    "modelPath": "/home/alejandro/Desktop/SFVI/SFVI-MIA/RPi/savedPrograms/RPi/proteccionDLCambre.pt",
+    "modelResultPath": "None",
+    "augmentGroups": {
+        "1": {}
+    }
+}

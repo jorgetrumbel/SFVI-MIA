@@ -91,7 +91,7 @@ class MainWindow(QMainWindow):
         self.boardIO.setTriggerPinFunc(self.programTrigger) #MOVER DE ACA?? REVISAR
         self.buttonChangeToProgrammingMain.clicked.connect(self.goToScreenProgrammingMain)
         self.buttonSelectProgramScreenMonitorMain.clicked.connect(self.getProgramFileName)
-        self.buttonCounterScreenMonitorMain.clicked.connect(self.triggerProgramRun) #CORREGIR - NO VA EN ESTE BOTON
+        self.buttonTriggerScreenMonitorMain.clicked.connect(self.triggerProgramRun) #CORREGIR - NO VA EN ESTE BOTON
         self.buttonConfigScreenMonitorMain.clicked.connect(self.configButtonAction)
         self.buttonCameraConfigurationScreenMonitorMain.clicked.connect(self.cameraConfigButtonAction)
 

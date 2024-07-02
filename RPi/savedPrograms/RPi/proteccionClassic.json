@@ -1,0 +1,84 @@
+{
+    "Camera1": {
+        "Name": "Camera1",
+        "Type": "Camera",
+        "Parent": "",
+        "Configuration": {
+            "Name": "",
+            "Camera Config": {
+                "Output Height": 600,
+                "Output Width": 500,
+                "Exposure Time": 66657,
+                "Analog Gain": 8.0,
+                "AWB Enable": false,
+                "AWB Mode": 0,
+                "Sharpness": 1.0,
+                "Contrast": 1.0,
+                "Saturation": 1.0,
+                "Brightness": 0.0
+            },
+            "File Path": 0
+        }
+    },
+    "Histogram1": {
+        "Name": "Histogram1",
+        "Type": "Histogram",
+        "Parent": "Camera1",
+        "Configuration": {
+            "Name": "",
+            "Kernel Rows": 0,
+            "Kernel Columns": 0,
+            "Iterations": 0,
+            "Threshold": 0,
+            "Threshold 2": 0,
+            "Crop Area": [
+                [
+                    32,
+                    87
+                ],
+                [
+                    586,
+                    358
+                ]
+            ]
+        }
+    },
+    "Range Threshold1": {
+        "Name": "Range Threshold1",
+        "Type": "Range Threshold",
+        "Parent": "Histogram1",
+        "Configuration": {
+            "Name": "",
+            "Kernel Rows": 0,
+            "Kernel Columns": 0,
+            "Iterations": 0,
+            "Threshold": 40,
+            "Threshold 2": 255,
+            "Crop Area": 0
+        }
+    },
+    "Template Matching Multiple1": {
+        "Name": "Template Matching Multiple1",
+        "Type": "Template Matching Multiple",
+        "Parent": "Range Threshold1",
+        "Configuration": {
+            "Name": "",
+            "Variable 1": 50,
+            "Variable 2": 0,
+            "Variable 3": 0,
+            "Template Path": "./temp/Template Matching Multiple1TemplateCrop.png"
+        }
+    },
+    "Pattern Count1": {
+        "Name": "Pattern Count1",
+        "Type": "Pattern Count",
+        "Parent": "Template Matching Multiple1",
+        "Configuration": {
+            "Name": "",
+            "Variable 1": 0,
+            "Variable 2": 0,
+            "Variable 3": 0,
+            "Variable 4": 0
+        }
+    }
+}

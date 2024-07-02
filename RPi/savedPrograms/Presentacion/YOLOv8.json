@@ -1,0 +1,10 @@
+{
+    "model": "YOLOv8",
+    "okPath": "C:/Users/Alejandro/Desktop/MIA Trabajo final/Repositorio/SFVI-MIA/RPi/images/proteccion/proteccion/Augment/OK",
+    "nokPath": "C:/Users/Alejandro/Desktop/MIA Trabajo final/Repositorio/SFVI-MIA/RPi/images/proteccion/proteccion/Augment/NOK",
+    "modelPath": "C:/Users/Alejandro/Desktop/MIA Trabajo final/Repositorio/SFVI-MIA/RPi/savedPrograms/Presentacion/YOLOv8.pt",
+    "modelResultPath": "None",
+    "augmentGroups": {
+        "1": {}
+    }
+}

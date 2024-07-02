@@ -1,0 +1,10 @@
+{
+    "model": "YOLOv8",
+    "okPath": "/home/alejandro/Desktop/SFVI/SFVI-MIA/RPi/images/proteccion/OK",
+    "nokPath": "/home/alejandro/Desktop/SFVI/SFVI-MIA/RPi/images/proteccion/NOK",
+    "modelPath": "/home/alejandro/Desktop/SFVI/SFVI-MIA/RPi/savedPrograms/RPi/proteccionDL.pt",
+    "modelResultPath": "None",
+    "augmentGroups": {
+        "1": {}
+    }
+}

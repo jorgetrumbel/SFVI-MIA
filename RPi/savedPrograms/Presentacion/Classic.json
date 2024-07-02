@@ -33,42 +33,52 @@
             "Threshold 2": 0,
             "Crop Area": [
                 [
-                    21,
-                    38
+                    23,
+                    68
                 ],
                 [
-                    574,
-                    353
+                    576,
+                    362
                 ]
             ]
         }
     },
-    "Sobel1": {
-        "Name": "Sobel1",
-        "Type": "Sobel",
+    "Range Threshold1": {
+        "Name": "Range Threshold1",
+        "Type": "Range Threshold",
         "Parent": "Histogram1",
         "Configuration": {
             "Name": "",
-            "Kernel Rows": 3,
-            "Kernel Columns": 3,
-            "Iterations": 1,
-            "Threshold": 0,
-            "Threshold 2": 0,
+            "Kernel Rows": 0,
+            "Kernel Columns": 0,
+            "Iterations": 0,
+            "Threshold": 40,
+            "Threshold 2": 255,
             "Crop Area": 0
         }
     },
-    "Gauss1": {
-        "Name": "Gauss1",
-        "Type": "Gauss",
-        "Parent": "File Select1",
+    "Template Matching Multiple1": {
+        "Name": "Template Matching Multiple1",
+        "Type": "Template Matching Multiple",
+        "Parent": "Range Threshold1",
         "Configuration": {
             "Name": "",
-            "Kernel Rows": 5,
-            "Kernel Columns": 5,
-            "Iterations": 1,
-            "Threshold": 0,
-            "Threshold 2": 0,
-            "Crop Area": 0
+            "Variable 1": 50,
+            "Variable 2": 0,
+            "Variable 3": 0,
+            "Template Path": "./temp/Template Matching Multiple1TemplateCrop.png"
+        }
+    },
+    "Pattern Count1": {
+        "Name": "Pattern Count1",
+        "Type": "Pattern Count",
+        "Parent": "Template Matching Multiple1",
+        "Configuration": {
+            "Name": "",
+            "Variable 1": 0,
+            "Variable 2": 0,
+            "Variable 3": 0,
+            "Variable 4": 0
         }
     }
 }
