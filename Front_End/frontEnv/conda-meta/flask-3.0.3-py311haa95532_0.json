@@ -1,0 +1,525 @@
+{
+  "build": "py311haa95532_0",
+  "build_number": 0,
+  "channel": "https://repo.anaconda.com/pkgs/main/win-64",
+  "constrains": [
+    "asgiref >=3.2"
+  ],
+  "depends": [
+    "blinker >=1.6.2",
+    "click >=8.1.3",
+    "itsdangerous >=2.1.2",
+    "jinja2 >=3.1.2",
+    "python >=3.11,<3.12.0a0",
+    "werkzeug >=3.0.0"
+  ],
+  "extracted_package_dir": "C:\\Users\\Alejandro\\anaconda3\\pkgs\\flask-3.0.3-py311haa95532_0",
+  "features": "",
+  "files": [
+    "Lib/site-packages/flask-3.0.3.dist-info/INSTALLER",
+    "Lib/site-packages/flask-3.0.3.dist-info/LICENSE.txt",
+    "Lib/site-packages/flask-3.0.3.dist-info/METADATA",
+    "Lib/site-packages/flask-3.0.3.dist-info/RECORD",
+    "Lib/site-packages/flask-3.0.3.dist-info/REQUESTED",
+    "Lib/site-packages/flask-3.0.3.dist-info/WHEEL",
+    "Lib/site-packages/flask-3.0.3.dist-info/direct_url.json",
+    "Lib/site-packages/flask-3.0.3.dist-info/entry_points.txt",
+    "Lib/site-packages/flask/__init__.py",
+    "Lib/site-packages/flask/__main__.py",
+    "Lib/site-packages/flask/__pycache__/__init__.cpython-311.pyc",
+    "Lib/site-packages/flask/__pycache__/__main__.cpython-311.pyc",
+    "Lib/site-packages/flask/__pycache__/app.cpython-311.pyc",
+    "Lib/site-packages/flask/__pycache__/blueprints.cpython-311.pyc",
+    "Lib/site-packages/flask/__pycache__/cli.cpython-311.pyc",
+    "Lib/site-packages/flask/__pycache__/config.cpython-311.pyc",
+    "Lib/site-packages/flask/__pycache__/ctx.cpython-311.pyc",
+    "Lib/site-packages/flask/__pycache__/debughelpers.cpython-311.pyc",
+    "Lib/site-packages/flask/__pycache__/globals.cpython-311.pyc",
+    "Lib/site-packages/flask/__pycache__/helpers.cpython-311.pyc",
+    "Lib/site-packages/flask/__pycache__/logging.cpython-311.pyc",
+    "Lib/site-packages/flask/__pycache__/sessions.cpython-311.pyc",
+    "Lib/site-packages/flask/__pycache__/signals.cpython-311.pyc",
+    "Lib/site-packages/flask/__pycache__/templating.cpython-311.pyc",
+    "Lib/site-packages/flask/__pycache__/testing.cpython-311.pyc",
+    "Lib/site-packages/flask/__pycache__/typing.cpython-311.pyc",
+    "Lib/site-packages/flask/__pycache__/views.cpython-311.pyc",
+    "Lib/site-packages/flask/__pycache__/wrappers.cpython-311.pyc",
+    "Lib/site-packages/flask/app.py",
+    "Lib/site-packages/flask/blueprints.py",
+    "Lib/site-packages/flask/cli.py",
+    "Lib/site-packages/flask/config.py",
+    "Lib/site-packages/flask/ctx.py",
+    "Lib/site-packages/flask/debughelpers.py",
+    "Lib/site-packages/flask/globals.py",
+    "Lib/site-packages/flask/helpers.py",
+    "Lib/site-packages/flask/json/__init__.py",
+    "Lib/site-packages/flask/json/__pycache__/__init__.cpython-311.pyc",
+    "Lib/site-packages/flask/json/__pycache__/provider.cpython-311.pyc",
+    "Lib/site-packages/flask/json/__pycache__/tag.cpython-311.pyc",
+    "Lib/site-packages/flask/json/provider.py",
+    "Lib/site-packages/flask/json/tag.py",
+    "Lib/site-packages/flask/logging.py",
+    "Lib/site-packages/flask/py.typed",
+    "Lib/site-packages/flask/sansio/README.md",
+    "Lib/site-packages/flask/sansio/__pycache__/app.cpython-311.pyc",
+    "Lib/site-packages/flask/sansio/__pycache__/blueprints.cpython-311.pyc",
+    "Lib/site-packages/flask/sansio/__pycache__/scaffold.cpython-311.pyc",
+    "Lib/site-packages/flask/sansio/app.py",
+    "Lib/site-packages/flask/sansio/blueprints.py",
+    "Lib/site-packages/flask/sansio/scaffold.py",
+    "Lib/site-packages/flask/sessions.py",
+    "Lib/site-packages/flask/signals.py",
+    "Lib/site-packages/flask/templating.py",
+    "Lib/site-packages/flask/testing.py",
+    "Lib/site-packages/flask/typing.py",
+    "Lib/site-packages/flask/views.py",
+    "Lib/site-packages/flask/wrappers.py",
+    "Scripts/flask-script.py",
+    "Scripts/flask.exe",
+    ".nonadmin"
+  ],
+  "fn": "flask-3.0.3-py311haa95532_0.conda",
+  "legacy_bz2_md5": "2025bf7e5bb5489d30e700e5632e9032",
+  "license": "BSD-3-Clause",
+  "license_family": "BSD",
+  "link": {
+    "source": "C:\\Users\\Alejandro\\anaconda3\\pkgs\\flask-3.0.3-py311haa95532_0",
+    "type": 1
+  },
+  "md5": "3f3799e9b23097622880d308be1bce3e",
+  "name": "flask",
+  "package_tarball_full_path": "C:\\Users\\Alejandro\\anaconda3\\pkgs\\flask-3.0.3-py311haa95532_0.conda",
+  "paths_data": {
+    "paths": [
+      {
+        "_path": "Lib/site-packages/flask-3.0.3.dist-info/INSTALLER",
+        "path_type": "hardlink",
+        "sha256": "d0edee15f91b406f3f99726e44eb990be6e34fd0345b52b910c568e0eef6a2a8",
+        "sha256_in_prefix": "d0edee15f91b406f3f99726e44eb990be6e34fd0345b52b910c568e0eef6a2a8",
+        "size_in_bytes": 5
+      },
+      {
+        "_path": "Lib/site-packages/flask-3.0.3.dist-info/LICENSE.txt",
+        "path_type": "hardlink",
+        "sha256": "489a8e1108509ed98a37bb983e11e0f7e1d31f0bd8f99a79c8448e7ff37d07ea",
+        "sha256_in_prefix": "489a8e1108509ed98a37bb983e11e0f7e1d31f0bd8f99a79c8448e7ff37d07ea",
+        "size_in_bytes": 1475
+      },
+      {
+        "_path": "Lib/site-packages/flask-3.0.3.dist-info/METADATA",
+        "path_type": "hardlink",
+        "sha256": "7b13da872e1a6a18d5fa662a77da9be4734ff21681fc8c53b9aa2da12bc2b5a8",
+        "sha256_in_prefix": "7b13da872e1a6a18d5fa662a77da9be4734ff21681fc8c53b9aa2da12bc2b5a8",
+        "size_in_bytes": 3177
+      },
+      {
+        "_path": "Lib/site-packages/flask-3.0.3.dist-info/RECORD",
+        "path_type": "hardlink",
+        "sha256": "0a8ea145fb641bf7d7fcff0af4ca3ea1d292a737bd92dac4004405f5c0218afa",
+        "sha256_in_prefix": "0a8ea145fb641bf7d7fcff0af4ca3ea1d292a737bd92dac4004405f5c0218afa",
+        "size_in_bytes": 3813
+      },
+      {
+        "_path": "Lib/site-packages/flask-3.0.3.dist-info/REQUESTED",
+        "path_type": "hardlink",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256_in_prefix": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size_in_bytes": 0
+      },
+      {
+        "_path": "Lib/site-packages/flask-3.0.3.dist-info/WHEEL",
+        "path_type": "hardlink",
+        "sha256": "1196c6921ec87b83e865f450f08d19b8ff5592537f4ef719e83484e546abe33e",
+        "sha256_in_prefix": "1196c6921ec87b83e865f450f08d19b8ff5592537f4ef719e83484e546abe33e",
+        "size_in_bytes": 81
+      },
+      {
+        "_path": "Lib/site-packages/flask-3.0.3.dist-info/direct_url.json",
+        "path_type": "hardlink",
+        "sha256": "2406e50f30cd683c6abfeb489c9ed7f27870646f6a0ea1dafbdf891f5f585fd2",
+        "sha256_in_prefix": "2406e50f30cd683c6abfeb489c9ed7f27870646f6a0ea1dafbdf891f5f585fd2",
+        "size_in_bytes": 85
+      },
+      {
+        "_path": "Lib/site-packages/flask-3.0.3.dist-info/entry_points.txt",
+        "path_type": "hardlink",
+        "sha256": "6c13fb853392e5fcfdccbb42eec3e87c164094c904bc1c6eecaa92ea5e65bdce",
+        "sha256_in_prefix": "6c13fb853392e5fcfdccbb42eec3e87c164094c904bc1c6eecaa92ea5e65bdce",
+        "size_in_bytes": 40
+      },
+      {
+        "_path": "Lib/site-packages/flask/__init__.py",
+        "path_type": "hardlink",
+        "sha256": "eb132a7550341484365352956865f79733427573f3a073da6b486f40235c7d29",
+        "sha256_in_prefix": "eb132a7550341484365352956865f79733427573f3a073da6b486f40235c7d29",
+        "size_in_bytes": 2625
+      },
+      {
+        "_path": "Lib/site-packages/flask/__main__.py",
+        "path_type": "hardlink",
+        "sha256": "6d8b7d7846a845059d7a3107143f11131f63c5511d669b44085b15ec5e3d2279",
+        "sha256_in_prefix": "6d8b7d7846a845059d7a3107143f11131f63c5511d669b44085b15ec5e3d2279",
+        "size_in_bytes": 30
+      },
+      {
+        "_path": "Lib/site-packages/flask/__pycache__/__init__.cpython-311.pyc",
+        "path_type": "hardlink",
+        "sha256": "1ec7a901d7f4b8f070d4c2b0d95de1db887568cc66ef7a436a2050d676099d2f",
+        "sha256_in_prefix": "1ec7a901d7f4b8f070d4c2b0d95de1db887568cc66ef7a436a2050d676099d2f",
+        "size_in_bytes": 3130
+      },
+      {
+        "_path": "Lib/site-packages/flask/__pycache__/__main__.cpython-311.pyc",
+        "path_type": "hardlink",
+        "sha256": "6db39e2a1f03e1ebc36232a4dc1265cd4c4274f4cdb55d4341e370dc84c18e28",
+        "sha256_in_prefix": "6db39e2a1f03e1ebc36232a4dc1265cd4c4274f4cdb55d4341e370dc84c18e28",
+        "size_in_bytes": 219
+      },
+      {
+        "_path": "Lib/site-packages/flask/__pycache__/app.cpython-311.pyc",
+        "path_type": "hardlink",
+        "sha256": "38daaf148776a9debd72cca8d23d5cf479e186e577cb2740ecf64998d8b6a4c5",
+        "sha256_in_prefix": "38daaf148776a9debd72cca8d23d5cf479e186e577cb2740ecf64998d8b6a4c5",
+        "size_in_bytes": 63785
+      },
+      {
+        "_path": "Lib/site-packages/flask/__pycache__/blueprints.cpython-311.pyc",
+        "path_type": "hardlink",
+        "sha256": "1d0dffde7bd6cfbb1e5966021a4d8f455dee916709c1c5ded3417efcc88c7998",
+        "sha256_in_prefix": "1d0dffde7bd6cfbb1e5966021a4d8f455dee916709c1c5ded3417efcc88c7998",
+        "size_in_bytes": 5239
+      },
+      {
+        "_path": "Lib/site-packages/flask/__pycache__/cli.cpython-311.pyc",
+        "path_type": "hardlink",
+        "sha256": "5672cc73896f0fc2e3b0ddb403c33476cdb4dffa1c8a6a78735f26b811aa1d04",
+        "sha256_in_prefix": "5672cc73896f0fc2e3b0ddb403c33476cdb4dffa1c8a6a78735f26b811aa1d04",
+        "size_in_bytes": 46843
+      },
+      {
+        "_path": "Lib/site-packages/flask/__pycache__/config.cpython-311.pyc",
+        "path_type": "hardlink",
+        "sha256": "931f5e7b09f57eb1fe2d3aaba7671a9dd9af2fcd8eb26c58ddab51f06700d7a7",
+        "sha256_in_prefix": "931f5e7b09f57eb1fe2d3aaba7671a9dd9af2fcd8eb26c58ddab51f06700d7a7",
+        "size_in_bytes": 17196
+      },
+      {
+        "_path": "Lib/site-packages/flask/__pycache__/ctx.cpython-311.pyc",
+        "path_type": "hardlink",
+        "sha256": "c38f53d885337ca70e7b954e6d6973995faf8d63975d01f1c7a881266e254b85",
+        "sha256_in_prefix": "c38f53d885337ca70e7b954e6d6973995faf8d63975d01f1c7a881266e254b85",
+        "size_in_bytes": 20860
+      },
+      {
+        "_path": "Lib/site-packages/flask/__pycache__/debughelpers.cpython-311.pyc",
+        "path_type": "hardlink",
+        "sha256": "607a8ad1ad09b6d5112ac1125d167f32bdefd80c5870a23bcb917f71b526d28a",
+        "sha256_in_prefix": "607a8ad1ad09b6d5112ac1125d167f32bdefd80c5870a23bcb917f71b526d28a",
+        "size_in_bytes": 10171
+      },
+      {
+        "_path": "Lib/site-packages/flask/__pycache__/globals.cpython-311.pyc",
+        "path_type": "hardlink",
+        "sha256": "74e1d1d5a1225b3e9a45570af739a5fb91aedb5e959be11c7c25b5b32ef7938d",
+        "sha256_in_prefix": "74e1d1d5a1225b3e9a45570af739a5fb91aedb5e959be11c7c25b5b32ef7938d",
+        "size_in_bytes": 2182
+      },
+      {
+        "_path": "Lib/site-packages/flask/__pycache__/helpers.cpython-311.pyc",
+        "path_type": "hardlink",
+        "sha256": "c1a98ade3f4576aa634b58d32f65161017071726585c244e1b418210ad7caf4d",
+        "sha256_in_prefix": "c1a98ade3f4576aa634b58d32f65161017071726585c244e1b418210ad7caf4d",
+        "size_in_bytes": 25899
+      },
+      {
+        "_path": "Lib/site-packages/flask/__pycache__/logging.cpython-311.pyc",
+        "path_type": "hardlink",
+        "sha256": "0ee798f483f02dc8ec33ee15f9542acb2b3edbdc8346865974dde93fc184a8fc",
+        "sha256_in_prefix": "0ee798f483f02dc8ec33ee15f9542acb2b3edbdc8346865974dde93fc184a8fc",
+        "size_in_bytes": 3412
+      },
+      {
+        "_path": "Lib/site-packages/flask/__pycache__/sessions.cpython-311.pyc",
+        "path_type": "hardlink",
+        "sha256": "233a658215503f41ff33af60c9edd25164383ede101afee33854a73bea311185",
+        "sha256_in_prefix": "233a658215503f41ff33af60c9edd25164383ede101afee33854a73bea311185",
+        "size_in_bytes": 17780
+      },
+      {
+        "_path": "Lib/site-packages/flask/__pycache__/signals.cpython-311.pyc",
+        "path_type": "hardlink",
+        "sha256": "0f65db9a7bdf776719079904eae27a9a7ccb9625d0db59eee55067cac2a4c4f1",
+        "sha256_in_prefix": "0f65db9a7bdf776719079904eae27a9a7ccb9625d0db59eee55067cac2a4c4f1",
+        "size_in_bytes": 1323
+      },
+      {
+        "_path": "Lib/site-packages/flask/__pycache__/templating.cpython-311.pyc",
+        "path_type": "hardlink",
+        "sha256": "191d972c1a1485f38ea4cbc56883cfac3e96ef111afa9c0eea37ae5ee257c905",
+        "sha256_in_prefix": "191d972c1a1485f38ea4cbc56883cfac3e96ef111afa9c0eea37ae5ee257c905",
+        "size_in_bytes": 10610
+      },
+      {
+        "_path": "Lib/site-packages/flask/__pycache__/testing.cpython-311.pyc",
+        "path_type": "hardlink",
+        "sha256": "8a4605d5a7cedcf1566d289ca8401e9a54265aaf06ec08061327b92a4b69c648",
+        "sha256_in_prefix": "8a4605d5a7cedcf1566d289ca8401e9a54265aaf06ec08061327b92a4b69c648",
+        "size_in_bytes": 14672
+      },
+      {
+        "_path": "Lib/site-packages/flask/__pycache__/typing.cpython-311.pyc",
+        "path_type": "hardlink",
+        "sha256": "3cbb300ebe9e2c18c0f31fa98dd864c7e82a6fc4b53dc84d1cbc71ced65e1635",
+        "sha256_in_prefix": "3cbb300ebe9e2c18c0f31fa98dd864c7e82a6fc4b53dc84d1cbc71ced65e1635",
+        "size_in_bytes": 3786
+      },
+      {
+        "_path": "Lib/site-packages/flask/__pycache__/views.cpython-311.pyc",
+        "path_type": "hardlink",
+        "sha256": "560e2c7e98a38d6cb536fa90fb5738c1ea9cc2e23ef50299c8436a2c9bd718bf",
+        "sha256_in_prefix": "560e2c7e98a38d6cb536fa90fb5738c1ea9cc2e23ef50299c8436a2c9bd718bf",
+        "size_in_bytes": 7415
+      },
+      {
+        "_path": "Lib/site-packages/flask/__pycache__/wrappers.cpython-311.pyc",
+        "path_type": "hardlink",
+        "sha256": "068835835d1b4cfc1f68fc0959a8955c1777ceb279c2c9ddf8064558069a2dc5",
+        "sha256_in_prefix": "068835835d1b4cfc1f68fc0959a8955c1777ceb279c2c9ddf8064558069a2dc5",
+        "size_in_bytes": 6766
+      },
+      {
+        "_path": "Lib/site-packages/flask/app.py",
+        "path_type": "hardlink",
+        "sha256": "efe961e9c223dbbae24c4d50d7c3a4d69e67399f2a62232ec7806d73aa3a98d7",
+        "sha256_in_prefix": "efe961e9c223dbbae24c4d50d7c3a4d69e67399f2a62232ec7806d73aa3a98d7",
+        "size_in_bytes": 60143
+      },
+      {
+        "_path": "Lib/site-packages/flask/blueprints.py",
+        "path_type": "hardlink",
+        "sha256": "ec83573f04e45317ce41738ebf5caee763691cf98f188e5f31330567e046f726",
+        "sha256_in_prefix": "ec83573f04e45317ce41738ebf5caee763691cf98f188e5f31330567e046f726",
+        "size_in_bytes": 4430
+      },
+      {
+        "_path": "Lib/site-packages/flask/cli.py",
+        "path_type": "hardlink",
+        "sha256": "38e69ffc47ea8a1d62da29f9f23fb96596664273e96927e25056c48e52fd6f3c",
+        "sha256_in_prefix": "38e69ffc47ea8a1d62da29f9f23fb96596664273e96927e25056c48e52fd6f3c",
+        "size_in_bytes": 35825
+      },
+      {
+        "_path": "Lib/site-packages/flask/config.py",
+        "path_type": "hardlink",
+        "sha256": "6cbccb5408fe72af97a2dbbd7aba8e16d7b4c5215a557c9fcf40243f819bc266",
+        "sha256_in_prefix": "6cbccb5408fe72af97a2dbbd7aba8e16d7b4c5215a557c9fcf40243f819bc266",
+        "size_in_bytes": 13312
+      },
+      {
+        "_path": "Lib/site-packages/flask/ctx.py",
+        "path_type": "hardlink",
+        "sha256": "e1ab4384927f72957554cab8aac7d4e04ffad4cd6837dde3952d87f608eb979f",
+        "sha256_in_prefix": "e1ab4384927f72957554cab8aac7d4e04ffad4cd6837dde3952d87f608eb979f",
+        "size_in_bytes": 15120
+      },
+      {
+        "_path": "Lib/site-packages/flask/debughelpers.py",
+        "path_type": "hardlink",
+        "sha256": "3c6203852b56fde7d18e969adf31c8a68fa1b52b49391e35229dce2563d8070a",
+        "sha256_in_prefix": "3c6203852b56fde7d18e969adf31c8a68fa1b52b49391e35229dce2563d8070a",
+        "size_in_bytes": 6080
+      },
+      {
+        "_path": "Lib/site-packages/flask/globals.py",
+        "path_type": "hardlink",
+        "sha256": "5dd419992b4198f22cf2df77b63c7aa4eec19b78286c068e3569057141da19ab",
+        "sha256_in_prefix": "5dd419992b4198f22cf2df77b63c7aa4eec19b78286c068e3569057141da19ab",
+        "size_in_bytes": 1713
+      },
+      {
+        "_path": "Lib/site-packages/flask/helpers.py",
+        "path_type": "hardlink",
+        "sha256": "b58adc43fef71ae49954483016bf9e32657af54ae21500c19adf30649200aaf8",
+        "sha256_in_prefix": "b58adc43fef71ae49954483016bf9e32657af54ae21500c19adf30649200aaf8",
+        "size_in_bytes": 23084
+      },
+      {
+        "_path": "Lib/site-packages/flask/json/__init__.py",
+        "path_type": "hardlink",
+        "sha256": "84b351f3df296aaa1e7dd78086b69ae70c89cbe6e6441da4d9d578120572d99f",
+        "sha256_in_prefix": "84b351f3df296aaa1e7dd78086b69ae70c89cbe6e6441da4d9d578120572d99f",
+        "size_in_bytes": 5602
+      },
+      {
+        "_path": "Lib/site-packages/flask/json/__pycache__/__init__.cpython-311.pyc",
+        "path_type": "hardlink",
+        "sha256": "0f37aaf680605254a78c3173a02b1d6a21da0bbde787262d574e902b8e1fbc3d",
+        "sha256_in_prefix": "0f37aaf680605254a78c3173a02b1d6a21da0bbde787262d574e902b8e1fbc3d",
+        "size_in_bytes": 6834
+      },
+      {
+        "_path": "Lib/site-packages/flask/json/__pycache__/provider.cpython-311.pyc",
+        "path_type": "hardlink",
+        "sha256": "93d52e83073660230d3692abe763b03f707857b1e00cb0bbf436ad769cc17f69",
+        "sha256_in_prefix": "93d52e83073660230d3692abe763b03f707857b1e00cb0bbf436ad769cc17f69",
+        "size_in_bytes": 9949
+      },
+      {
+        "_path": "Lib/site-packages/flask/json/__pycache__/tag.cpython-311.pyc",
+        "path_type": "hardlink",
+        "sha256": "fc3d7e815033b4ba13b5f33a9c6612f825320be21000cfde5a1cf7ed6c0e87f2",
+        "sha256_in_prefix": "fc3d7e815033b4ba13b5f33a9c6612f825320be21000cfde5a1cf7ed6c0e87f2",
+        "size_in_bytes": 16542
+      },
+      {
+        "_path": "Lib/site-packages/flask/json/provider.py",
+        "path_type": "hardlink",
+        "sha256": "aba881f379528a8a72f340d93eb53ef6619c5b0ac3d26bcb8e2bfd7c7ad16607",
+        "sha256_in_prefix": "aba881f379528a8a72f340d93eb53ef6619c5b0ac3d26bcb8e2bfd7c7ad16607",
+        "size_in_bytes": 7646
+      },
+      {
+        "_path": "Lib/site-packages/flask/json/tag.py",
+        "path_type": "hardlink",
+        "sha256": "0e168dc2e20e85db7647be28382f58e19f19a6bc4562245be5d50fe5bcb220dc",
+        "sha256_in_prefix": "0e168dc2e20e85db7647be28382f58e19f19a6bc4562245be5d50fe5bcb220dc",
+        "size_in_bytes": 9281
+      },
+      {
+        "_path": "Lib/site-packages/flask/logging.py",
+        "path_type": "hardlink",
+        "sha256": "f2c33758c4ee6e2d5c05bd9cfe53e45a937427c74c02aae029160b2e2d5d0952",
+        "sha256_in_prefix": "f2c33758c4ee6e2d5c05bd9cfe53e45a937427c74c02aae029160b2e2d5d0952",
+        "size_in_bytes": 2377
+      },
+      {
+        "_path": "Lib/site-packages/flask/py.typed",
+        "path_type": "hardlink",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256_in_prefix": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size_in_bytes": 0
+      },
+      {
+        "_path": "Lib/site-packages/flask/sansio/README.md",
+        "path_type": "hardlink",
+        "sha256": "fb45f5b440a78a59b3d5ca20c7e621370e5dee0b8aec62ababf0c45763b3954d",
+        "sha256_in_prefix": "fb45f5b440a78a59b3d5ca20c7e621370e5dee0b8aec62ababf0c45763b3954d",
+        "size_in_bytes": 228
+      },
+      {
+        "_path": "Lib/site-packages/flask/sansio/__pycache__/app.cpython-311.pyc",
+        "path_type": "hardlink",
+        "sha256": "add616dc2ce69576e14aeacfcc913d99b31090e09fa7947e249e06105c693418",
+        "sha256_in_prefix": "add616dc2ce69576e14aeacfcc913d99b31090e09fa7947e249e06105c693418",
+        "size_in_bytes": 35319
+      },
+      {
+        "_path": "Lib/site-packages/flask/sansio/__pycache__/blueprints.cpython-311.pyc",
+        "path_type": "hardlink",
+        "sha256": "b3ad8b05e8f4066e122d052319a5ff7d5868a6254b8403cb52bd6a0d0ecce979",
+        "sha256_in_prefix": "b3ad8b05e8f4066e122d052319a5ff7d5868a6254b8403cb52bd6a0d0ecce979",
+        "size_in_bytes": 32510
+      },
+      {
+        "_path": "Lib/site-packages/flask/sansio/__pycache__/scaffold.cpython-311.pyc",
+        "path_type": "hardlink",
+        "sha256": "895d1e0a13c65ca29b868fcc41c3766d8fe7c3673dfd7d84e1999943573d454a",
+        "sha256_in_prefix": "895d1e0a13c65ca29b868fcc41c3766d8fe7c3673dfd7d84e1999943573d454a",
+        "size_in_bytes": 31727
+      },
+      {
+        "_path": "Lib/site-packages/flask/sansio/app.py",
+        "path_type": "hardlink",
+        "sha256": "606e467fb2557f5734c9c7160d9f3aab95527c952274e569dbb1c5c453710bb5",
+        "sha256_in_prefix": "606e467fb2557f5734c9c7160d9f3aab95527c952274e569dbb1c5c453710bb5",
+        "size_in_bytes": 38053
+      },
+      {
+        "_path": "Lib/site-packages/flask/sansio/blueprints.py",
+        "path_type": "hardlink",
+        "sha256": "4ea7beec4919fad6d67219bc883a027c3f38f1fd3fde72efe8d3637883ef1f03",
+        "sha256_in_prefix": "4ea7beec4919fad6d67219bc883a027c3f38f1fd3fde72efe8d3637883ef1f03",
+        "size_in_bytes": 24637
+      },
+      {
+        "_path": "Lib/site-packages/flask/sansio/scaffold.py",
+        "path_type": "hardlink",
+        "sha256": "58b57d4d140c3211a55f3fb538ab50de5bfa9ad201419c5d5b61decd8ac6c682",
+        "sha256_in_prefix": "58b57d4d140c3211a55f3fb538ab50de5bfa9ad201419c5d5b61decd8ac6c682",
+        "size_in_bytes": 30633
+      },
+      {
+        "_path": "Lib/site-packages/flask/sessions.py",
+        "path_type": "hardlink",
+        "sha256": "454e25ce6f4c416f42b47f2b54b4530e6f1448c2724f82dbbd87bbb31336fff9",
+        "sha256_in_prefix": "454e25ce6f4c416f42b47f2b54b4530e6f1448c2724f82dbbd87bbb31336fff9",
+        "size_in_bytes": 14807
+      },
+      {
+        "_path": "Lib/site-packages/flask/signals.py",
+        "path_type": "hardlink",
+        "sha256": "57b94c530c3b0aa809d93854067d4f89ab59b506a73b2b7b399a6ed86648fb7e",
+        "sha256_in_prefix": "57b94c530c3b0aa809d93854067d4f89ab59b506a73b2b7b399a6ed86648fb7e",
+        "size_in_bytes": 750
+      },
+      {
+        "_path": "Lib/site-packages/flask/templating.py",
+        "path_type": "hardlink",
+        "sha256": "d937172d3f3902c7e59b65bd58e485c4a0a6627e5ee3dc3f26483df8d69a256a",
+        "sha256_in_prefix": "d937172d3f3902c7e59b65bd58e485c4a0a6627e5ee3dc3f26483df8d69a256a",
+        "size_in_bytes": 7537
+      },
+      {
+        "_path": "Lib/site-packages/flask/testing.py",
+        "path_type": "hardlink",
+        "sha256": "dc11576f76cfed1e6bf972c1ba86e17336f10eef3ed4b591cd8ba16ebfa5c1a1",
+        "sha256_in_prefix": "dc11576f76cfed1e6bf972c1ba86e17336f10eef3ed4b591cd8ba16ebfa5c1a1",
+        "size_in_bytes": 10163
+      },
+      {
+        "_path": "Lib/site-packages/flask/typing.py",
+        "path_type": "hardlink",
+        "sha256": "65abcafb0576f18bfc09007bbbbdea669fe32da9696d676b5d2dfb411d5fb4dd",
+        "sha256_in_prefix": "65abcafb0576f18bfc09007bbbbdea669fe32da9696d676b5d2dfb411d5fb4dd",
+        "size_in_bytes": 3190
+      },
+      {
+        "_path": "Lib/site-packages/flask/views.py",
+        "path_type": "hardlink",
+        "sha256": "07ae9b4ef60105c1cc624e1d03549c643d284d14c1974239b26a759519bdae22",
+        "sha256_in_prefix": "07ae9b4ef60105c1cc624e1d03549c643d284d14c1974239b26a759519bdae22",
+        "size_in_bytes": 6939
+      },
+      {
+        "_path": "Lib/site-packages/flask/wrappers.py",
+        "path_type": "hardlink",
+        "sha256": "9b58f9b4827122ef3fb0f3e04c007f1b84d3879d90f87a03bb0fea1d5e49e7d8",
+        "sha256_in_prefix": "9b58f9b4827122ef3fb0f3e04c007f1b84d3879d90f87a03bb0fea1d5e49e7d8",
+        "size_in_bytes": 5831
+      },
+      {
+        "_path": "Scripts/flask-script.py",
+        "path_type": "hardlink",
+        "sha256": "7f000bbfe275df58416f9c9a9b5997978b1bc6b150619d8267d6453794407682",
+        "sha256_in_prefix": "7f000bbfe275df58416f9c9a9b5997978b1bc6b150619d8267d6453794407682",
+        "size_in_bytes": 203
+      },
+      {
+        "_path": "Scripts/flask.exe",
+        "path_type": "hardlink",
+        "sha256": "f24d102084620e54fe68d07f6e9169118b283f8d33d0c8f4b974c2e05a306059",
+        "sha256_in_prefix": "f24d102084620e54fe68d07f6e9169118b283f8d33d0c8f4b974c2e05a306059",
+        "size_in_bytes": 54032
+      }
+    ],
+    "paths_version": 1
+  },
+  "requested_spec": "flask",
+  "sha256": "aaa1ce2d04513e6447f5d530a872607e3b3d051a0c43de2038aaeb5afc5ff7a1",
+  "size": 244881,
+  "subdir": "win-64",
+  "timestamp": 1716546004620,
+  "track_features": "",
+  "url": "https://repo.anaconda.com/pkgs/main/win-64/flask-3.0.3-py311haa95532_0.conda",
+  "version": "3.0.3"
+}

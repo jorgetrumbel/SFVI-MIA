@@ -1,0 +1,2 @@
+CORRER EN TERMINAL LOCAL:
+npm run dev

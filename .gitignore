@@ -165,3 +165,4 @@ Log*/
 *.zip
 **/RPi/temp/
 *.cache
+*.dll
