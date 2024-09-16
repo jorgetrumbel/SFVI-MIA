@@ -1,0 +1,37 @@
+{
+    "Camera1": {
+        "Name": "Camera1",
+        "Type": "Camera",
+        "Parent": "",
+        "Configuration": {
+            "Name": "",
+            "Camera Config": {
+                "Output Height": 500,
+                "Output Width": 500,
+                "Exposure Time": 100000,
+                "Analog Gain": 2.22,
+                "AWB Enable": false,
+                "AWB Mode": 0,
+                "Sharpness": 2.2,
+                "Contrast": 2.2,
+                "Saturation": 2.2,
+                "Brightness": 0.22
+            },
+            "File Path": 0
+        }
+    },
+    "Blur1": {
+        "Name": "Blur1",
+        "Type": "Blur",
+        "Parent": "Camera1",
+        "Configuration": {
+            "Name": "",
+            "Kernel Rows": 55,
+            "Kernel Columns": 55,
+            "Iterations": 0,
+            "Threshold": 0,
+            "Threshold 2": 0,
+            "Crop Area": 0
+        }
+    }
+}

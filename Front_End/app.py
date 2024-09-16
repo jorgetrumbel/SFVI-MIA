@@ -48,21 +48,136 @@ def redir():
 
 @app.route('/sfviCaptureAction/')
 def sfviCaptureAction():
-    return SFVI.captureAction()
+    retVar = 0
+    try:
+        retVar = SFVI.captureAction()
+    except:
+        print("sfviCaptureAction Eror")
+    return retVar
 
 @app.route('/sfviSetProgramFileName', methods = ['POST'])
 def sfviSetProgramFileName():
-    data = request.json('param')
-    print(data) #CORREGIR
-    SFVI.status.setProgramFileName(data)
-    return f'El valor del parámetro es: {data}'
+    retVar = 0
+    data = request.json
+    try:    
+        data = data[0]['path']
+        SFVI.status.setProgramFileName(data)
+    except:
+        print("sfviSetProgramFileName Eror")
+    return str(retVar)
+
+@app.route('/sfviProgramOnlineStatusSet', methods = ['POST'])
+def sfviProgramOnlineStatusSet():
+    retVar = 0
+    data = request.json
+    try:
+        data = data[0]['programState']
+        retVar = SFVI.status.programOnlineStatusSet(data)
+    except:
+        print("sfviProgramOnlineStatusSet Eror")
+    return str(retVar)
+
+@app.route('/sfviResetProgramCounters/')
+def sfviResetProgramCounters():
+    retVar = 0
+    try:
+        retVar = SFVI.status.resetProgramCounters()
+    except:
+        print("sfviResetProgramCounters Eror")
+    return str(retVar)
+
+@app.route('/sfviTriggerProgramRun', methods = ['POST'])
+def sfviTriggerProgramRun():
+    retVar = 0
+    data = request.json
+    try:    
+        data = data[0]['path']
+        SFVI.status.triggerProgramRun(data)
+    except:
+        print("sfviTriggerProgramRun Eror")
+    return str(retVar)
+
+@app.route('/sfviGetSavedProgramsPathsFromDirectory/')
+def sfviGetSavedProgramsPathsFromDirectory():
+    retVar = 0
+    try:
+        retVar = SFVI.getSavedProgramsPathsFromDirectory()
+    except:
+        print("sfviGetSavedProgramsPathsFromDirectory Eror")
+    return retVar
+
+@app.route('/sfviCheckProgramType', methods = ['POST'])
+def sfviTriggerProgramRun():
+    retVar = 0
+    data = request.json
+    try:    
+        data = data[0]['path']
+        retVar = SFVI.checkProgramType(data)
+    except:
+        print("sfviCheckProgramType Eror")
+    return str(retVar)
+
+@app.route('/sfviLoadVisionProgram', methods = ['POST'])
+def sfviLoadVisionProgram():
+    retVar = 0
+    data = request.json
+    try:    
+        data = data[0]['path']
+        retVar = SFVI.status.loadVisionProgram(data)
+    except:
+        print("sfviLoadVisionProgram Eror")
+    return str(retVar)
+
+@app.route('/sfviLoadDeepLearningVisionProgram', methods = ['POST'])
+def sfviLoadVisionProgram():
+    retVar = 0
+    data = request.json
+    try:    
+        data = data[0]['path']
+        retVar = SFVI.status.loadDeepLearningVisionProgram(data)
+    except:
+        print("sfviLoadDeepLearningVisionProgram Eror")
+    return str(retVar)
+
+@app.route('/sfviCopyProgram', methods = ['POST'])
+def sfviCopyProgram():
+    retVar = 0
+    data = request.json
+    try:    
+        file = data[0]['path']
+        copyPath = data[0]['copyPath']
+        retVar = SFVI.copyProgram(file, copyPath)
+    except:
+        print("sfviCopyProgram Eror")
+    return str(retVar)
+
+@app.route('/sfviDeleteProgram', methods = ['POST'])
+def sfviDeleteProgram():
+    retVar = 0
+    data = request.json
+    try:    
+        file = data[0]['path']
+        retVar = SFVI.deleteProgram(file)
+    except:
+        print("sfviDeleteProgram Eror")
+    return str(retVar)
+
+@app.route('/sfviLaunchNewVisionProgram')
+def sfviLaunchNewVisionProgram():
+    retVar = 0
+    try:    
+        retVar = SFVI.status.launchNewVisionProgram()
+    except:
+        print("sfviLaunchNewVisionProgram Eror")
+    return str(retVar)
 
 
 #EJEMPLO - USANDO JS
 @app.route('/data', methods=['POST'])
 def receive_data():
-    data = request.json
-    data = data[0]['url']
-    #SFVI.status.setProgramFileName(data) #REVISAR ACA
-    return str(1)
-    #return jsonify(message="Datos recibidos correctamente", data=data)
+    retVar = 0
+    try:
+        retVar = SFVI.getSavedProgramsPathsFromDirectory()
+    except:
+        print("sfviGetSavedProgramsPathsFromDirectory Eror")
+    return retVar

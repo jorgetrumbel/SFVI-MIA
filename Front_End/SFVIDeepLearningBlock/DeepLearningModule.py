@@ -609,10 +609,14 @@ def loadSwinModel(modelPath):
 #FILE MANAGEMENT
 def checkIfFileIsDLProgram(path):
     retBool = False
-    with open(path, "r") as readFile:
-        jsonDict = json.load(readFile)
-    if DLPO.DL_PROGRAM_DICT_MODEL in jsonDict.keys():
-        retBool = True
+    try:
+        with open(path, "r") as readFile:
+            jsonDict = json.load(readFile)
+
+        if DLPO.DL_PROGRAM_DICT_MODEL in jsonDict.keys():
+            retBool = True
+    except:
+            print("Could not read file")
     return retBool
 
 def checkIfFileIsDLModel(path:str):

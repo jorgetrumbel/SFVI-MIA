@@ -1,0 +1,12 @@
+{
+    "Output Height": 1000,
+    "Output Width": 500,
+    "Exposure Time": 50000,
+    "Analog Gain": 1500,
+    "AWB Enable": false,
+    "AWB Mode": 0,
+    "Sharpness": 10,
+    "Contrast": 10,
+    "Saturation": 0,
+    "Brightness": 6
+}
