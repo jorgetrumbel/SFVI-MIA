@@ -86,3 +86,6 @@ def get_trailing_number(s):
 def getDirFiles(path):
     files = [f for f in os.listdir(path) if os.path.isfile(os.path.join(path, f))]
     return files
+
+def getImageFileFromUser(): #CORREGIR - ARMAR FUNCION PARA QUE LA EJECUCION STALLEE HASTA QUE EL USUARIO MANDE LA INFO
+    pass

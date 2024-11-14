@@ -155,3 +155,10 @@
 # conda version: 23.5.0
 +defaults/noarch::flask_cors-3.0.10-pyhd3eb1b0_0
 # update specs: ['flask_cors']
+==> 2024-11-14 18:49:58 <==
+# cmd: C:\Users\Alejandro\anaconda3\Scripts\conda-script.py install websockets
+# conda version: 23.5.0
+-defaults/win-64::ca-certificates-2024.7.2-haa95532_0
++defaults/win-64::ca-certificates-2024.9.24-haa95532_0
++defaults/win-64::websockets-10.4-py311h2bbff1b_1
+# update specs: ['websockets']

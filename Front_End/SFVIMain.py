@@ -81,7 +81,7 @@ class programStatus():
             self.boardIO.NOKPinFunc()
         else:
             self.boardIO.OKPinFunc()
-        self.updateProgramStatusForm()
+        #self.updateProgramStatusForm() #CORREGIR
         self.boardIO.setBusyPinFunc(False)
         return image, data, dataType, programIndividualResults, programResult
     
@@ -104,6 +104,22 @@ class programStatus():
         #CORREGIR
         #self.visionProgramStructure.addInstruction("File Select1", parentItem.text(), VPO.CAPTURE_OPTIONS_FILE_SELECT)
         return 1
+
+    def loadProgramToTreeViewScreenProgramEditor(self): #CORREGIR NOMBRE DE FUNCION
+        #CORREGIR - Esta funcion desglosa un programa de vision clasica y sirve para mandar su informacion al front end. 
+        #revisar como seria el envio
+        names, parents, config = self.visionProgramStructure.getProgramAttributes() #Get program
+        for index, name in enumerate(names):
+            instructionType = self.visionProgramStructure.getInstructionType(name)
+            
+    def treeViewClicked(self): #CORREGIR NOMBRE
+        #VER COMO SERIA LA IMPLEMENTACION DE ESTA FUNCION
+        #Toma del front end la configuracion de las instrucciones de un programa clasico y las pasa al backend
+        #Get configuration from currently selected tree command and pass it to vision program
+        #self.visionProgramStructure.changeInstructionConfiguration(previousItem.text(), configuration)
+        #instructionType = self.visionProgramStructure.getInstructionType(item.text())
+        #instructionConfiguration = self.visionProgramStructure.getInstructionConfiguration(item.text())
+        pass
 
 status = programStatus()
 

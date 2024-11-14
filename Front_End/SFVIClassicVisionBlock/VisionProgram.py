@@ -285,7 +285,7 @@ def runCaptureInstruction(type, configuration, camera:CM.Camera):
     elif type == VPO.CAPTURE_OPTIONS_FILE:
         image = VM.loadImage(filePath, grayscale=True)
     elif type == VPO.CAPTURE_OPTIONS_FILE_SELECT:
-        filePath = CMPC.getImageFile()
+        filePath = UM.getImageFileFromUser()
         image = VM.loadImage(filePath, grayscale=True)
     return image
 

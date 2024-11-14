@@ -1,11 +1,12 @@
 from flask import Flask, request, make_response, redirect, abort, jsonify
-from flask_cors import CORS
+
+from websockets.server import serve
+import asyncio
 
 import SFVIMain as SFVI
 
 app = Flask(__name__)
 
-CORS(app)
 
 app.config['ENV'] = 'development'
 app.config['DEBUG'] = True
@@ -107,7 +108,7 @@ def sfviGetSavedProgramsPathsFromDirectory():
     return retVar
 
 @app.route('/sfviCheckProgramType', methods = ['POST'])
-def sfviTriggerProgramRun():
+def sfviCheckProgramType():
     retVar = 0
     data = request.json
     try:    
@@ -129,7 +130,7 @@ def sfviLoadVisionProgram():
     return str(retVar)
 
 @app.route('/sfviLoadDeepLearningVisionProgram', methods = ['POST'])
-def sfviLoadVisionProgram():
+def sfviLoadDeepLearningVisionProgram():
     retVar = 0
     data = request.json
     try:    
